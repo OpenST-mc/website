@@ -83,10 +83,8 @@ body {
     transition: all 0.3s ease !important;
 }
 
-/* 3. 状态切换：开启侧边栏时变为 X */
 body:not(.close) .sidebar-toggle::before {
     content: "\2630" !important;
-    transform: rotate(90deg) !important; /* 加个旋转动效更有质感 */
 }
 
 /* 4. 移动端颜色翻转适配 */
@@ -583,3 +581,542 @@ section.content { padding-top: 84px !important; }
     pointer-events: none !important;
 }
 
+/* --- 16. iPad & Tablet 专项适配 (加固版) --- */
+
+/* 针对 iPad 横屏及桌面小窗口 (768px - 1100px) */
+@media screen and (max-width: 1100px) {
+    /* 1. 强制重置 content 的 transform 行为，防止内容飘到屏幕外 */
+    .content {
+        position: static !important;
+        width: 100% !important;
+        transition: none !important;
+    }
+
+    /* 2. 侧边栏改为遮罩式，而不是推开式，这样可以节省宝贵的屏幕空间 */
+    body:not(.close) .sidebar {
+        box-shadow: 20px 0 50px rgba(0,0,0,0.6) !important;
+    }
+
+    body.close .sidebar {
+        transform: translateX(-300px) !important;
+    }
+
+    /* 3. iPad 上的侧边栏开关要稍微大一点，方便手指点击 */
+    .sidebar-toggle {
+        width: 54px !important;
+        height: 54px !important;
+        bottom: 24px !important;
+        left: 24px !important;
+    }
+}
+
+/* 针对 iPad 竖屏及手机 (彻底消除文字被遮挡) */
+@media screen and (max-width: 834px) {
+    .markdown-section {
+        max-width: 92% !important;
+        padding: 1.8rem !important; /* 进一步压缩 padding 给文字腾空间 */
+        margin-top: 10px !important;
+    }
+
+    /* 4. 强制隐藏遮挡文字的无关元素 */
+    body:not(.close) .content {
+        margin-left: 0 !important; /* 侧边栏浮起来，不再推开内容 */
+        filter: blur(2px) brightness(0.5); /* 增加背景遮罩感，突出侧边栏 */
+        pointer-events: none; /* 打开侧边栏时禁止点击内容页 */
+    }
+}
+
+/* --- 顶栏用户区域重塑 --- */
+.user-zone {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-left: auto; /* 靠右对齐 */
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px 4px 4px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.username {
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+}
+
+.badge {
+    color: var(--brand-color);
+    font-size: 8px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* 退出按钮：小而精致 */
+.logout-btn {
+    background: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d;
+    border: 1px solid rgba(255, 77, 77, 0.2);
+    font-size: 9px;
+    font-weight: 900;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: #ff4d4d;
+    color: #000;
+}
+
+/* --- FAB 悬浮组重塑 (适配移动端) --- */
+.fab-group {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 9999;
+}
+
+.fab-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fab-label {
+    background: rgba(20, 20, 20, 0.8);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0; /* 默认隐藏标签 */
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+}
+
+.fab-item:hover .fab-label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.fab-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(30, 30, 30, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brand-color);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.fab-item.primary .fab-icon {
+    background: var(--brand-color);
+    color: #000;
+    border: none;
+}
+
+/* 移动端避让逻辑 */
+@media screen and (max-width: 1024px) {
+    .fab-group {
+        right: 20px;
+        bottom: 20px;
+    }
+    .fab-label { display: none; } /* 移动端隐藏标签，保持整洁 */
+
+    /* 避免挡住你的左侧侧边栏按钮，虽然是在右边，但也要统一尺寸感 */
+    .fab-icon {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+.font-ctrl-panel {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 12px; margin-bottom: 25px; padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.font-ctrl-group {
+    display: flex; align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px; padding: 2px;
+}
+
+.font-ctrl-btn {
+    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: var(--brand-color);
+    cursor: pointer; transition: all 0.2s; border-radius: 6px;
+}
+
+.font-ctrl-btn:hover { background: rgba(64, 181, 173, 0.1); }
+.font-ctrl-btn:active { transform: scale(0.9); }
+
+.font-ctrl-val {
+    min-width: 40px; text-align: center; font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 900; color: #fff;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 核心：应用字号变量 */
+.markdown-section p, .markdown-section li, .markdown-section td {
+    font-size: var(--wiki-fs, 16px) !important;
+}
+
+/* 核心：将变量应用到整个容器 */
+.markdown-section {
+    --wiki-fs: 16px; /* 初始值 */
+}
+
+/* 1. 覆盖所有文本元素 */
+.markdown-section p,
+.markdown-section li,
+.markdown-section td,
+.markdown-section th,
+.markdown-section blockquote,
+.markdown-section code {
+    font-size: var(--wiki-fs) !important;
+    transition: font-size 0.2s ease;
+}
+
+/* 2. 标题也按比例缩放 (使用 calc 让标题始终比正文大) */
+.markdown-section h1 { font-size: calc(var(--wiki-fs) * 2.2) !important; }
+.markdown-section h2 { font-size: calc(var(--wiki-fs) * 1.75) !important; }
+.markdown-section h3 { font-size: calc(var(--wiki-fs) * 1.35) !important; }
+
+/* 3. 图片缩放逻辑 */
+/* 默认图片 100% 宽度，但我们可以通过控制 max-width 让它随着字号微调感觉 */
+.markdown-section img {
+    max-width: 100%;
+    height: auto;
+    /* 改为调整图片的显示比例，或者利用 margin 抵消 */
+    display: block;
+    margin: 2rem auto !important;
+}
+/* --- 字体缩放核心：注入 themeable 变量系统 --- */
+:root {
+    /* 强制将 docsify-themeable 的基准字号映射到我们的变量 */
+    --base-font-size: var(--wiki-fs) !important;
+}
+
+/* 针对正文和列表的深度覆盖 */
+.markdown-section p,
+.markdown-section li,
+.markdown-section td,
+.markdown-section blockquote {
+    font-size: var(--wiki-fs) !important;
+    line-height: 1.7 !important;
+}
+
+/* 标题按比例缩放 */
+.markdown-section h1 { font-size: calc(var(--wiki-fs) * 2.2) !important; }
+.markdown-section h2 { font-size: calc(var(--wiki-fs) * 1.75) !important; }
+.markdown-section h3 { font-size: calc(var(--wiki-fs) * 1.35) !important; }
+
+/* 代码块稍微缩小一点 */
+.markdown-section pre code,
+.markdown-section :not(pre) > code {
+    font-size: calc(var(--wiki-fs) * 0.9) !important;
+}
+
+/* 翻页插件容器 */
+.docsify-pagination-container {
+    margin-top: 50px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* 翻页按钮样式 */
+.pagination-item {
+    margin-top: 0 !important;
+}
+
+.pagination-item a {
+    color: var(--brand-color, #40B5AD) !important;
+    text-decoration: none !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.pagination-item a:hover {
+    opacity: 0.7;
+    transform: translateY(-2px);
+}
+
+/* 辅助文字（上一篇/下一篇） */
+.pagination-item--subtitle {
+    font-size: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 标题文字 */
+.pagination-item--title {
+    font-weight: 700 !important;
+    margin-top: 5px !important;
+}
+
+/* 1. 彻底移除顶部那条丑陋的白线 */
+.docsify-pagination-container {
+    border-top: none !important;
+    margin-top: 80px !important;
+    display: flex;
+    gap: 20px;
+}
+
+/* 2. 把翻页链接变成“卡片” */
+.pagination-item {
+    background: rgba(255, 255, 255, 0.03); /* 极暗的背景 */
+    border: 1px solid rgba(255, 255, 255, 0.08); /* 淡淡的边框 */
+    border-radius: 12px;
+    padding: 16px 20px !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    flex: 1;
+}
+
+/* 3. 悬浮效果：变亮并微调位置 */
+.pagination-item:hover {
+    background: rgba(64, 181, 173, 0.08); /* 品牌色半透明 */
+    border-color: rgba(64, 181, 173, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* 4. 调整文字颜色和排版 */
+.pagination-item a {
+    text-decoration: none !important;
+}
+
+/* 1. 强制统一卡片背景和边框，不分先后 */
+.pagination-item--previous,
+.pagination-item--next {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    opacity: 1 !important; /* 核心：防止插件自动变暗 */
+}
+
+/* 2. 统一标题（大字）颜色为纯白 */
+.pagination-item--title {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* 3. 统一链接（品牌色） */
+.pagination-item a,
+.pagination-item a:hover {
+    color: var(--brand-color, #40B5AD) !important;
+    text-decoration: none !important;
+}
+
+/* 4. 统一副标题（小字）颜色 */
+.pagination-item--subtitle {
+    color: rgba(255, 255, 255, 0.4) !important;
+    opacity: 1 !important;
+}
+
+/* 5. 悬浮状态同步 */
+.pagination-item:hover {
+    background: rgba(64, 181, 173, 0.1) !important;
+    border-color: rgba(64, 181, 173, 0.5) !important;
+}
+/* 上一页加左箭头 */
+.pagination-item--previous .pagination-item--title::before {
+    content: '← ';
+    opacity: 0.5;
+    margin-right: 4px;
+}
+
+/* 下一页加右箭头 */
+.pagination-item--next .pagination-item--title::after {
+    content: ' →';
+    opacity: 0.5;
+    margin-left: 4px;
+}
+/* 1. 隐藏原生边框 */
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3,
+.markdown-section h4,
+.markdown-section h5,
+.markdown-section h6 {
+    border-bottom: none !important;
+    position: relative;
+    padding-bottom: 0.8rem !important;
+    margin-top: 2.5rem !important;
+}
+
+/* 2. 用伪元素绘制渐变线 */
+.markdown-section h1::after,
+.markdown-section h2::after,
+.markdown-section h3::after,
+.markdown-section h4::after,
+.markdown-section h5::after,
+.markdown-section h6::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* 也可以设为固定长度如 400px */
+    height: 1px; /* 极细线 */
+    /* 从半透明灰渐变到彻底透明 */
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+}
+
+/* 3. 细节微调：让 H1/H2 稍微长一点点，更有层次 */
+.markdown-section h1::after {
+    height: 1.5px; /* H1 稍微厚一点点 */
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+}
+
+/* 定位统计信息 */
+.content .count {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: -10px; /* 拉近与标题的距离 */
+    padding-bottom: 20px;
+    font-family: 'JetBrains Mono', monospace; /* 如果有这种极客字体更好 */
+}
+
+/* 修饰字数和时间小块 */
+.content .count > span {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 12px !important;
+    display: flex;
+    align-items: center;
+}
+
+/* 在前面加个小圆点或表情 */
+.content .count > span:first-child::before {
+    content: "📝";
+    margin-right: 5px;
+}
+.content .count > span:last-child::before {
+    content: "⏱️";
+    margin-right: 5px;
+}
+/* 针对正文段落的排版优化 */
+.markdown-section p,
+.markdown-section li {
+    /* 1. 增大行高：1.8 是黄金比例，阅读最舒适 */
+    line-height: 1.8 !important;
+
+    /* 2. 微调字间距：0.03em - 0.05em 会让中文看起来更清爽 */
+    letter-spacing: 0.04em !important;
+
+    /* 3. 增大段落之间的距离 */
+    margin-bottom: 1.5rem !important;
+
+    /* 4. 稍微调低纯白文字的亮度（用 0.9 的灰白），保护视力 */
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* 针对标题也微调一下字间距，显得更有力量 */
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3 {
+    letter-spacing: 0.06em !important;
+    line-height: 1.4 !important;
+}
+
+/* 确保侧边栏在任何情况下都保持可见，除非手动折叠 */
+.sidebar {
+    background-color: #0f0f0f !important; /* 确保背景色不透明 */
+    border-right: 1px solid rgba(255, 255, 255, 0.05); /* 加一条精致的灰线区分 */
+}
+
+/* 即使是选中的状态，也要保持文字亮度 */
+.sidebar ul li.active > a {
+    color: var(--brand-color, #40B5AD) !important;
+    font-weight: bold;
+}
+
+/* 防止折叠时的位移 Bug */
+.sidebar-toggle {
+    position: fixed;
+    bottom: 30px; /* 建议把切换按钮挪到左下角，这样不会遮挡标题 */
+    left: 30px;
+    z-index: 20;
+}
+/* 1. 强制所有侧边栏列表永久显示，取消折叠动画 */
+.sidebar-nav ul,
+.sidebar-nav li > ul {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    transition: none !important; /* 彻底关掉动画，防止闪烁 */
+}
+
+/* 2. 隐藏 Docsify 自动生成的折叠箭头（它们会误导用户可以折叠） */
+.sidebar-nav .folder-stack > i,
+.sidebar-nav .collapse:after {
+    display: none !important;
+}
+
+/* 3. 针对 docsify-sidebar-collapse 插件的强制覆盖 */
+.sidebar-nav .app-sub-sidebar {
+    display: block !important;
+}
+
+/* 4. 解决“点击消失”的核心：强制 active 状态下的子菜单不收缩 */
+.sidebar-nav li.active > ul {
+    display: block !important;
+}
+.spoiler {
+    /* 默认状态：文字与背景颜色一致，形成色块 */
+    background-color: #252525 !important;
+    color: #252525 !important;
+    border-radius: 2px;
+    padding: 0 2px;
+    margin: 0 2px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    user-select: none; /* 未点开前不可选中文字 */
+}
+
+/* 悬停时：微微发亮，提示这里可以点 */
+.spoiler:hover {
+    background-color: #333 !important;
+    color: #333 !important;
+}
+
+/* 揭开状态：背景透明，文字恢复，并带有一点品牌色强调 */
+.spoiler.revealed {
+    background-color: rgba(64, 181, 173, 0.1) !important;
+    color: #40B5AD !important;
+    user-select: text; /* 展开后允许选中 */
+}

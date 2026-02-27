@@ -22,7 +22,6 @@
             theme: {
                 extend: {
                     colors: {
-                        // 定义你的 OpenST 品牌色
                         brand: {
                             DEFAULT: '#40B5AD',
                             light: '#5fc7bf',
@@ -45,6 +44,25 @@
         }
     </style>
 </head>
+<script>
+    // 监听整个侧边栏的点击事件
+    document.addEventListener('click', function (e) {
+        // 检查点击的是否是侧边栏里的文件夹标题（父级 li）
+        const target = e.target.closest('.sidebar-nav li');
+
+        if (target && target.querySelector('ul')) {
+            setTimeout(() => {
+                if (target.classList.contains('collapse')) {
+                    target.classList.remove('collapse');
+                    const childUl = target.querySelector('ul');
+                    if (childUl) {
+                        childUl.style.display = 'block';
+                    }
+                }
+            }, 10);
+        }
+    }, true); // 使用捕获模式，确保比 Docsify 插件更早捕获或更可靠执行
+</script>
 <body>
 <div class="soft-bg"></div>
 
@@ -54,8 +72,8 @@
 <script>
     window.$docsify = {
         name: 'OpenST Wiki',
-        basePath: '/wiki/content/',
-        relativePath: true,
+        basePath: 'content/',
+        relativePath: false,
         loadSidebar: true,
         auto2top: true,
         mergeNavbar: true,
@@ -70,10 +88,55 @@
             noData: '未找到结果',
             depth: 3,
             hideOtherSidebarContent: false,
-        }
+        },
+        subMaxLevel: 2,
+        zoomImage: {
+            margin: 20,
+            background: 'rgba(0, 0, 0, 0.8)',
+            scrollOffset: 40
+        },
+        previousText: '上一章节',
+        nextText: '下一章节',
+        crossChapter: true,
+        crossChapterText: true,
+        count: {
+            countable: true,
+            fontsize: '0.85em',
+            color: 'rgba(255, 255, 255, 0.4)',
+            language: 'chinese'
+        },
+        alias: {
+            '/.*/_sidebar.md': '/_sidebar.md'
+        },
+        sidebarDisplayLevel: 1,
+        collapseEnumeration: true,
     };
 </script>
+<script>
+    document.addEventListener('click', function(e) {
+        // 只有在窗口宽度小于 1024px (移动端/平板) 时才执行
+        if (window.innerWidth > 1024) return;
 
+        const body = document.querySelector('body');
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.querySelector('.sidebar-toggle');
+
+        // 逻辑：如果侧边栏是打开状态
+        // 且 点击的对象既不是侧边栏本身，也不是开关按钮
+        if (!body.classList.contains('close') &&
+            sidebar && !sidebar.contains(e.target) &&
+            toggleBtn && !toggleBtn.contains(e.target)) {
+
+            toggleBtn.click();
+        }
+    });
+</script>
+<script>
+    if (window.innerWidth <= 1024) {
+        document.documentElement.classList.add('close');
+        document.body.classList.add('close');
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/js/docsify-themeable.min.js"></script>
@@ -82,6 +145,10 @@
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+<script src="//unpkg.com/docsify-count/dist/countable.min.js"></script>
 
 <script src="wiki-core.js" type="module"></script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Wiki - OpenST</title>
-    <link rel="icon" href="../images/favicon.png"></link>
+    <link rel="icon" href="../images/favicon.png">
     <link rel="apple-touch-icon" href="../images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
@@ -15,7 +15,7 @@
 
     <style>
         :root { --brand-color: #40B5AD; --bg-deep: #0c0c0c; }
-        body { background-color: var(--bg-deep); color: #e0e0e0; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; height: 100dvh; }
+        body { background-color: var(--bg-deep); color: #e0e0e0; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; height: 100dvh; margin: 0; }
 
         .glass-panel { background: rgba(255, 255, 255, 0.01); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; }
         .cyber-btn { background: var(--brand-color); color: #000; font-weight: 800; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -28,28 +28,28 @@
         .no-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
         .no-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
-        /* 响应式核心：移动端上下排列 */
+        /* 移动端 Tab 样式 */
+        .tab-trigger { font-size: 10px; font-weight: 900; letter-spacing: 0.2em; border-bottom: 2px solid transparent; transition: all 0.3s; }
+        .tab-trigger.active { color: var(--brand-color); border-bottom-color: var(--brand-color); }
+
         @media (max-width: 1024px) {
-            main { flex-direction: column !important; }
+            .glass-panel { border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.02); }
+            header { padding: 0.5rem 0 !important; }
             .resizer { display: none !important; }
-            section { width: 100% !important; flex: 1 1 50% !important; }
-            .glass-panel { border-radius: 12px; }
-            header { padding: 0.5rem !important; }
         }
 
-        .resizer { width: 1px; background: rgba(255,255,255,0.05); margin: 0 4px; }
-        input::placeholder { color: rgba(255,255,255,0.2); }
+        .resizer { width: 1px; background: rgba(255,255,255,0.05); cursor: col-resize; }
+        [v-cloak] { display: none; }
     </style>
 </head>
 <body>
 
-<div id="editor-app" class="h-full w-full flex flex-col p-3 lg:p-6">
+<div id="editor-app" class="h-full w-full flex flex-col p-3 lg:p-6" v-cloak>
 
-    <header class="flex justify-between items-center mb-4 px-2">
+    <header class="flex justify-between items-center mb-4 px-2 shrink-0">
         <div class="flex items-center gap-3 flex-1 min-w-0">
             <a href="wiki.html" class="text-[10px] font-black tracking-[0.3em] text-white/20 hover:text-[#40B5AD] transition-all uppercase">Exit</a>
             <div class="h-4 w-px bg-white/10"></div>
-
             <div class="flex items-center gap-1 min-w-0 overflow-hidden">
                 <span class="text-[10px] font-mono text-white/20 uppercase hidden sm:inline">Editing:</span>
                 <template v-if="isNewFile">
@@ -67,8 +67,13 @@
         </button>
     </header>
 
+    <div class="lg:hidden flex mb-3 bg-white/5 rounded-xl p-1 shrink-0">
+        <button @click="activeTab = 'edit'" :class="{active: activeTab === 'edit'}" class="tab-trigger flex-1 py-3 text-white/30">WRITE</button>
+        <button @click="activeTab = 'preview'" :class="{active: activeTab === 'preview'}" class="tab-trigger flex-1 py-3 text-white/30">PREVIEW</button>
+    </div>
+
     <main class="flex-1 flex glass-panel overflow-hidden">
-        <section class="flex-1 flex flex-col min-w-0 border-r border-white/5">
+        <section v-show="activeTab === 'edit' || isDesktop" class="flex-1 flex flex-col min-w-0 border-r border-white/5">
             <div class="px-4 py-2 border-b border-white/5 text-[9px] text-white/20 font-mono tracking-widest uppercase flex justify-between items-center bg-white/[0.01]">
                 <span>Markdown Source</span>
                 <span class="hidden sm:inline">{{ content.length }} chars</span>
@@ -85,7 +90,7 @@
 
         <div class="resizer"></div>
 
-        <section class="flex-1 flex flex-col min-w-0 bg-white/[0.005]">
+        <section v-show="activeTab === 'preview' || isDesktop" class="flex-1 flex flex-col min-w-0 bg-white/[0.005]">
             <div class="px-4 py-2 border-b border-white/5 text-[9px] text-[#40B5AD] font-mono tracking-widest uppercase bg-white/[0.01]">
                 Live Preview
             </div>
@@ -97,7 +102,7 @@
         </section>
     </main>
 
-    <footer class="mt-3 flex flex-col sm:flex-row items-center justify-between gap-3 px-2">
+    <footer class="mt-3 flex flex-col sm:flex-row items-center justify-between gap-3 px-2 shrink-0">
         <div class="flex items-center gap-3 w-full sm:w-auto overflow-hidden">
             <label class="shrink-0 cursor-pointer">
                 <input type="file" multiple accept="image/*" @change="handleImageSelect" class="hidden">
@@ -119,8 +124,8 @@
             </div>
         </div>
 
-        <div v-if="user" class="text-[8px] font-mono text-white/10 tracking-widest">
-            ID: <span class="text-white/30">{{ user.login.toUpperCase() }}</span>
+        <div v-if="user" class="text-[8px] font-mono text-white/10 tracking-widest uppercase">
+            ID: <span class="text-white/30">{{ user.login }}</span>
         </div>
     </footer>
 </div>
@@ -133,14 +138,14 @@
     createApp({
         data() {
             let pathParam = new URLSearchParams(window.location.search).get('path') || '/README';
-            if (pathParam === '/') pathParam = '/README';
-
             return {
                 filePath: pathParam,
-                isNewFile: pathParam === '/NEW_DOCUMENT',
+                isNewFile: pathParam === '/NEW_DOCUMENT' || pathParam === 'new',
                 newFileName: '',
                 content: '',
                 loading: false,
+                activeTab: 'edit',
+                isDesktop: window.innerWidth > 1024,
                 user: null,
                 token: null,
                 imageFiles: [],
@@ -158,6 +163,7 @@
             }
         },
         async mounted() {
+            window.addEventListener('resize', () => { this.isDesktop = window.innerWidth > 1024 });
             this.checkAuth();
             if (!this.isNewFile) {
                 this.loading = true;
@@ -173,30 +179,17 @@
         methods: {
             checkAuth() {
                 const raw = localStorage.getItem('gh_auth');
-                if (!raw) {
-                    window.location.href = 'wiki.html';
-                    return;
-                }
-
-                try {
+                // 暂时拦截跳转逻辑，方便调试，若要恢复生产请加回 window.location 限制
+                if (raw) {
                     const authData = JSON.parse(raw);
-                    console.log("检测到登录数据:", authData);
                     this.token = authData.token || authData.access_token;
-                    this.user = authData.user || { login: 'Unknown' };
-                    if (!this.token) {
-                        alert("登录信息缺失令牌，请尝试重新登录");
-                        window.location.href = 'wiki.html';
-                    }
-                } catch (e) {
-                    console.error("解析登录信息失败", e);
-                    window.location.href = 'wiki.html';
+                    this.user = authData.user || { login: 'DEBUG_USER' };
+                } else {
+                    this.user = { login: 'GUEST' }; // 临时占位
                 }
             },
             handleImageSelect(e) {
                 const files = Array.from(e.target.files);
-                const totalSize = files.reduce((acc, f) => acc + f.size, 0);
-                if (totalSize > 50 * 1024 * 1024) return alert("Total size exceeds 50MB limit!");
-
                 this.imageFiles = [...this.imageFiles, ...files];
                 files.forEach(file => {
                     this.imageMap[file.name] = URL.createObjectURL(file);
@@ -214,17 +207,16 @@
                 const end = el.selectionEnd;
                 const tag = `![Description](${name})`;
                 this.content = this.content.substring(0, start) + tag + this.content.substring(end);
-                this.$nextTick(() => {
-                    el.focus();
-                    el.setSelectionRange(start + 2, start + 13);
-                });
             },
             handleScroll(e) {
+                if (!this.isDesktop) return;
                 const previewEl = this.$refs.previewArea;
                 const ratio = e.target.scrollTop / (e.target.scrollHeight - e.target.clientHeight);
                 previewEl.scrollTop = ratio * (previewEl.scrollHeight - previewEl.clientHeight);
             },
             async submitEdit() {
+                if (!this.token || this.token === 'debug') return alert("请先通过 Wiki 主页登录 GitHub");
+
                 let baseName = this.isNewFile
                     ? this.newFileName.trim().replace(/[^a-zA-Z0-9-_\u4e00-\u9fa5]/g, '-')
                     : this.filePath.replace(/^\//, '').replace('.md', '');
@@ -239,7 +231,7 @@
                     this.imageFiles.forEach(f => folder.file(f.name, f));
 
                     const zipBlob = await zip.generateAsync({type: "blob"});
-                    const zipFileName = `${this.isNewFile ? 'wiki-submission' : 'wiki-modify'}-${baseName}.zip`;
+                    const zipFileName = `${this.isNewFile ? 'wiki-new' : 'wiki-edit'}-${baseName}.zip`;
 
                     const fd = new FormData();
                     fd.append('file', zipBlob, zipFileName);
@@ -255,17 +247,10 @@
 
                     if (res.ok) {
                         const data = await res.json();
-                        const issueNum = data.issueNumber || data.number;
-
-                        if (issueNum) {
-                            alert(`🎉 提交成功！Issue #${issueNum} 已创建。`);
-                            window.location.href = `https://github.com/MC-OpenST/submissions/issues/${issueNum}`;
-                        } else {
-                            alert(`⚠️ GitHub 未能返回编号：\n${JSON.stringify(data)}`);
-                        }
+                        alert(`🎉 提交成功！Issue #${data.issueNumber || data.number}`);
+                        window.location.href = 'wiki.html';
                     } else {
-                        const errorMsg = await res.text();
-                        alert("❌ Worker 转发失败: " + errorMsg);
+                        alert("❌ 提交失败: " + await res.text());
                     }
                 } catch (err) {
                     alert("❌ 脚本执行错误: " + err.message);
