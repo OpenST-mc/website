@@ -1120,3 +1120,44 @@ section.content { padding-top: 84px !important; }
     color: #40B5AD !important;
     user-select: text; /* 展开后允许选中 */
 }
+/* 1. 锁定侧边栏：固定在左侧，拥有独立的滚动条 */
+.sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    overflow-y: auto !important; /* 只有侧边栏自己动 */
+    overscroll-behavior: contain; /* 防止滚动传导给底层 */
+    z-index: 10;
+    background-color: #0f0f0f;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 2. 定位主内容区：确保它不会钻到侧边栏下面 */
+.content {
+    padding-left: 300px; /* 宽度必须与侧边栏一致 */
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 3. 针对全页面背景的锁定（防止页面整体抖动） */
+body {
+    overflow: hidden; /* 禁用 body 滚动 */
+    height: 100vh;
+}
+
+/* 4. 让正文区域重新获得滚动能力 */
+main {
+    height: 100vh;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch; /* 优化移动端丝滑度 */
+}
+
+/* 5. 适配手机端：当侧边栏消失时，内容区恢复边距 */
+@media screen and (max-width: 768px) {
+    .content {
+        padding-left: 0;
+    }
+}
