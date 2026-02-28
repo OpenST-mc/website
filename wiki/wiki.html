@@ -93,59 +93,58 @@
             '/.*/_sidebar.md': '/_sidebar.md'
         },
         plugins: [
-            function(hook, vm) {
-                hook.doneEach(function() {
-                    // 1. 强制重排顺序：把搜索框挪到标题 (app-name) 下面
-                    const moveSearchBox = () => {
-                        const searchBox = document.querySelector('.sidebar .search');
-                        const appName = document.querySelector('.sidebar .app-name');
-                        if (searchBox && appName && searchBox.previousElementSibling === null) {
-                            // 如果搜索框在最顶部（即没有前一个兄弟元素），就把它挪到标题后面
-                            appName.parentNode.insertBefore(searchBox, appName.nextSibling);
+            function (hook, vm) {
+                // 1. 核心排序逻辑：确保 [标题] -> [搜索框] -> [菜单]
+                const arrangeSidebar = () => {
+                    const sidebar = document.querySelector('.sidebar');
+                    const appName = document.querySelector('.app-name');
+                    const search = document.querySelector('.search');
+                    const nav = document.querySelector('.sidebar-nav');
+
+                    if (sidebar && appName && search) {
+                        // 检查顺序：如果搜索框在标题之前，或者搜索框是第一个子元素
+                        if (search.nextElementSibling === appName || search.previousElementSibling === null) {
+                            // 强制：将搜索框插在标题 (app-name) 的后面
+                            appName.parentNode.insertBefore(search, appName.nextSibling);
                         }
-                    };
+                    }
+                };
 
-                    // 2. 智能同步逻辑
-                    const syncEverything = () => {
-                        const realNav = document.querySelector('.sidebar > .sidebar-nav');
-                        const fallbackNav = document.querySelector('#sidebar-fallback .sidebar-nav');
-                        const fallbackContainer = document.querySelector('#sidebar-fallback');
-
-                        if (realNav && fallbackNav) {
-                            // 核心修正：只有当真实侧边栏里“标题”和“搜索框”都到位了，才同步给影子
-                            const hasSearch = realNav.querySelector('.search');
-                            const hasApp = realNav.querySelector('.app-name');
-
-                            if (hasSearch && hasApp) {
-                                fallbackNav.innerHTML = realNav.innerHTML;
-                            }
+                // 2. 同步影子容器 (iPad 兼容)
+                const syncShadow = () => {
+                    const realNav = document.querySelector('.sidebar');
+                    const fallbackNav = document.querySelector('#sidebar-fallback');
+                    if (realNav && fallbackNav && realNav.innerHTML.trim() !== "") {
+                        if (fallbackNav.innerHTML !== realNav.innerHTML) {
+                            fallbackNav.innerHTML = realNav.innerHTML;
                         }
+                    }
+                };
 
-                        // 状态切换逻辑
-                        if (window.innerWidth > 1024) {
-                            const isRealEmpty = !realNav || realNav.innerHTML.trim() === "" || !realNav.querySelector('ul');
-                            fallbackContainer.style.display = isRealEmpty ? 'block' : 'none';
-                        } else {
-                            fallbackContainer.style.display = 'none';
-                        }
-                    };
+                // 3. 监听器：只要侧边栏内容变动（插件注入），立刻纠正
+                hook.ready(() => {
+                    const sidebar = document.querySelector('.sidebar');
+                    if (sidebar) {
+                        const observer = new MutationObserver(() => {
+                            arrangeSidebar();
+                            syncShadow();
+                        });
+                        observer.observe(sidebar, {childList: true, subtree: true});
+                    }
+                    arrangeSidebar();
+                });
 
-                    // 执行顺序：先挪位置，再同步
-                    moveSearchBox();
-                    syncEverything();
-
-                    // 持续巡检：针对插件异步加载和 iPad 旋转
-                    if (!window.wikiSyncTimer) {
-                        window.wikiSyncTimer = setInterval(() => {
-                            moveSearchBox();
-                            syncEverything();
-                        }, 1000);
+                hook.doneEach(() => {
+                    arrangeSidebar();
+                    syncShadow();
+                    // Safari 补丁：电脑端强行移除关闭状态类
+                    if (window.innerWidth > 1024) {
+                        document.body.classList.remove('close');
                     }
                 });
             }
         ]
     }
-
     // 2. 处理初始状态（移动端默认关闭）
     if (window.innerWidth <= 1024) {
         document.documentElement.classList.add('close');

@@ -1354,3 +1354,91 @@ section.content { padding-top: 84px !important; }
         margin-top: 60px !important;
     }
 }
+/* --- 搜索框与标题布局优化 --- */
+.sidebar {
+    padding-top: 0 !important; /* 必须为 0，靠内部 margin 撑开 */
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.sidebar .app-name {
+    margin: 100px 24px 10px 24px !important; /* 100px 避开顶栏 */
+    font-size: 16px !important;
+    order: 1 !important; /* 强制第一 */
+}
+
+.sidebar .search {
+    margin: 0 20px 20px 20px !important;
+    order: 2 !important; /* 强制第二 */
+    position: relative !important;
+}
+
+.sidebar-nav {
+    margin-top: 0 !important;
+    order: 3 !important; /* 菜单第三 */
+}
+
+/* --- Safari & iPad 侧边栏消失终极修复 --- */
+
+/* 1. PC/iPad 横屏模式 (1025px 以上) */
+@media screen and (min-width: 1025px) {
+    /* 强制侧边栏显示，禁用所有 transform 位移 */
+    .sidebar {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 300px !important;
+        height: 100vh !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        z-index: 999 !important;
+        background: #0c0c0c !important; /* 确保有实色背景 */
+    }
+
+    /* 强制内容区偏移 300px，不遮挡，不消失 */
+    section.content {
+        padding-left: 300px !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+        transition: none !important;
+    }
+
+    /* 隐藏切换按钮 */
+    .sidebar-toggle {
+        display: none !important;
+    }
+}
+
+/* 2. 移动端/iPad 竖屏模式 (1024px 以下) */
+@media screen and (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%) !important;
+        -webkit-transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+    }
+
+    /* 开启状态：由 body 的 .close 类控制（Docsify 逻辑是 !close 为开） */
+    body:not(.close) .sidebar {
+        transform: translateX(0) !important;
+        -webkit-transform: translateX(0) !important;
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    }
+
+    /* 移动端内容区严禁位移 */
+    .content {
+        transform: none !important;
+        -webkit-transform: none !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* 修复 Safari 的 3D 加速渲染阴影 */
+.sidebar, .top-bar {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
