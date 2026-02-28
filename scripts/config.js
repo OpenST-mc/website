@@ -35,7 +35,7 @@ export const TAG_CONFIG = {
         "地狱门加载器": []
     },
     "生产/合成": ["合成站", "合成器相关"],
-    "版本": ["1.21.x", "1.20.x", "1.19+", "1.19-"],
+    "版本": ["1.21.x", "1.20.x", "1.19+", "1.16+"],
 };
 
 export const CATEGORIES = Object.keys(TAG_CONFIG);
