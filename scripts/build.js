@@ -57,7 +57,7 @@ async function build() {
                     description: info.description || '',
                     preview: `archive/${folder}/preview.png`,
                     filename: archiveFile || '',
-                    sub_id: info.id || ''
+                    sub_id: info.sub-id || ''
                 });
 
                 console.log(`✅ 已收录: ${info.name}`);
