@@ -1,18 +1,5 @@
 [
     {
-        "id": "8gt盒子取样器 8gt_keygen",
-        "name": "8gt盒子取样器 8gt_keygen",
-        "author": "Unknown",
-        "tags": [
-            "车头及拐弯设计 (Keygen & U-turn)",
-            "1.16+"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**：对潜影盒内的物品进行取样，来判断盒内物品\n- **适用版本**：Java 1.16+\n- **投影创建者**：RaPsCaLLioN1138\n- **投影创建时间**：2021-11-20\n\n### 📖 使用说明\n- 在黄色混凝土旁的漏斗处，输入装有物品的潜影盒。在紫色羊毛处输出潜影盒，白色羊毛处输出物品 ",
-        "preview": "archive/8gt盒子取样器 8gt_keygen/preview.png",
-        "filename": "8gt盒子取样器 8gt_keygen.litematic",
-        "sub_id": "sub-1770926988612"
-    },
-    {
         "id": "Ners自解锁潜影盒分类",
         "name": "Ners自解锁潜影盒分类",
         "author": "Ners",
@@ -23,7 +10,7 @@
         "description": "### 🚀 机器概览（示例）\n- **核心功能**: 无需全局解锁的潜影盒分类\n- **适用版本**: Java 1.13+\n\n### 📖 使用说明\n- 文件是压缩包，包含了适配 JE 1.13 ~ 1.17+ 版本的不同设计方案",
         "preview": "archive/Ners自解锁潜影盒分类/preview.png",
         "filename": "Ners自解锁盒子分类相关.zip",
-        "sub_id": ""
+        "sub_id": "sub-1772475420526"
     },
     {
         "id": "金合欢潜影盒分类-车头及拐弯",
@@ -35,6 +22,6 @@
         "description": "### 🚀 机器概览（示例）\n- **核心功能**: “金合欢潜影盒分类v5” 的车头及拐弯设计\n- **适用版本**: Java 1.16+\n- **投影创建者**: Philgood0815\n- **适用版本**: 2023-9-23\n\n### 📖 使用说明\n1. 投影内分别包含了 车头、拐弯以及具体样例\n2. 在非原版特性端使用时，请先测试机器能否正常工作\n\n> 提示：本机器需与 “金合欢潜影盒分类v5” 配套使用",
         "preview": "archive/金合欢潜影盒分类-车头及拐弯/preview.png",
         "filename": "金合欢潜影盒分类-车头及拐弯 Acaciachan_Box_Sorter_Keygen_U-Turn_Ultimate.litematic",
-        "sub_id": ""
+        "sub_id": "sub-1772474624236"
     }
 ]
