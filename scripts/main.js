@@ -144,6 +144,13 @@ const AppOptions = {
             return this.useProxy ? `https://ghfast.top/${raw}` : raw;
         },
 
+        getPreviewUrl(item) {
+            if (!item || !item.preview) return '';
+            const rawPath = decodeURIComponent(item.preview);
+            const safePath = rawPath.split('/').map(s => encodeURIComponent(s)).join('/');
+            return `https://cdn.jsdmirror.com/gh/MC-OpenST/website@main/${safePath}`;
+        },
+
         // 编辑跳转逻辑
         openEdit(item) {
             if (!item || !item.id) return;

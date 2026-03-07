@@ -134,9 +134,10 @@ export const ArchiveCard = {
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-width="2.5"/></svg>
         </button>
 
-        <div class="aspect-[16/9] overflow-hidden relative cursor-pointer bg-black/20" @click="$emit('open', item)">
-            <img v-lazy="item.preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-        </div>
+      <div class="aspect-[16/9] overflow-hidden relative cursor-pointer bg-black/20" @click="$emit('open', item)">
+        <img v-lazy="$parent.getPreviewUrl(item)"
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+      </div>
         <div class="p-5 flex flex-col flex-1">
             <div class="cursor-pointer mb-3" @click="$emit('open', item)">
                 <h3 class="font-bold text-base line-clamp-2 h-[2.8rem] text-gray-100 group-hover:text-brand transition-colors">{{ item.name }}</h3>
@@ -196,10 +197,12 @@ export const DetailModal = {
                 <svg class="w-6 h-6 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5"></path></svg>
             </button>
 
-            <div class="flex flex-col md:flex-row w-full overflow-y-auto md:overflow-visible">
-                <div class="w-full md:w-3/5 bg-black/20 flex items-center justify-center border-b md:border-b-0 md:border-r border-white/5 p-4 md:p-10 md:sticky md:top-0 h-auto md:h-[90vh]">
-                  <img :src="item.preview" @click.stop="$root.handleImageZoom($event)" class="w-full h-auto md:max-h-full object-contain rounded-xl shadow-2xl cursor-zoom-in">
-                </div>
+          <div class="flex flex-col md:flex-row w-full overflow-y-auto md:overflow-visible">
+            <div class="w-full md:w-3/5 ...">
+              <img :src="$parent.getPreviewUrl(item)"
+                   @click.stop="$root.handleImageZoom($event)"
+                   class="w-full h-auto md:max-h-full object-contain rounded-xl shadow-2xl cursor-zoom-in">
+            </div>
 
                 <div class="w-full md:w-2/5 p-8 md:p-10 flex flex-col gap-8 bg-[#1a1a1a] md:overflow-y-auto md:h-[90vh] custom-scrollbar text-gray-400">
                     <div>

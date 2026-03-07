@@ -110,3 +110,4 @@ export function getSafePath(path) {
     if (!path) return '';
     return path.split('/').map(segment => encodeURIComponent(segment)).join('/');
 }
+
