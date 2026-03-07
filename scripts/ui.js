@@ -128,7 +128,7 @@ export const SideBar = {
 export const ArchiveCard = {
     props: ['item', 'isAdmin'], // 传入权限标识
     template: `
-    <div class="group bg-panel rounded-[2rem] overflow-hidden border border-white/5 hover:border-brand/40 active:scale-[0.98] transition-all duration-300 shadow-lg flex flex-col h-full relative">
+    <div class="group bg-panel rounded-[20px] overflow-hidden border border-white/5 hover:border-brand/40 active:scale-[0.98] transition-all duration-300 shadow-lg flex flex-col h-full relative">
         <button v-if="isAdmin" @click.stop="$emit('edit', item)" 
                 class="absolute top-4 right-4 z-10 bg-brand text-black p-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-width="2.5"/></svg>
