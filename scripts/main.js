@@ -139,9 +139,10 @@ const AppOptions = {
         // 下载链接生成
         getDownloadLink(item) {
             if (!item) return '';
-            const safePath = this.getSafePath(`archive/${item.id}/${item.filename}`);
-            const raw = `https://raw.githubusercontent.com/MC-OpenST/website/main/${safePath}`;
-            return this.useProxy ? `https://cdn.linvin.net/${raw}` : raw;
+            const path = `archive/${item.id}/${item.filename}`;
+            const raw = `https://raw.githubusercontent.com/MC-OpenST/website/main/${path}`;
+            const finalRaw = raw.replace('https://', 'https:/');
+            return this.useProxy ? `https://cdn.linvin.net/${finalRaw}` : raw;
         },
 
         getPreviewUrl(item) {
