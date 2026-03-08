@@ -112,15 +112,51 @@
 
                 clickCount++;
                 lastClickTime = currentTime;
-                secretTrigger.style.opacity = '0.3';
-                setTimeout(() => { secretTrigger.style.opacity = '1'; }, 100);
+                secretTrigger.style.filter = 'brightness(2)';
+                secretTrigger.style.transition = 'filter 0.1s';
+                setTimeout(() => { secretTrigger.style.filter = 'brightness(1)'; }, 100);
 
                 if (clickCount === 5) {
-                    document.body.style.transition = 'opacity 0.6s';
-                    document.body.style.opacity = '0';
-                    setTimeout(() => {
-                        window.location.href = 'profile/april/december/credits.html';
-                    }, 600);
+                    clickCount = 0;
+                    const transitionHTML = `
+        <div class="scan-line"></div>
+        <div id="app" class="relative z-10 text-center px-6 animate-in fade-in duration-700">
+            <div id="searching" class="space-y-6">
+                <div class="relative w-24 h-24 mx-auto">
+                    <div class="absolute inset-0 border-4 border-[#40B5AD]/10 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-t-[#40B5AD] rounded-full animate-spin"></div>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-black tracking-[0.3em] text-[#40B5AD] brand-shadow uppercase">Bypassing...</h2>
+                    <p id="inject-log" class="text-white/30 font-mono text-sm tracking-widest">GATE: /profile/april/december/...</p>
+                </div>
+            </div>
+        </div>
+    `;
+                    const style = document.createElement('style');
+                    style.innerHTML = `
+        body { background: #0a0a0a !important; overflow: hidden !important; transition: all 0.5s; }
+        .scan-line { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #40B5AD, transparent); position: absolute; top: -2px; animation: scan 3s linear infinite; opacity: 0.3; }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+        .brand-shadow { text-shadow: 0 0 20px rgba(64, 181, 173, 0.5); }
+    `;
+                    document.head.appendChild(style);
+                    document.body.innerHTML = transitionHTML;
+                    const logs = ["SPOOFING_IP...", "DECRYPTING_V_FILES...", "ACCESS_GRANTED"];
+                    let i = 0;
+                    const logEl = document.getElementById('inject-log');
+                    const interval = setInterval(() => {
+                        if (i < logs.length) {
+                            logEl.innerText = `STATUS: ${logs[i]}`;
+                            i++;
+                        } else {
+                            clearInterval(interval);
+                            document.body.style.opacity = '0';
+                            setTimeout(() => {
+                                window.location.href = 'profile/april/december/credits.html';
+                            }, 600);
+                        }
+                    }, 500);
                 }
             });
         }
