@@ -106,21 +106,16 @@
         if (secretTrigger) {
             secretTrigger.addEventListener('click', () => {
                 const currentTime = Date.now();
-
-                // 连击间隔超过 800ms 重置
                 if (currentTime - lastClickTime > 800) {
                     clickCount = 0;
                 }
 
                 clickCount++;
                 lastClickTime = currentTime;
-
-                // 连击时的反馈：让文字闪烁
                 secretTrigger.style.opacity = '0.3';
                 setTimeout(() => { secretTrigger.style.opacity = '1'; }, 100);
 
                 if (clickCount === 5) {
-                    // 跳转前全屏黑屏转场
                     document.body.style.transition = 'opacity 0.6s';
                     document.body.style.opacity = '0';
                     setTimeout(() => {
