@@ -66,7 +66,7 @@
     <header class="mb-24 flex items-center gap-6">
         <h1 class="text-3xl font-bold tracking-tight text-[#f5f5f7]">OpenST</h1>
         <div class="h-px flex-1 bg-white/5"></div>
-        <div class="flex items-center gap-2 text-[10px] text-gray-600 tracking-widest uppercase">
+        <div id="credits-trigger" class="flex items-center gap-2 text-[10px] text-gray-600 tracking-widest uppercase">
             <div class="breath-light"></div>
             System Active
         </div>
@@ -97,5 +97,39 @@
     </footer>
 </div>
 
+<script>
+    (function() {
+        let clickCount = 0;
+        let lastClickTime = 0;
+        const secretTrigger = document.getElementById('credits-trigger');
+
+        if (secretTrigger) {
+            secretTrigger.addEventListener('click', () => {
+                const currentTime = Date.now();
+
+                // 连击间隔超过 800ms 重置
+                if (currentTime - lastClickTime > 800) {
+                    clickCount = 0;
+                }
+
+                clickCount++;
+                lastClickTime = currentTime;
+
+                // 连击时的反馈：让文字闪烁
+                secretTrigger.style.opacity = '0.3';
+                setTimeout(() => { secretTrigger.style.opacity = '1'; }, 100);
+
+                if (clickCount === 5) {
+                    // 跳转前全屏黑屏转场
+                    document.body.style.transition = 'opacity 0.6s';
+                    document.body.style.opacity = '0';
+                    setTimeout(() => {
+                        window.location.href = 'profile/april/december/credits.html';
+                    }, 600);
+                }
+            });
+        }
+    })();
+</script>
 </body>
 </html>

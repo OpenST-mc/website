@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OpenST Credits</title>
+    <script src="https://cdn.jsdmirror.com/npm/marked/marked.min.js"></script>
+    <style>
+        :root { --brand: #ffffff; --text-secondary: #86868b; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; background: #000; font-family: -apple-system, BlinkMacSystemFont, sans-serif; scroll-behavior: smooth; }
+        body::-webkit-scrollbar { display: none; }
+
+        #starfield { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .fade-overlay { position: fixed; inset: 0; background: radial-gradient(circle, transparent 10%, #000 100%); z-index: 3; pointer-events: none; }
+
+        #credits-wrap {
+            position: relative; z-index: 2;
+            width: 90%; max-width: 800px; margin: 0 auto;
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; padding-top: 50vh; padding-bottom: 30vh;
+        }
+
+        .markdown-body { color: var(--text-secondary); line-height: 2; width: 100%; }
+        .markdown-body h2 { font-size: 32px; font-weight: 700; color: #fff; margin: 40px 0 20px 0; }
+        .markdown-body h3 { font-size: 10px; font-weight: 500; letter-spacing: 0.4em; color: #444; text-transform: uppercase; margin-top: 25vh; }
+        .markdown-body p { font-size: 16px; margin-bottom: 30px; padding: 0 10px; }
+        .markdown-body ul { display: flex; flex-direction: column; align-items: center; gap: 12px; list-style: none; padding: 0; margin: 20px 0; }
+        .markdown-body li { font-size: 20px; color: #fff; font-weight: 300; word-break: break-word; }
+        .markdown-body strong { display: block; margin-top: 30vh; font-size: 18px; color: #fff; letter-spacing: 2px; }
+
+        /* 移动端专项适配 (Mobile Styles) */
+        @media (max-width: 768px) {
+            #credits-wrap { width: 92%; padding-top: 40vh; }
+            .markdown-body h2 { font-size: 26px; } /* 缩小主标题 */
+            .markdown-body p { font-size: 15px; line-height: 1.8; } /* 缩小感言字号 */
+            .markdown-body li { font-size: 18px; } /* 缩小人名字号 */
+            .markdown-body h3 { margin-top: 15vh; } /* 缩小间距，防止划不到头 */
+            .markdown-body strong { margin-top: 20vh; font-size: 16px; }
+        }
+
+        #portal { position: fixed; inset: 0; z-index: 100; background: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 1s; }
+        .portal-btn { border: 1px solid rgba(255,255,255,0.2); padding: 15px 30px; border-radius: 50px; color: #fff; font-size: 11px; letter-spacing: 3px; }
+        .back-home { display: inline-block; margin-top: 15vh; font-size: 11px; color: #333; text-decoration: none; letter-spacing: 2px; transition: 0.3s; }
+        .back-home:hover { color: #fff; }
+    </style>
+</head>
+<body>
+
+<div id="portal" onclick="this.style.opacity='0'; setTimeout(()=>this.remove(), 1000)">
+    <div class="portal-btn">INIT OPENST</div>
+</div>
+
+<canvas id="starfield"></canvas>
+<div class="fade-overlay"></div>
+
+<div id="credits-wrap" class="markdown-body"></div>
+
+<script>
+    const wrap = document.getElementById('credits-wrap');
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    async function loadCredits() {
+        try {
+            const res = await fetch('./credits.md');
+            const md = await res.text();
+            wrap.innerHTML = marked.parse(md) + '<a href="https://openst.qzz.io" class="back-home">BACK TO ARCHIVE</a>';
+        } catch (e) {
+            wrap.innerHTML = "<h2>OpenST Credits</h2><a href='https://openst.qzz.io' class='back-home'>RETURN</a>";
+        }
+    }
+
+    function initStars() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        const starCount = window.innerWidth < 768 ? 800 : 1800;
+
+        stars = Array(starCount).fill().map(() => ({
+            x: (Math.random() - 0.5) * window.innerWidth * 2.5,
+            y: (Math.random() - 0.5) * window.innerHeight * 2.5,
+            z: Math.random() * window.innerWidth,
+            s: Math.random() * 1.2 + 0.3
+        }));
+    }
+
+    function animateStars() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+        stars.forEach(s => {
+            s.z -= 0.3;
+            if(s.z <= 0) s.z = window.innerWidth;
+            let k = 400 / s.z;
+            let px = s.x * k + window.innerWidth / 2;
+            let py = s.y * k + window.innerHeight / 2;
+
+            if (px >= 0 && px <= window.innerWidth && py >= 0 && py <= window.innerHeight) {
+                let size = (1 - s.z / window.innerWidth) * s.s;
+                ctx.fillStyle = `rgba(255,255,255,${(1 - s.z / window.innerWidth) * 0.7})`;
+                ctx.beginPath();
+                ctx.arc(px, py, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        });
+        requestAnimationFrame(animateStars);
+    }
+
+    window.addEventListener('resize', initStars);
+    initStars();
+    animateStars();
+    loadCredits();
+</script>
+</body>
+</html>
