@@ -63,7 +63,7 @@ export const SideBar = {
             <div class="flex flex-col gap-3 mb-6 shrink-0">
                 <div class="relative">
                     <input :value="search" @input="$emit('update:search', $event.target.value)" 
-                           type="text" placeholder="搜索存档..." 
+                           type="text" placeholder="搜索存档/作者/简介/标签..." 
                            class="w-full bg-black/40 rounded-lg px-4 py-2.5 text-base border border-white/5 focus:border-brand outline-none transition text-white pr-10">
                     <button v-if="search" @click="$emit('update:search', '')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">✕</button>
                 </div>
