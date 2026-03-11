@@ -3,7 +3,7 @@ import { PortalAuth } from '../scripts/auth.js';
 
 const { createApp } = Vue;
 
-const WORKER_URL = 'https://openstsubmission.linvin.net';
+const WORKER_URL = '';
 const CLIENT_ID = 'Ov23liTildfj3XAkvbr8';
 const GH_REPO = 'MC-OpenST/Submissions';
 

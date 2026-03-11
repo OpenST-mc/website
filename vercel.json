@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/backend.js" },
+    { "source": "/dl/(.*)", "destination": "/api/backend.js" }
+  ],
+  "functions": {
+    "api/backend.js": {
+      "runtime": "edge"
+    }
+  }
+}
