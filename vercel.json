@@ -6,7 +6,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "runtime": "edge"
+      "runtime": "edge@1.0.0"
     }
   }
 }
