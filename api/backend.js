@@ -1,7 +1,7 @@
 /**
  * OpenST API Hub V5.1 - "Universal Portal"
  */
-
+export const runtime = 'edge';
 const BOT_TOKEN = 'process.env.BOT_TOKEN';
 const CHAT_ID   = 'prcess.env.CHAT_ID';
 const CLIENT_ID = 'process.env.CLIENT_ID';
