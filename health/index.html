@@ -20,7 +20,7 @@
     <header class="flex justify-between items-center mb-12 backdrop-blur-sm bg-black/40 p-4 rounded-xl border border-white/5">
         <div>
             <h1 class="text-2xl font-bold text-white tracking-tight">OpenST System Status</h1>
-            <p class="text-gray-500 text-sm mt-1">独立外部监控节点 (Global Edge)</p>
+            <p class="text-gray-500 text-sm mt-1">站点状态</p>
         </div>
         <div id="global-badge" class="px-3 py-1 rounded-full text-xs font-medium bg-gray-800 text-gray-400">
             正在初始化...
@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-4">
                     <div id="api-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></div>
                     <div>
-                        <div class="text-white font-medium text-sm">API Hub 中继</div>
+                        <div class="text-white font-medium text-sm">API/后端</div>
                         <div class="text-[10px] text-gray-500 uppercase tracking-widest">Cloudflare Workers</div>
                     </div>
                 </div>
@@ -64,6 +64,24 @@
             </div>
         </div>
     </div>
+
+    <div class="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-4">
+                <div id="cdn-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></div>
+                <div>
+                    <div class="text-white font-medium text-sm">下载服务（CDN）</div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest">cdn.linvin.net (EdgeOne)</div>
+                </div>
+            </div>
+            <div id="cdn-ping" class="text-sm font-mono text-gray-400">-- ms</div>
+        </div>
+        <div class="flex gap-2">
+            <span id="cdn-node" class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">NODE: ANYCAST</span>
+            <span id="cdn-status" class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">CACHE: FETCHING</span>
+        </div>
+    </div>
+
 
     <footer class="mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6">
         <div class="text-xs text-gray-600 font-mono">
@@ -80,11 +98,14 @@
     </footer>
 </div>
 
+<div class="h-24 w-full bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
+
 <script>
     const PORTAL_URL = 'https://openst.qzz.io/archive/不要动这是占位符！.txt';
     const API_HEALTH_URL = 'https://openstsubmission.linvin.net/health';
+    const CDN_HEALTH_URL = 'https://cdn.linvin.net/gh/MC-OpenST/website@main/README.md';
 
-    let lastData = { portal: null, api: null };
+    let lastData = { portal: null, api: null, cdn: null};
 
     // 带超时的 Fetch
     async function fetchWithTimeout(url, options = {}, timeout = 6000) {
@@ -129,21 +150,33 @@
             .then(data => ({ ok: true, ping: Date.now() - wStart, ...data }))
             .catch(() => ({ ok: false }));
 
-        const [portal, api] = await Promise.all([portalPromise, apiPromise]);
-        lastData = { portal, api };
+        const cdnStart = Date.now();
+        const cdnPromise = fetchWithTimeout(CDN_HEALTH_URL, { mode: 'no-cors', cache: 'no-store' })
+            .then(() => ({ ok: true, ping: Date.now() - cdnStart }))
+            .catch(() => ({ ok: false }));
+
+        const [portal, api, cdn] = await Promise.all([portalPromise, apiPromise, cdnPromise]);
+        lastData = { portal, api, cdn };
 
         updateUI('portal', portal.ok ? 'online' : 'offline', portal.ping);
         updateUI('api', api.ok ? 'online' : 'offline', api.ping);
+        updateUI('cdn', cdn.ok ? 'online' : 'offline', cdn.ping); // 修复了这里的引用
 
         if (api.ok) {
             document.getElementById('api-node').innerText = `NODE: ${api.region}`;
             document.getElementById('api-upstream').innerText = `UPSTREAM: ${api.upstream}`;
         }
 
-        // 判定逻辑
-        if (portal.ok && api.ok) {
+        if (cdn.ok) {
+            // 由于是 no-cors，我们拿不到详细 header，但可以标记为连接成功
+            document.getElementById('cdn-status').innerText = `STATUS: OPERATIONAL`;
+            document.getElementById('cdn-node').innerText = `NODE: EO_ANYCAST`;
+        }
+
+        // 综合判定逻辑
+        if (portal.ok && api.ok && cdn.ok) {
             showMajorStatus('operational');
-        } else if (!portal.ok && !api.ok) {
+        } else if (!portal.ok && !api.ok && !cdn.ok) {
             showMajorStatus('major_outage');
         } else {
             showMajorStatus('partial_outage');
