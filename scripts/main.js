@@ -226,7 +226,21 @@ const AppOptions = {
             this.zoomImage = { url: target.src, name: "Preview" };
             document.body.style.overflow = 'hidden';
         },
-        closeZoom() { this.zoomImage = null; document.body.style.overflow = ''; }
+        closeZoom() { this.zoomImage = null; document.body.style.overflow = ''; },
+        get3DPreviewLink(item) {
+            if (!item) return '';
+            const fileUrl = this.getDownloadLink(item);
+            const viewerPath = 'Extra-Function/litematic-preview/index.html';
+
+            return `${viewerPath}#${fileUrl}`;
+        },
+
+        open3DPreview(item) {
+            const url = this.get3DPreviewLink(item);
+            if (url) {
+                window.open(url, '_blank');
+            }
+        }
     },
 
     async mounted() {

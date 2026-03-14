@@ -236,7 +236,19 @@ export const DetailModal = {
                     </div>
 
                     <div class="pt-6 pb-10 mt-auto flex flex-col gap-4">
-                        
+                      <button v-if="item.filename && item.filename.endsWith('.litematic')"
+                              @click="$parent.open3DPreview(item)"
+                              class="group relative overflow-hidden bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 border border-[#F59E0B]/30 text-[#F59E0B] text-center py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-3 transition-all active:scale-[0.97]">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke-width="2" />
+                          <path d="M12 22V12" stroke-width="2" /><path d="M12 12l8.73-5.04" stroke-width="2" /><path d="M12 12L3.27 6.96" stroke-width="2" />
+                        </svg>
+                        投影预览
+                      </button>
+
+                      <a :href="$parent.getDownloadLink(item)" class="..."></a>
                         <div class="flex items-center justify-between px-4 py-3 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
                             <div class="flex items-center gap-3 text-left">
                                 <div class="w-8 h-8 rounded-full bg-brand/10 flex items-center justify-center text-brand">
