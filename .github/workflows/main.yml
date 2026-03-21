@@ -1,12 +1,12 @@
 name: Auto Rebuild Database
 on:
   push:
-    # 逻辑：只有当 archive 文件夹里的内容，或者脚本本身变动时才触发
+    branches:
+      - main
     paths:
       - 'archive/**'
       - 'scripts/build.js'
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build:
