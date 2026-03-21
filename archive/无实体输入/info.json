@@ -7,7 +7,7 @@
     ],
     "description": "### 🚀 机器概览\n- **核心功能**: 超级防熊，玩家的一切输入均以盒子输出，盒子输入箱放入非盒物品，会提取出来并进行混杂打包，进入散货盒子出口。\n- **适用版本**: Java 1.16+(投影中装饰性材料为1.17+，但不影响正常工作)\n\n### 📖 使用说明\n在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
     "folder": "无实体输入",
-    "preview": "LhDdAXrvZLgAAAAASUVORK5CYII=",
+    "preview": "preview.png",
     "filename": "ValBlaze Floppy Decoder Head.litematic",
-    "submitDate": "2026-03-21T15:12:13.403Z"
+    "submitDate": "2026-03-21T15:28:30.254Z"
 }
