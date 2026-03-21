@@ -238,7 +238,10 @@
                 const item = database.find(i => i.id === folder);
                 if (item) this.editForm = JSON.parse(JSON.stringify(item));
                 if (!this.editForm.folder) {
-                    this.editForm.folder = folderParam;
+                    this.editForm.folder = item.folder || item.id || folderName;
+                console.log("✅ 加载成功，当前操作目录:", this.editForm.folder);
+            } else {
+                    console.warn("⚠️ 在数据库中未找到该稿件:", folderName);
                 }
             } catch (e) { console.error("Load failed", e); }
         },
