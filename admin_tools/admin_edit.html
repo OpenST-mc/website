@@ -249,7 +249,6 @@
             async handlePreviewChange(e) {
                 const file = e.target.files[0];
                 if (!file) return;
-                // 仅用于本地预览显示，不要赋值给 editForm.preview
                 const reader = new FileReader();
                 reader.onload = (ev) => { this.localPreviewUrl = ev.target.result; };
                 reader.readAsDataURL(file);
@@ -265,11 +264,18 @@
                         body: formData
                     });
                     if (res.ok) {
-                        this.editForm.preview = file.name;
+                        const data = await res.json();
+                        this.editForm.preview = data.newName;
                         alert("✅ 预览图更新成功");
+                    } else {
+                        alert("❌ 上传失败，请检查登录状态");
                     }
-                } catch (e) { alert("❌ 网络错误"); }
-                finally { this.isUploadingPreview = false; }
+                } catch (e) {
+                    console.error(e);
+                    alert("❌ 网络错误");
+                } finally {
+                    this.isUploadingPreview = false;
+                }
             },
 
             // 更换投影文件
