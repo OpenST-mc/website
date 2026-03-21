@@ -12,7 +12,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/92330e144e.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
         :root {
@@ -86,6 +86,24 @@
             background: linear-gradient(90deg, transparent, var(--primary), transparent);
             z-index: 50;
         }
+        #mobile-joystick {
+            pointer-events: none;
+        }
+
+        #joystick-zone {
+            pointer-events: auto;
+            touch-action: none;
+        }
+        #mobile-joystick, #vertical-controls {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        #joystick-zone, #vertical-controls button {
+            pointer-events: auto;
+        }
     </style>
 </head>
 
@@ -93,6 +111,21 @@
 <div class="top-bar"></div>
 
 <div id="viewer"></div>
+
+
+<div id="mobile-joystick" class="fixed inset-0 z-[200] lg:hidden select-none touch-none">
+    <div id="joystick-zone" class="absolute bottom-10 left-10 w-40 h-40 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
+        <div id="joystick-knob" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-[#40B5AD]/50 shadow-[0_0_15px_#40B5AD] transition-transform duration-75"></div>
+    </div>
+</div>
+<div id="vertical-controls" class="fixed bottom-10 right-10 flex flex-col gap-4 z-[200] hidden">
+    <button id="btn-up" class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center active:bg-[#40B5AD]/50 active:shadow-[0_0_15px_#40B5AD]">
+        <i class="material-icons text-white">keyboard_arrow_up</i>
+    </button>
+    <button id="btn-down" class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center active:bg-[#40B5AD]/50 active:shadow-[0_0_15px_#40B5AD]">
+        <i class="material-icons text-white">keyboard_arrow_down</i>
+    </button>
+</div>
 
 <div id="loading-overlay" class="fixed inset-0 z-[999] bg-black/80 flex justify-center items-center hidden">
     <div class="flex flex-col items-center">

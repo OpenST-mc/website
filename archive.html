@@ -26,7 +26,15 @@
     </nav-bar>
 
     <div class="flex flex-1 overflow-hidden relative">
-        <side-bar ref="sidebar" :categories="categories" :groups="dynamicTagGroups" :selected="selectedTags" v-model:search="searchQuery" @reset="resetFilters"></side-bar>
+        <side-bar ref="sidebar"
+                  :categories="categories"
+                  :groups="dynamicTagGroups"
+                  :selected="selectedTags"
+                  v-model:search="searchQuery"
+                  @reset="resetFilters">
+                  :show-only-favs="showOnlyFavs"
+                  @update:show-only-favs="showOnlyFavs = $event"
+        </side-bar>
 
         <main class="flex-1 p-6 pb-[20vh] overflow-y-auto bg-dark custom-scrollbar" id="main-content">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 content-start">
@@ -44,9 +52,11 @@
                         v-for="item in pagedList"
                         :key="item.id"
                         :is-admin="isAdmin"
+                        :is-fav="favorites.includes(item.id)"
                         :item="{ ...item, preview: getSafePath(item.preview) }"
                         @open="detailItem = $event"
-                        @edit="openEdit">
+                        @edit="openEdit"
+                        @toggle-fav="toggleFavorite(item.id)">
                 </archive-card>
             </div>
 

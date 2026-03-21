@@ -61,18 +61,25 @@ const AppOptions = {
             useProxy: true,
             zoomImage: null,
             currentPage: 1,
-            pageSize: 7
+            pageSize: 7,
+            favorites: JSON.parse(localStorage.getItem('openst_favs') || '[]'),
+            showOnlyFavs: false,
         }
     },
     computed: {
         normalizedSearch() { return this.normalize(this.searchQuery); },
         fullFilteredList() {
-            return Logic.getFilteredList(
+            let list = Logic.getFilteredList(
                 this.allData,
-                this.searchQuery, // 传入原始搜索词
+                this.searchQuery,
                 this.selectedTags,
-                this.normalize // 传入繁简转换函数
+                this.normalize
             );
+            if (this.showOnlyFavs) {
+                list = list.filter(item => this.favorites.includes(item.id));
+            }
+
+            return list;
         },
         totalPages() { return Math.ceil(this.fullFilteredList.length / this.pageSize) || 1; },
         pagedList() {
@@ -105,6 +112,7 @@ const AppOptions = {
             // 2. 将所有分类的已选标签数组重置为空
             this.categories.forEach(cat => {
                 this.selectedTags[cat] = [];
+                this.showOnlyFavs = false;
             });
 
             // 3. 回归第一页并同步 URL 状态
@@ -240,7 +248,21 @@ const AppOptions = {
             if (url) {
                 window.open(url, '_blank');
             }
-        }
+        },
+        toggleFavorite(itemId) {
+            const index = this.favorites.indexOf(itemId);
+            if (index > -1) {
+                this.favorites.splice(index, 1);
+            } else {
+                this.favorites.push(itemId);
+            }
+            // 持久化到本地存储
+            localStorage.setItem('openst_favs', JSON.stringify(this.favorites));
+        },
+
+        isFavorite(itemId) {
+            return this.favorites.includes(itemId);
+        },
     },
 
     async mounted() {

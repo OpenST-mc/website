@@ -37,7 +37,7 @@ export const NavBar = {
 };
 
 export const SideBar = {
-    props: ['groups', 'selected', 'search', 'categories'],
+    props: ['groups', 'selected', 'search', 'categories', 'showOnlyFavs', 'favorites'],
     data() {
         return {
             isOpen: false,
@@ -47,7 +47,7 @@ export const SideBar = {
     methods: {
         handleSubCatClick(cat, subCat, hasSubTags) {
             if (hasSubTags) {
-                // 如果有子标签，切换展开状态并触发筛选
+                // 如果有子标签，切换展开状态并触发筛
                 this.expandedGroups[subCat] = !this.expandedGroups[subCat];
             }
             // 无论是否有子标签，都触发筛选信号
@@ -67,7 +67,22 @@ export const SideBar = {
                            class="w-full bg-black/40 rounded-lg px-4 py-2.5 text-base border border-white/5 focus:border-brand outline-none transition text-white pr-10">
                     <button v-if="search" @click="$emit('update:search', '')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">✕</button>
                 </div>
-                <button v-if="search || Object.values(selected).some(v => v && v.length > 0)" 
+
+              <div class="flex flex-col gap-2">
+                <span class="text-[11px] text-gray-600 font-bold uppercase tracking-[0.2em] mb-1">我的收藏</span>
+                <div class="flex flex-col text-[14px]">
+                  <button @click="$root.showOnlyFavs = !$root.showOnlyFavs"
+                          :class="$root.showOnlyFavs ? 'text-brand font-bold bg-brand/5' : 'text-white/60 hover:text-white hover:bg-white/5'"
+                          class="text-left py-2 px-3 rounded-md transition-all flex items-center gap-3 group">
+                    <svg class="w-3.5 h-3.5" :class="$root.showOnlyFavs ? 'fill-current text-brand' : 'text-white/20 group-hover:text-white/40'" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>我的收藏 ({{ $root.favorites.length }})</span>
+                  </button>
+                </div>
+              </div>
+
+                <button v-if="search || Object.values(selected).some(v => v && v.length > 0) || showOnlyFavs" 
                         @click="$emit('reset'); expandedGroups = {}"
                         class="w-full py-2 rounded-lg bg-brand/10 border border-brand/20 text-brand text-[13px] font-bold hover:bg-brand hover:text-white transition-all">
                     清除所有筛选
@@ -126,18 +141,33 @@ export const SideBar = {
 };
 
 export const ArchiveCard = {
-    props: ['item', 'isAdmin'], // 传入权限标识
+    props: ['item', 'isAdmin', 'isFav'],
     template: `
     <div class="group bg-panel rounded-[20px] overflow-hidden border border-white/5 hover:border-brand/40 active:scale-[0.98] transition-all duration-300 shadow-lg flex flex-col h-full relative">
-        <button v-if="isAdmin" @click.stop="$emit('edit', item)" 
-                class="absolute top-4 right-4 z-10 bg-brand text-black p-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-width="2.5"/></svg>
+        
+        <button @click.stop="$emit('toggle-fav', item.id)" 
+                class="absolute top-4 left-4 z-10 p-2.5 rounded-xl bg-black/20 backdrop-blur-md border border-white/5 transition-all hover:scale-110 active:scale-90"
+                :class="isFav ? 'opacity-100 bg-brand/10 border-brand/20' : 'opacity-0 group-hover:opacity-100'">
+            <svg :class="isFav ? 'text-brand fill-current' : 'text-white/40 group-hover:text-white/80'" 
+                 class="w-4 h-4 transition-colors" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" 
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
         </button>
 
-      <div class="aspect-[16/9] overflow-hidden relative cursor-pointer bg-black/20" @click="$emit('open', item)">
-        <img v-lazy="$parent.getPreviewUrl(item)"
-             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-      </div>
+        <button v-if="isAdmin" @click.stop="$emit('edit', item)" 
+                class="absolute top-4 right-4 z-10 bg-brand text-black p-2.5 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-width="2.5"/>
+            </svg>
+        </button>
+
+        <div class="aspect-[16/9] overflow-hidden relative cursor-pointer bg-black/20" @click="$emit('open', item)">
+            <img v-lazy="$parent.getPreviewUrl(item)"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+
         <div class="p-5 flex flex-col flex-1">
             <div class="cursor-pointer mb-3" @click="$emit('open', item)">
                 <h3 class="font-bold text-base line-clamp-2 h-[2.8rem] text-gray-100 group-hover:text-brand transition-colors">{{ item.name }}</h3>
