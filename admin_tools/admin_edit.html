@@ -249,8 +249,11 @@
             async handlePreviewChange(e) {
                 const file = e.target.files[0];
                 if (!file) return;
+
                 const reader = new FileReader();
-                reader.onload = (ev) => { this.editForm.preview = ev.target.result; };
+                reader.onload = (ev) => {
+                    this.localPreview = ev.target.result;
+                };
                 reader.readAsDataURL(file);
 
                 this.isUploadingPreview = true;
@@ -258,14 +261,20 @@
                     const auth = JSON.parse(localStorage.getItem('gh_auth'));
                     const formData = new FormData();
                     formData.append('file', file);
-                    formData.append('folder', this.editForm.id);
+                    formData.append('folder', this.editForm.folder); // 确保是文件夹名
+
                     const res = await fetch(`${this.WORKER_URL}/api/admin/update-preview`, {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${auth?.token}` },
                         body: formData
                     });
-                    if (res.ok) alert("✅ 预览图已更新");
-                    else alert("❌ 上传失败");
+
+                    if (res.ok) {
+                        this.editForm.preview = file.name;
+                        alert("✅ 预览图已更新");
+                    } else {
+                        alert("❌ 上传失败");
+                    }
                 } catch (e) { alert("❌ 网络错误"); }
                 finally { this.isUploadingPreview = false; }
             },
