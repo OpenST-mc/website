@@ -80,6 +80,20 @@
         "sub_id": "sub-1772475420526"
     },
     {
+        "id": "Obi 10bit 安全二进制编码器",
+        "name": "Obi 10bit 安全二进制编码器",
+        "author": "Obi",
+        "tags": [
+            "二进制",
+            "其他编码器",
+            "1.16+"
+        ],
+        "description": "### 🚀 机器概览\n- **核心功能**:  \n将物品转成10位的二进制码\n- 适用版本: Java 1.16+\n- 投影创建者：Obi81\n- 投影创建时间：2023-05-18\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n2. 编码器可自由缩短/加长。请为此注意每一片的充能\n\n> 提示：本机器拥有安全性保护",
+        "preview": "archive/Obi 10bit 安全二进制编码器/preview.webp",
+        "filename": "EC06_Item_to_Binary_Encoder_With_Safety_Features.litematic",
+        "sub_id": "sub-1774559620756"
+    },
+    {
         "id": "Tom自出盒细雪展示",
         "name": "【1.17+】Tom 自出盒细雪展示",
         "author": "Unknown",
