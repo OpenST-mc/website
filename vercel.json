@@ -11,7 +11,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://your-worker.qzz.io/api/$1" },
+    { "source": "/api/(.*)", "destination": "https://openstsubmission.linvin.net/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
