@@ -35,8 +35,6 @@ async function generate() {
         <priority>0.8</priority>
     </url>`;
         }).join('');
-
-        // 3. 组合完整 XML
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
@@ -52,8 +50,6 @@ async function generate() {
         <priority>0.9</priority>
     </url>${urls}
 </urlset>`;
-
-        // 4. 写入文件
         await fs.writeFile(SITEMAP_PATH, xml.trim());
 
         async function generateRobots() {
