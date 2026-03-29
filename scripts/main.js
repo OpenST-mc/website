@@ -174,6 +174,9 @@ const AppOptions = {
             if (item && item.sub_id) {
                 const newUrl = `${window.location.pathname}?${item.sub_id}`;
                 window.history.pushState({ subId: item.sub_id }, '', newUrl);
+                if (item.name) {
+                    document.title = `${item.name} - OpenST Archive`;
+                }
             }
         },
 
@@ -182,6 +185,7 @@ const AppOptions = {
             this.detailItem = null;
             // 彻底移除查询参数，恢复到 example.com/archive.html
             window.history.pushState({}, '', window.location.pathname);
+            document.title = "OpenST Archive";
         },
 
         handleCopyID(subId) {
@@ -319,6 +323,9 @@ const AppOptions = {
 
             // 4. 数据加载完后再执行 URL 定位
             this.checkUrlLocation();
+            if (this.detailItem) {
+                document.title = `${this.detailItem.name} - OpenST 档案馆`;
+            }
 
         } catch (e) {
             console.error("Data Load Error: 检查文件路径是否正确", e);
