@@ -56,7 +56,22 @@ async function generate() {
         // 4. 写入文件
         await fs.writeFile(SITEMAP_PATH, xml.trim());
 
+        async function generateRobots() {
+            const root = path.resolve(__dirname, '..');
+            const robotsPath = path.join(root, 'robots.txt');
+            const content = `User-agent: *
+Allow: /
+
+Sitemap: https://openst.qzz.io/sitemap.xml
+`;
+            await fs.writeFile(robotsPath, content);
+            console.log('robots.txt 生成成功！');
+        }
+
+        await generateRobots();
+
         console.log(`\nSitemap 生成成功！`);
+        console.log(`\nrobots 生成成功！`)
         console.log(`路径: ${SITEMAP_PATH}`);
         console.log(`总计链接: ${database.length + 2} 条`);
 
