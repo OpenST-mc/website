@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "build": "node scripts/build.js && vite build",
     "add": "node scripts/init.js",
-    "build:css": "npx tailwindcss -i ./input.css -o ./dist/output.css --minify",
+    "build:css": "tailwindcss -i ./input.css -o ./output.css --minify",
     "build:sitemap": "node scripts/generate-sitemap.js",
     "deploy-prep": "npm run build:css && npm run build:sitemap"
   },
