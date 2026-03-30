@@ -141,7 +141,7 @@
             "潜影盒分盒器",
             "1.19+"
         ],
-        "description": "### 🚀 机器概览\n- **投影创建者：** Andrews54757\n- **核心功能**: 将混杂盒分成单一种类的盒子，最大限度减少不满盒的产生。最高64倍漏斗速，下载链接包含了32倍漏斗速的版本\n- **适用版本**: Java 1.19+\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n\n### 🔍 其他特性\n\n1. 无静态车，打包机漏斗全锁\n2. 基于矿车的盒子卸货和物品id重置\n3. 紧凑型设计。64 倍速版本尺寸为 43x16x14，32 倍速版本尺寸为 27x16x14\n\n> **流程图：**![分盒器流程图](https://cdn.linvin.net/https:/raw.githubusercontent.com/Linvin-1233/just-a-storage/main/ideal3-2.png)",
+        "description": "### 🚀 机器概览\n- **投影创建者：** Andrews54757\n- **核心功能**: 将混杂盒分成单一种类的盒子，最大限度减少不满盒的产生。最高64倍漏斗速，下载链接包含了32倍漏斗速的版本\n- **适用版本**: Java 1.19+\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n\n### 🔍 其他特性\n\n1. 无静态车，打包机漏斗全锁\n2. 基于矿车的盒子卸货和物品重投\n3. 紧凑型设计。64 倍速版本尺寸为 43x16x14，32 倍速版本尺寸为 27x16x14\n\n> **流程图：**![分盒器流程图](https://cdn.linvin.net/https:/raw.githubusercontent.com/Linvin-1233/just-a-storage/main/ideal3-2.png)",
         "preview": "archive/【1.19+】32倍-64倍速 紧凑型高速分盒器/preview.webp",
         "filename": "Ideal_Splitter_V3-r8.zip",
         "sub_id": "sub-1774887018775"
