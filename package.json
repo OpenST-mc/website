@@ -7,14 +7,19 @@
     "dev": "vite",
     "preview": "vite preview",
     "build": "node scripts/build.js && vite build",
-    "add": "node scripts/init.js"
+    "add": "node scripts/init.js",
+    "build:css": "npx tailwindcss -i ./input.css -o ./dist/output.css --minify",
+    "build:sitemap": "node scripts/generate-sitemap.js",
+    "deploy-prep": "npm run build:css && npm run build:sitemap"
   },
   "dependencies": {
+    "@tailwindcss/cli": "^4.2.2",
     "sharp": "^0.34.5",
     "vue": "^3.5.27"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.3",
+    "tailwindcss": "^4.2.2",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.5"
   },

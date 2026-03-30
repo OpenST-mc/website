@@ -4,16 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="OpenST 档案馆：归档、转换并在线预览 Minecraft 优秀储电作品。提供精密机器存档下载与 WebGL 投影预览。">
-    <link rel="preconnect" href="https://cdn.jsdmirror.com">
+    <link rel="preconnect" href="https://cdn.jsdmirror.com" crossorigin>
     <link rel="icon" href="images/favicon.png">
     <link rel="apple-touch-icon" href="images/favicon.png">
     <title>OpenST Archive</title>
-    <script src="tailwind.js"></script>
-    <script src="https://lib.baomitu.com/marked/11.1.1/marked.min.js"></script>
+    <link rel="stylesheet" href="dist/output.css">
+    <script src="https://lib.baomitu.com/marked/11.1.1/marked.min.js" defer></script>
     <link rel="stylesheet" href="style.css">
-    <script>
-        tailwind.config = { theme: { extend: { colors: { brand: '#40B5AD', dark: '#1f2223', panel: '#2a2c2d' } } } }
-    </script>
 </head>
 <body class="bg-dark text-white overflow-hidden font-sans">
 <div id="app" v-cloak class="flex flex-col h-screen h-[100dvh] overflow-hidden" @click="handleImageZoom">

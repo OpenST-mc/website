@@ -164,7 +164,7 @@ export const ArchiveCard = {
 
         <div class="aspect-[16/9] overflow-hidden relative cursor-pointer bg-black/20" @click="$emit('open', item)">
             <img v-lazy="$parent.getPreviewUrl(item)"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" fetchpriority="high">
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </div>
 

@@ -1,5 +1,7 @@
 /* css/style.css */
 /* 强制提升细小文字的可读性 */
+[v-cloak] { display: none !important; }
+body { background-color: #1f2223; } /* 确保白屏变黑屏，减少视觉冲击 */
 .text-\[10px\] { font-size: 0.85rem !important; } /* 原本约10px -> 提升到约13.6px */
 .text-xs { font-size: 0.9rem !important; }        /* 原本12px -> 提升到14.4px */
 .text-sm { font-size: 1.1rem !important; }        /* 原本14px -> 提升到17.6px */
