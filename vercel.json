@@ -3,7 +3,6 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/archive", "destination": "/archive.html" },
-    { "source": "/upload", "destination": "/upload.html" },
-    { "source": "/Extra-Function/:path*", "destination": "/Extra-Function/:path*" }
+    { "source": "/upload", "destination": "/upload.html" }
   ]
 }
