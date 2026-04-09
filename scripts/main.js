@@ -156,8 +156,7 @@ const AppOptions = {
         getPreviewUrl(item) {
             if (!item || !item.preview) return '';
             const rawPath = decodeURIComponent(item.preview);
-            const safePath = rawPath.split('/').map(s => encodeURIComponent(s)).join('/');
-            return `https://cdn.jsdmirror.com/gh/MC-OpenST/website@main/${safePath}`;
+            return `${rawPath}`;
         },
 
         // 编辑跳转逻辑
@@ -175,7 +174,15 @@ const AppOptions = {
                 const newUrl = `${window.location.pathname}?${item.sub_id}`;
                 window.history.pushState({ subId: item.sub_id }, '', newUrl);
                 if (item.name) {
-                    document.title = `${item.name} - OpenST Archive`;
+                    document.title = `${item.name} -${item.name} OpenST Archive`;
+                    let metaDesc = document.querySelector('meta[name="description"]');
+                    if (!metaDesc) {
+                        metaDesc = document.createElement('meta');
+                        metaDesc.name = "description";
+                        document.head.appendChild(metaDesc);
+                    }
+                    const summary = item.description.split('\n')[2] || item.name; // 避开标题取第一行正文
+                    metaDesc.setAttribute('content', summary.replace(/[#*`>]/g, ''));
                 }
             }
         },
