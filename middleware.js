@@ -3,70 +3,54 @@ import { NextResponse } from 'next/server';
 
 export async function middleware(req) {
     const url = new URL(req.url);
+
+    // 【硬核逻辑 1】切断递归：如果是静态资源请求，滚去直接加载，别进中间件
+    if (url.pathname.includes('.') || url.pathname.startsWith('/data/')) {
+        return NextResponse.next();
+    }
+
     const ua = req.headers.get('user-agent') || '';
-
-    const subId = Array.from(url.searchParams.keys()).find(key => key.startsWith('sub-'));
-
     const isBot = /discordbot|twitterbot|facebookexternalhit|whatsapp|googlebot|telegrambot/i.test(ua);
+
+    // 提取 subId
+    const subId = Array.from(url.searchParams.keys()).find(k => k.startsWith('sub-'));
 
     if (isBot && subId) {
         try {
-            const dbUrl = `https://openst.qzz.io/data/database.json`;
-            const dbRes = await fetch(dbUrl);
+            // 【硬核逻辑 2】直接 fetch 物理路径，不要带域名，防止跨域解析问题
+            const dbRes = await fetch(`${url.origin}/data/database.json`);
+            if (!dbRes.ok) return NextResponse.next();
 
-            if (dbRes.ok) {
-                const database = await dbRes.json();
-                const item = database.find(i => i.sub_id === subId);
+            const database = await dbRes.json();
+            const item = database.find(i => i.sub_id === subId);
 
-                if (item) {
-                    const domain = "https://openst.qzz.io";
+            if (item) {
+                // 【硬核逻辑 3】针对加号的终极处理
+                // 如果转义成了 %2B 还不行，说明服务器要的是“未编码”的原始路径或双重转义
+                // 这里我们给爬虫返回最稳的地址：CDN 代理
+                const safePath = item.preview.replace(/\+/g, '%2B');
+                const absoluteImageUrl = `https://cdn.linvin.net/https://raw.githubusercontent.com/MC-OpenST/website/main/${safePath}`;
 
-                    // 处理图片路径编码
-                    const safePreviewPath = item.preview.split('/')
-                        .map(segment => encodeURIComponent(segment))
-                        .join('/');
-                    const absoluteImageUrl = `${domain}/${safePreviewPath}`;
-
-                    // 净化描述
-                    const cleanDesc = (item.description || '')
-                        .replace(/[#*>`-]/g, '')
-                        .replace(/\n+/g, ' ')
-                        .substring(0, 160);
-
-                    const displayTags = (item.tags || []).join(' · ');
-
-                    // 返回给爬虫的伪装页面
-                    return new Response(
-                        `<!DOCTYPE html>
-                        <html lang="zh-CN">
-                            <head>
-                                <meta charset="utf-8">
-                                <title>${item.name}</title>
-                                <meta name="description" content="${cleanDesc}">
-                                <meta property="og:type" content="article">
-                                <meta property="og:title" content="${item.name}">
-                                <meta property="og:description" content="👤 作者: ${item.author} | 🏷️ 标签: ${displayTags}\n\n${cleanDesc}">
-                                <meta property="og:image" content="${absoluteImageUrl}">
-                                <meta property="og:url" content="${url.href}">
-                                <meta name="twitter:card" content="summary_large_image">
-                                <meta http-equiv="refresh" content="0;url=${url.href}">
-                            </head>
-                            <body>Redirecting...</body>
-                        </html>`,
-                        {
-                            headers: { 'Content-Type': 'text/html; charset=utf-8' }
-                        }
-                    );
-                }
+                return new Response(
+                    `<!DOCTYPE html><html><head><meta charset="utf-8">
+                    <title>${item.name}</title>
+                    <meta property="og:title" content="${item.name}">
+                    <meta property="og:image" content="${absoluteImageUrl}">
+                    <meta property="twitter:card" content="summary_large_image">
+                    <meta http-equiv="refresh" content="0;url=${url.href}">
+                    </head><body>Redirecting...</body></html>`,
+                    { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+                );
             }
         } catch (e) {
-            console.error('Middleware Error:', e);
+            return NextResponse.next();
         }
     }
+
     return NextResponse.next();
 }
 
-// 匹配规则保持不变
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+    // 别管那些复杂的正则了，直接只拦截根路径和 archive 相关页面
+    matcher: ['/', '/archive.html', '/archive/'],
 };
