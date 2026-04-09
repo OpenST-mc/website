@@ -156,7 +156,9 @@ const AppOptions = {
         getPreviewUrl(item) {
             if (!item || !item.preview) return '';
             const rawPath = decodeURIComponent(item.preview);
-            return `${rawPath}`;
+            return rawPath.split('/')
+                .map(segment => encodeURIComponent(segment))
+                .join('/');
         },
 
         // 编辑跳转逻辑
