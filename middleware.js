@@ -3,7 +3,7 @@ export async function middleware(req) {
     const url = new URL(req.url);
     const ua = req.headers.get('user-agent') || '';
 
-    // 1. 更健壮的 subId 提取
+    // 1. 提取 subId (兼容 ?sub-xxx 和 ?id=sub-xxx)
     let subId = null;
     for (const key of url.searchParams.keys()) {
         if (key.startsWith('sub-')) {
@@ -16,8 +16,8 @@ export async function middleware(req) {
 
     if (isBot && subId) {
         try {
-            // 使用绝对路径，加上缓存失效参数防止 Middleware 读到旧数据
-            const dbRes = await fetch(`${url.origin}/data/database.json?v=${Date.now()}`);
+            // 获取数据库
+            const dbRes = await fetch(`${url.origin}/data/database.json`);
             if (!dbRes.ok) return;
 
             const database = await dbRes.json();
@@ -25,41 +25,53 @@ export async function middleware(req) {
 
             if (item) {
                 const domain = url.origin;
-                // 对每一段路径进行编码，防止中文路径断裂
+
+                // 【优化 A】处理中文路径，确保图片在大牛的 Discord 里秒开
                 const safePreviewPath = item.preview.split('/')
                     .map(segment => encodeURIComponent(segment))
                     .join('/');
                 const absoluteImageUrl = `${domain}/${safePreviewPath}`;
 
+                // 【优化 B】净化描述文本，去掉 Markdown 符号，只留纯文字
+                const cleanDesc = item.description
+                    .replace(/[#*>`-]/g, '') // 去掉 Markdown 符号
+                    .replace(/\n+/g, ' ')    // 把换行变空格
+                    .substring(0, 160);      // 截取前 160 字
+
+                const displayTags = item.tags.join(' · ');
+
                 return new Response(
                     `<!DOCTYPE html>
-                    <html>
+                    <html lang="zh-CN">
                         <head>
                             <meta charset="utf-8">
                             <title>${item.name}</title>
-                            <meta name="description" content="作者: ${item.author} | 标签: ${item.tags.join(', ')}">
+                            <meta name="description" content="${cleanDesc}">
+                            
                             <meta property="og:type" content="article">
                             <meta property="og:title" content="${item.name}">
-                            <meta property="og:description" content="作者: ${item.author} | 标签: ${item.tags.join(', ')}">
+                            <meta property="og:description" content="👤 作者: ${item.author} | 🏷️ 标签: ${displayTags}\n\n${cleanDesc}">
                             <meta property="og:image" content="${absoluteImageUrl}">
                             <meta property="og:url" content="${url.href}">
+                            
                             <meta name="twitter:card" content="summary_large_image">
+                            <meta name="twitter:title" content="${item.name}">
                             <meta name="twitter:image" content="${absoluteImageUrl}">
+
                             <meta http-equiv="refresh" content="0;url=${url.href}">
                         </head>
-                        <body>Redirecting...</body>
+                        <body>Redirecting to OpenST Archive...</body>
                     </html>`,
                     {
                         headers: {
                             'Content-Type': 'text/html; charset=utf-8',
-                            // 调试阶段建议把 Cache-Control 设低，确定没问题了再改回 3600
-                            'Cache-Control': 'no-cache, no-store'
+                            'Cache-Control': 'public, max-age=600' // 缓存 10 分钟
                         }
                     }
                 );
             }
         } catch (e) {
-            console.error('Middleware Injection Error:', e);
+            console.error('OpenST Middleware Error:', e);
         }
     }
     return;
