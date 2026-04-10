@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '..');
 
 const CONFIG = {
-    BASE_URL: 'https://openst.qzz.io/',
+    BASE_URL: 'https://openstmc.com/',
     DATABASE_PATH: path.join(root, 'data/database.json'),
     SITEMAP_PATH: path.join(root, 'sitemap.xml'),
     ROBOTS_PATH: path.join(root, 'robots.txt')
@@ -39,7 +39,7 @@ async function generate() {
             const date = formatFullDate(item.submitDate || item.date);
 
             return `  <url>
-    <loc>${CONFIG.BASE_URL}archive.html?id=${id}</loc>
+    <loc>${CONFIG.BASE_URL}archive?id=${id}</loc>
     <lastmod>${date}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
