@@ -1,11 +1,6 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "functions": {
-    "api/DymaticMeta.js": {
-      "includeFiles": "data/database.json"
-    }
-  },
   "headers": [
     {
       "source": "/archive/(.*).(litematic|webp|png|jpg)",
@@ -17,7 +12,7 @@
       ]
     },
     {
-      "source": "/Extra-Function(.*).js",
+      "source": "/Extra-Function/(.*).js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -28,14 +23,8 @@
   ],
   "rewrites": [
     {
-      "source": "/archive",
-      "has": [
-        {
-          "type": "query",
-          "key": "sub-(.*)"
-        }
-      ],
-      "destination": "/api/DymaticMeta"
+      "source": "/share/:subid",
+      "destination": "/api/share?id=:subid"
     }
   ]
 }
