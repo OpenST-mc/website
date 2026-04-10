@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://openst.qzz.io/sitemap.xml
+Sitemap: https://openstmc.com/sitemap.xml
