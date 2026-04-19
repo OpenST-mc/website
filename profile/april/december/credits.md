@@ -4,7 +4,7 @@
 --- Linvin-1233   
 
 none（其实就是什么都不想说） --- Trice450  
-## Staff  
+## 管理
 - Linvin-1233  
 - Trice450  
 - linchien26
@@ -14,6 +14,7 @@ none（其实就是什么都不想说） --- Trice450
 - Trice450
 - woodengrass
 - Gufen-hnust  
+- yymhyymh
 
 ## 网站维护（Website Maintainer）
 - Linvin-1233
@@ -21,7 +22,6 @@ none（其实就是什么都不想说） --- Trice450
 ## 基础设施 (Infrastructure)
 * GitHub
 * Cloudflare
-* jsdMirror
 * Edgeone
 * Vercel
 
@@ -38,6 +38,7 @@ none（其实就是什么都不想说） --- Trice450
 
 ## 特别感谢（Special Credits）
 - Breeze 
-- BFladderbean
+- BFladderbean  
+- 4rcadia  
 
 **OpenST**  Built with passion. Powered by Open Source.
