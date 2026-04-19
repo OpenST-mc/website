@@ -39,7 +39,7 @@ async function generate() {
             const date = formatFullDate(item.submitDate || item.date);
 
             return `  <url>
-    <loc>${CONFIG.BASE_URL}archive.html?id=${id}</loc>
+    <loc>${CONFIG.BASE_URL}archive?${id}</loc>
     <lastmod>${date}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
@@ -61,7 +61,7 @@ async function generate() {
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>${CONFIG.BASE_URL}archive.html</loc>
+    <loc>${CONFIG.BASE_URL}archive</loc>
     <lastmod>${now}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
