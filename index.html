@@ -31,106 +31,9 @@
     <link rel="icon" type="image/png" sizes="128x128" href="images/favicon-2.png">
     <link rel="icon" type="image/png" sizes="196x196" href="images/favicon-2.png">
     <link rel="apple-touch-icon" href="images/favicon.png" sizes="any">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/input.css">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=block">
-    <link rel="stylesheet" href="https://fonts.font.im/css2?family=JetBrains+Mono:wght@400;800&display=block">
-    <style>
-        @font-face {
-            font-family: 'JetBrains Mono Fallback';
-            src: local('JetBrains Mono ExtraBold'),
-            url('./fonts/JetBrainsMono-Bold.woff2') format('woff2'),
-            local('JetBrains Mono Bold'),
-            local('JetBrains Mono');
-            font-display: swap;
-        }
-        .loading-skeleton {
-            color: transparent !important;
-            background: linear-gradient(90deg, #1a1a1e 25%, #2a2a2e 50%, #1a1a1e 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
-            border-radius: 2px;
-        }
 
-        @keyframes skeleton-loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        :root {
-            --rs-red: #ff4d00;
-            --st-cyan: #40B5AD;
-            --logic-bg: #0a0a0b;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* 核心 */
-            position: relative;
-        }
-
-        body {
-            background-color: var(--logic-bg);
-            color: #a1a1aa;
-            font-family: 'JetBrains Mono', monospace;
-            overflow-x: hidden;
-            scrollbar-width: thin;
-            scrollbar-color: #1f2223 #2a2a2e;
-        }
-
-        /* 逻辑阵列背景 */
-        .logic-grid {
-            position: fixed; inset: 0;
-            background-image:
-                    radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
-            background-size: 32px 32px;
-            z-index: -1;
-        }
-
-        /* 模拟红石线 */
-        .rs-wire {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, var(--rs-red), transparent);
-            height: 1px;
-            width: 100%;
-            opacity: 0.3;
-            filter: blur(1px);
-        }
-
-        /* 硬核切角卡片 */
-        .tech-panel {
-            background: rgba(20, 20, 22, 0.8);
-            border-left: 4px solid #2a2a2e;
-            transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
-            position: relative;
-        }
-        .tech-panel:hover {
-            border-left-color: var(--st-cyan);
-            background: rgba(30, 30, 35, 1);
-            transform: translateX(8px);
-        }
-        .tech-panel::after {
-            content: 'READY';
-            position: absolute; top: 10px; right: 20px;
-            font-size: 8px; color: #333; letter-spacing: 2px;
-        }
-
-        /* 信号呼吸灯 */
-        .signal {
-            width: 8px; height: 2px;
-            background: var(--rs-red);
-            box-shadow: 0 0 10px var(--rs-red);
-            animation: blink 0.1s infinite alternate;
-        }
-        @keyframes blink { to { opacity: 0.3; } }
-
-        .glitch-text:hover {
-            text-shadow: 2px 0 var(--rs-red), -2px 0 var(--st-cyan);
-        }
-    </style>
 </head>
 <body class="min-h-screen p-4 md:p-12"> <div class="logic-grid"></div>
 
@@ -244,26 +147,40 @@
     (function() {
         let clickCount = 0;
         let lastClickTime = 0;
-        const secretTrigger = document.getElementById('credits-trigger');
 
-        if (secretTrigger) {
-            secretTrigger.addEventListener('click', () => {
-                const currentTime = Date.now();
-                if (currentTime - lastClickTime > 800) {
-                    clickCount = 0;
-                }
+        // 同时获取桌面端和移动端的触发元素
+        const desktopTrigger = document.getElementById('credits-trigger');
+        const mobileTrigger = document.querySelector('p.text-gray-600');
 
-                clickCount++;
-                lastClickTime = currentTime;
-                secretTrigger.style.filter = 'brightness(2)';
-                secretTrigger.style.transition = 'filter 0.1s';
-                setTimeout(() => { secretTrigger.style.filter = 'brightness(1)'; }, 100);
+        const handleSecretAction = () => {
+            const currentTime = Date.now();
+            if (currentTime - lastClickTime > 800) {
+                clickCount = 0;
+            }
 
-                if (clickCount === 5) {
-                    clickCount = 0;
-                    const transitionHTML = `
+            clickCount++;
+            lastClickTime = currentTime;
+            const activeTrigger = window.innerWidth < 640 ? mobileTrigger : desktopTrigger;
+            if (activeTrigger) {
+                activeTrigger.style.filter = 'brightness(2)';
+                activeTrigger.style.transition = 'filter 0.1s';
+                setTimeout(() => { activeTrigger.style.filter = 'brightness(1)'; }, 100);
+            }
+
+            if (clickCount === 5) {
+                clickCount = 0;
+                triggerTransition();
+            }
+        };
+
+        const triggerTransition = () => {
+            window.scrollTo(0, 0);
+            document.documentElement.style.overflow = 'hidden';
+            const overlay = document.createElement('div');
+            overlay.id = 'transition-overlay';
+            overlay.innerHTML = `
         <div class="scan-line"></div>
-        <div id="app" class="relative z-10 text-center px-6 animate-in fade-in duration-700">
+        <div id="app" class="relative z-10 text-center px-6">
             <div id="searching" class="space-y-6">
                 <div class="relative w-24 h-24 mx-auto">
                     <div class="absolute inset-0 border-4 border-[#40B5AD]/10 rounded-full"></div>
@@ -271,37 +188,43 @@
                 </div>
                 <div class="space-y-2">
                     <h2 class="text-2xl font-black tracking-[0.3em] text-[#40B5AD] brand-shadow uppercase">Bypassing...</h2>
-                    <p id="inject-log" class="text-white/30 font-mono text-sm tracking-widest">GATE: /profile/april/december/...</p>
+                    <p id="inject-log" class="text-white/30 font-mono text-xs tracking-widest uppercase">GATE: INITIALIZING...</p>
                 </div>
             </div>
         </div>
     `;
-                    const style = document.createElement('style');
-                    style.innerHTML = `
-        body { background: #0a0a0a !important; overflow: hidden !important; transition: all 0.5s; }
-        .scan-line { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #40B5AD, transparent); position: absolute; top: -2px; animation: scan 3s linear infinite; opacity: 0.3; }
+
+            const style = document.createElement('style');
+            style.innerHTML = `
+        #transition-overlay { position: fixed; inset: 0; background: #0a0a0a; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .scan-line { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #40B5AD, transparent); position: fixed; top: 0; z-index: 10000; animation: scan 2s linear infinite; }
         @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
         .brand-shadow { text-shadow: 0 0 20px rgba(64, 181, 173, 0.5); }
     `;
-                    document.head.appendChild(style);
-                    document.body.innerHTML = transitionHTML;
-                    const logs = ["SPOOFING_IP...", "DECRYPTING_V_FILES...", "ACCESS_GRANTED"];
-                    let i = 0;
-                    const logEl = document.getElementById('inject-log');
-                    const interval = setInterval(() => {
-                        if (i < logs.length) {
-                            logEl.innerText = `STATUS: ${logs[i]}`;
-                            i++;
-                        } else {
-                            clearInterval(interval);
-                            document.body.style.opacity = '0';
-                            setTimeout(() => {
-                                window.location.href = 'profile/april/december/credits.html';
-                            }, 600);
-                        }
-                    }, 500);
+
+            document.head.appendChild(style);
+            document.body.appendChild(overlay);
+
+            const logs = ["SPOOFING_IP...", "DECRYPTING_V_FILES...", "BYPASSING_GATE...", "ACCESS_GRANTED"];
+            let i = 0;
+            const logEl = overlay.querySelector('#inject-log');
+
+            const interval = setInterval(() => {
+                if (i < logs.length) {
+                    logEl.innerText = `STATUS: ${logs[i]}`;
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    window.location.href = 'profile/april/december/credits.html';
                 }
-            });
+            }, 600);
+        };
+
+        // 绑定事件
+        if (desktopTrigger) desktopTrigger.addEventListener('click', handleSecretAction);
+        if (mobileTrigger) {
+            mobileTrigger.style.cursor = 'pointer';
+            mobileTrigger.addEventListener('click', handleSecretAction);
         }
     })();
 </script>
@@ -315,8 +238,7 @@
         };
         if ('fonts' in document) {
             document.fonts.ready.then(() => {
-                // 微调延迟，确保渲染平滑
-                setTimeout(unlockSystem, 100);
+                setTimeout(unlockSystem, 200);
             });
         } else {
             window.onload = unlockSystem;

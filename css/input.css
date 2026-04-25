@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+    --color-st-cyan: #40B5AD;
+    --color-rs-red: #ff4d00;
+    --color-logic-bg: #0a0a0b;
+    --color-panel-bg: rgba(20, 20, 22, 0.8);
+    --color-panel-border: #2a2a2e;
+
+    --animate-skeleton: skeleton-loading 1.5s infinite;
+    --animate-blink: blink 0.1s infinite alternate;
+
+    @keyframes skeleton-loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    @keyframes blink {
+        to { opacity: 0.3; }
+    }
+}
+
+@layer base {
+    @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('../fonts/JetBrainsMono-Bold.woff2') format('woff2');
+        font-display: swap;
+    }
+
+    html {
+        background-color: var(--color-logic-bg);
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        background-color: var(--color-logic-bg);
+        color: #a1a1aa;
+        /* 解决中文字体变宋体的问题 */
+        font-family: 'JetBrains Mono', 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        min-height: 100vh;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        scrollbar-gutter: stable;
+        font-weight: 900;
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+@layer components {
+    .loading-skeleton {
+        background: linear-gradient(90deg, #1a1a1e 25%, #2a2a2e 50%, #1a1a1e 75%) !important;
+        background-size: 200% 100% !important;
+        animation: var(--animate-skeleton) !important;
+        border-radius: 2px;
+        pointer-events: none;
+        color: transparent !important;
+    }
+
+    .tech-panel {
+        background: var(--color-panel-bg);
+        border-left: 4px solid var(--color-panel-border);
+        transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+        position: relative;
+        z-index: 1;
+    }
+
+    .tech-panel:hover {
+        border-left-color: var(--color-st-cyan) !important;
+        background: rgba(30, 30, 35, 1) !important;
+        transform: translateX(8px);
+    }
+
+    .rs-wire {
+        background: linear-gradient(90deg, transparent, var(--color-rs-red), transparent);
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        opacity: 0.3;
+        filter: blur(1px);
+        pointer-events: none;
+    }
+
+    .signal {
+        width: 8px;
+        height: 2px;
+        background: var(--color-rs-red);
+        box-shadow: 0 0 10px var(--color-rs-red);
+        animation: var(--animate-blink);
+    }
+
+    .bg-data-text {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        color: rgba(255, 255, 255, 0.03);
+        font-weight: 900;
+        user-select: none;
+        pointer-events: none;
+        z-index: 0;
+        line-height: 0.8;
+    }
+
+    .glitch-text:hover {
+        text-shadow: 2px 0 var(--color-rs-red), -2px 0 var(--color-st-cyan);
+    }
+}
+
+[v-cloak] { display: none !important; }

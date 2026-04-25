@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+    --color-brand: #40B5AD;
+    --color-dark: #1f2223;
+    --color-panel: #2a2c2d;
+}
+
+:root {
+    --brand: #40B5AD;
+}
+
+[v-cloak] { display: none !important; }

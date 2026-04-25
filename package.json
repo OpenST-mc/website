@@ -1,19 +1,17 @@
 {
-  "name": "openst4-0",
-  "version": "0.0.0",
+  "name": "openst",
+  "version": "4.5.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build": "npm run deploy-prep && node scripts/build.js && vite build",
-    "add": "node scripts/init.js",
-    "build:css": "tailwindcss -i ./input.css -o ./output.css --minify",
-    "build:sitemap": "node scripts/sitemap.js",
-    "deploy-prep": "npm run build:css && npm run build:sitemap"
+    "build": "npm run build:sitemap && node scripts/build.js && vite build",
+    "build:ArchiveCSS": "tailwindcss -i ./css/ArchiveInput.css -o ./css/ArchiveOutput.css --minify",
+    "build:sitemap": "node scripts/sitemap.js"
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.2.2",
+    "@tailwindcss/cli": "^4.2.4",
     "next": "^16.2.3",
     "sharp": "^0.34.5",
     "vue": "^3.5.27"
@@ -21,9 +19,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.4",
     "@vitejs/plugin-vue": "^6.0.3",
-    "autoprefixer": "^10.4.27",
-    "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.2",
+    "tailwindcss": "^4.2.4",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.5"
   },
