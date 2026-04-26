@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="preconnect" href="https://cdn.jsdmirror.com">
     <title>OpenST Credits</title>
+    <link rel="icon" href="/images/favicon.png" sizes="any">
+    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-2.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-2.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-2.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon-2.png">
+    <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png">
+    <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any">
     <script src="https://cdn.jsdmirror.com/npm/marked/marked.min.js"></script>
     <style>
         :root { --brand: #ffffff; --text-secondary: #86868b; }
@@ -19,6 +26,11 @@
             width: 90%; max-width: 800px; margin: 0 auto;
             display: flex; flex-direction: column; align-items: center;
             text-align: center; padding-top: 50vh; padding-bottom: 30vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--brand);
         }
 
         .markdown-body { color: var(--text-secondary); line-height: 2; width: 100%; }
@@ -66,9 +78,9 @@
         try {
             const res = await fetch('./credits.md');
             const md = await res.text();
-            wrap.innerHTML = marked.parse(md) + '<a href="https://openst.qzz.io" class="back-home">BACK TO ARCHIVE</a>';
+            wrap.innerHTML = marked.parse(md) + '<a href="https://openstmc.com" class="back-home">BACK TO ARCHIVE</a>';
         } catch (e) {
-            wrap.innerHTML = "<h2>OpenST Credits</h2><a href='https://openst.qzz.io' class='back-home'>RETURN</a>";
+            wrap.innerHTML = "<h2>OpenST Credits</h2><a href='https://openstmc.com' class='back-home'>RETURN</a>";
         }
     }
 

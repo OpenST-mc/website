@@ -45,7 +45,7 @@ export default async function handler(req, res) {
 </head>
 <body style="background: #1a1a1a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
     <div style="text-align: center;">
-        <p>正在进入档案馆...</p>
+        <p>查找稿件中...</p>
         <script>location.replace("${finalUrl}");</script>
     </div>
 </body>

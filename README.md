@@ -10,3 +10,21 @@ OpenST的官方网站
 
 * [Litematic-Convertor](https://github.com/Harusarri/litematica-converter) - 投影转换功能的实现
 * [Litematic-Viewer](https://github.com/EndingCredits/litematic-viewer) - 3d预览的实现
+
+## 部署方法：
+1. 初次设置
+
+```bash
+git clone https://github.com/OpenST-mc/website.git
+```  
+```bash
+npm install
+```
+
+2. 启动
+```bash
+npm run dev
+```
+- vite服务器会自动部署于localhost:4000，并开启局域网内访问功能
+
+> [OpenST开发文档](https://openst-mc.github.io/OpenST-Docs/#/)

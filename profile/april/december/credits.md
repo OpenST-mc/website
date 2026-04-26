@@ -41,4 +41,7 @@ none（其实就是什么都不想说） --- Trice450
 - 4rcadia  
 - linchien26
 
-**OpenST**  Built with passion. Powered by Open Source.
+## 友好组织（Friendly Organizations）
+- [GTMC](https://beta.techmc.wiki)
+
+**OpenST** Built with passion. Powered by Open Source.
