@@ -6,6 +6,7 @@
     --color-logic-bg: #0a0a0b;
     --color-panel-bg: rgba(20, 20, 22, 0.8);
     --color-panel-border: #2a2a2e;
+    --color-bg-text: #fafafa;
 
     --animate-skeleton: skeleton-loading 1.5s infinite;
     --animate-blink: blink 0.1s infinite alternate;
@@ -17,6 +18,12 @@
     @keyframes blink {
         to { opacity: 0.3; }
     }
+    /* 方案 A: 适合超大文字横向无限循环滚动 (Marquee) */
+    @keyframes marquee {
+        from { transform: translateX(0); }
+        to { transform: translateX(-100%); }
+    }
+    --animate-marquee: marquee 180s linear infinite; /* 超长周期，线性速度 */
 }
 
 @layer base {
@@ -106,6 +113,13 @@
 
     .glitch-text:hover {
         text-shadow: 2px 0 var(--color-rs-red), -2px 0 var(--color-st-cyan);
+    }
+    .logic-grid {
+        background-image:
+                linear-gradient(to right, rgba(111, 111, 111, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(111, 111, 111, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+        background-attachment: fixed;
     }
 }
 
