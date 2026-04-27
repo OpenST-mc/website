@@ -1,5 +1,9 @@
 # website
 
+<a href="https://deepwiki.com/OpenST-mc/website">
+  <img src="https://deepwiki.com/badge.svg" alt="Ask Deepwiki">
+</a>
+
 OpenST的官方网站  
 
 采用vue+tailwind css+cf workers+vercel api架构   
