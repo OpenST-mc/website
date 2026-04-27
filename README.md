@@ -4,7 +4,7 @@
   <img src="https://deepwiki.com/badge.svg" alt="Ask Deepwiki">
 </a>  
 
-[github repo sth](https://socialify.git.ci/MC-OpenST/website/image?custom_language=Vue&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit+Board&pulls=1&stargazers=1&theme=Dark)
+![github repo sth](https://socialify.git.ci/MC-OpenST/website/image?custom_language=Vue&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit+Board&pulls=1&stargazers=1&theme=Dark)
 
 OpenST的官方网站  
 
