@@ -1,5 +1,11 @@
 # website
 
+<a href="https://deepwiki.com/OpenST-mc/website">
+  <img src="https://deepwiki.com/badge.svg" alt="Ask Deepwiki">
+</a>  
+
+![github repo sth](https://socialify.git.ci/OpenST-mc/website/image?custom_language=Vue&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit+Board&pulls=1&stargazers=1&theme=Dark)
+
 OpenST的官方网站  
 
 采用vue+tailwind css+cf workers+vercel api架构   
