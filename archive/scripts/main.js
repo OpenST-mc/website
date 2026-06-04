@@ -159,7 +159,7 @@ const AppOptions = {
             if (!item || !item.id) return;
             const folder = item.id.trim();
             // 确保跳转到 admin_tools 目录下的编辑器
-            window.location.href = `./admin_tools/admin_edit.html?folder=${encodeURIComponent(folder)}`;
+            window.location.href = `../../admin_tools/admin_edit.html`;
         },
 
         // 详情页控制
@@ -177,7 +177,7 @@ const AppOptions = {
         // 详情页关闭：还原 URL
         closeDetail() {
             this.detailItem = null;
-            // 彻底移除查询参数，恢复到 example.com/archive.html
+            // 彻底移除查询参数，恢复到 example.com/index.html
             window.history.pushState({}, '', window.location.pathname);
             document.title = "OpenST Archive";
         },

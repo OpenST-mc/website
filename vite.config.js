@@ -20,7 +20,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         upload: 'upload/index.html',
-        archive: 'archive.html'
+        archive: 'index.html'
       }
     }
   }

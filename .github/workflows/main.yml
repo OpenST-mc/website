@@ -4,8 +4,8 @@ on:
     branches:
       - main
     paths:
-      - 'archive/**'
-      - 'scripts/build.js'
+      - '../../archive/archive/**'
+      - '../../archive/scripts/build.js'
   workflow_dispatch:
 
 jobs:

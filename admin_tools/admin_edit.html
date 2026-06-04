@@ -46,7 +46,7 @@
             <p class="text-white/30 text-sm mt-2 font-mono">Archive: {{ editForm.id }}</p>
         </div>
         <div class="flex gap-4">
-            <a href="../archive.html" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-sm border border-white/10">放弃返回</a>
+            <a href="../archive/index.html" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-sm border border-white/10">放弃返回</a>
             <button @click="submitSave" :disabled="isSaving"
                     class="px-8 py-2.5 rounded-xl bg-[--brand] text-black font-extrabold hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#40B5AD]/20 disabled:opacity-50">
                 {{ isSaving ? '同步中...' : '提交修改' }}
@@ -193,7 +193,7 @@
 </div>
 
 <script type="module">
-    import { TAG_CONFIG } from '../scripts/config.js';
+    import { TAG_CONFIG } from '../archive/scripts/config.js';
     const { createApp } = Vue;
 
     createApp({
@@ -345,7 +345,7 @@
                     });
                     if (res.ok) {
                         alert("🗑️ 稿件已彻底删除");
-                        window.location.href = '../archive.html';
+                        window.location.href = '../documentation/archive.html';
                     } else alert("❌ 删除失败");
                 } catch (e) { alert("❌ 请求错误"); }
             },
@@ -385,7 +385,7 @@
                     });
                     if (res.ok) {
                         alert("✅ 信息修改成功！");
-                        window.location.href = '../archive.html';
+                        window.location.href = '../documentation/archive.html';
                     } else alert("❌ 提交失败");
                 } catch (e) { alert("❌ 网络错误"); }
                 finally { this.isSaving = false; }
