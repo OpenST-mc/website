@@ -28,8 +28,8 @@ jobs:
 
       - name: Run Build Script
         run: |
-          node scripts/build.js
-          node scripts/sitemap.js
+          node data/build.js
+          node data/sitemap.js
 
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
