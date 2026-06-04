@@ -54,7 +54,7 @@ async function processFolder(folder) {
                         .toFile(webpPath);
                     console.log(`优化图片: ${folder}/${sourceImg} -> WebP`);
                 }
-                finalPreview = `/archive/${folder}/preview.webp`;
+                finalPreview = `/archive/archive/${folder}/preview.webp`;
             } catch (err) {
                 console.warn(` 图片转换失败 ${folder}: ${err.message}`);
             }

@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build:sitemap": "node archive/scripts/sitemap.js",
+    "build:sitemap": "node data/sitemap.js",
     "build:ArchiveCSS": "tailwindcss -i ./css/ArchiveInput.css -o ./css/ArchiveOutput.css --minify",
     "build:PortalCSS": "tailwindcss -i ./css/input.css -o ./css/output.css --minify",
-    "build": "npm run build:sitemap && node archive/scripts/build.js && npm run build:ArchiveCSS && npm run build:PortalCSS && vite build"
+    "build": "npm run build:sitemap && node data/build.js && npm run build:ArchiveCSS && npm run build:PortalCSS && vite build"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.2.4",

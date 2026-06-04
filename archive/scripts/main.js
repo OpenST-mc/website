@@ -1,7 +1,7 @@
 import * as Logic from './logic.js';
 import * as UI from './ui.js';
 import { TAG_CONFIG, CATEGORIES } from './config.js';
-import { PortalAuth } from './auth.js';
+import { PortalAuth } from '../../auth/auth.js';
 
 const { createApp } = Vue;
 const WORKER_URL = 'https://openstsubmission.linvin.net';

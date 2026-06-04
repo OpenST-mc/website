@@ -1,5 +1,5 @@
 import { TAG_CONFIG } from '../archive/scripts/config.js';
-import { PortalAuth } from '../archive/scripts/auth.js';
+import { PortalAuth } from '../auth/auth.js';
 
 const { createApp } = Vue;
 

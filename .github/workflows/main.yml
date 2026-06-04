@@ -5,7 +5,7 @@ on:
       - main
     paths:
       - '../../archive/archive/**'
-      - '../../archive/scripts/build.js'
+      - '../../data/build.js'
   workflow_dispatch:
 
 jobs:
@@ -36,4 +36,3 @@ jobs:
         with:
           commit_message: "chore: 自动更新数据库及预览图 [skip ci]"
           file_pattern: 'data/database.json archive/**/*.webp sitemap.xml robots.txt'
-          # [skip ci] 很重要，防止 Action 自己触发自己导致死循环
