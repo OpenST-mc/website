@@ -8,7 +8,7 @@ const root = path.resolve(__dirname, '..');
 
 const CONFIG = {
     BASE_URL: 'https://openstmc.com/',
-    DATABASE_PATH: path.join(root, 'data/database.json'),
+    DATABASE_PATH: path.join(root, 'archive/data/database.json'),
     SITEMAP_PATH: path.join(root, 'sitemap.xml'),
     ROBOTS_PATH: path.join(root, 'robots.txt')
 };
