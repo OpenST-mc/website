@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     const subId = req.query.id || queryKeys.find(k => k.startsWith('sub-'));
 
     try {
-        const data = await fetch('https://openstmc.com/data/database.json')
+        const data = await fetch('https://openstmc.com/archive/data/database.json')
             .then(r => r.json());
 
         const item = data.find(i => i.sub_id === subId);
@@ -15,7 +15,7 @@ export default async function handler(req, res) {
         const title = `${item.name} - OpenST Archive`;
         const desc = item.description.replace(/[#*`>!-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 150);
         const image = `https://openstmc.com/${item.preview}`;
-        const finalUrl = `https://openstmc.com/archive.html?${subId}`;
+        const finalUrl = `https://openstmc.com/archive?${subId}`;
 
         const html = `<!DOCTYPE html>
 <html lang="zh-CN">

@@ -345,7 +345,7 @@
                     });
                     if (res.ok) {
                         alert("🗑️ 稿件已彻底删除");
-                        window.location.href = '../documentation/archive.html';
+                        window.location.href = '../archive/index.html';
                     } else alert("❌ 删除失败");
                 } catch (e) { alert("❌ 请求错误"); }
             },
@@ -385,7 +385,7 @@
                     });
                     if (res.ok) {
                         alert("✅ 信息修改成功！");
-                        window.location.href = '../documentation/archive.html';
+                        window.location.href = '../archive/index.html';
                     } else alert("❌ 提交失败");
                 } catch (e) { alert("❌ 网络错误"); }
                 finally { this.isSaving = false; }
