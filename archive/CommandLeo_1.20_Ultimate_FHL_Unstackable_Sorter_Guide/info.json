@@ -1,15 +1,15 @@
 {
     "id": "sub-1778344851021-846",
-    "name": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter_Guide",
-    "author": "Unknown",
+    "name": "CommandLeo 1.20 不可堆叠分类",
+    "author": "CommandLeo",
     "tags": [
         "不可堆叠分类",
         "不可堆叠相关",
         "1.20.x"
     ],
-    "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+    "description": "### 🚀 机器概览\n- **核心功能**: 将不可堆叠分类，并根据种类送入相应的容器内\n- **适用版本**: Java 1.20+\n- **投影创建者名称**: CommandLeo\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
     "folder": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter_Guide",
     "preview": "preview.webp",
     "filename": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter_Guide[不可堆叠分类].litematic",
-    "submitDate": "2026-05-09T16:40:51.021Z"
+    "submitDate": "2026-05-10T15:52:11.301Z"
 }

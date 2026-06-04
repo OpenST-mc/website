@@ -16,12 +16,13 @@
     {
         "id": "1.13＋ 6-7bit floppy解码器",
         "name": "1.13＋ 6-7bit floppy解码器",
-        "author": "Unknown",
+        "author": "Floppy",
         "tags": [
             "解码器",
-            "1.16+"
+            "1.16+",
+            "二进制"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将对应的二进制码对应，并激活\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: floppydonkeyni\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 车头左侧为左右区分，0为左，1为右",
         "preview": "/archive/1.13＋ 6-7bit floppy解码器/preview.webp",
         "filename": "1.13_6_and_7_Bit_Rail_Bud_Decoders[解码器].litematic",
         "sub_id": "sub-1778344850969-309"
@@ -29,26 +30,28 @@
     {
         "id": "1.16＋自适应均分不满盒暂存v1.2",
         "name": "1.16＋自适应均分不满盒暂存v1.2",
-        "author": "Unknown",
+        "author": "77 & vincent & in",
         "tags": [
             "其他杂物",
-            "1.16+"
+            "1.16+",
+            "不满盒临时存储",
+            "合并器相关"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 优先缓存至盒子数量少的单元能缩短搜索配对所需要的时间，该机器在缓存单元和主控都内置了计数器来实现伪均分\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: vincent20080201\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 激活指定位置解锁漏斗后输入需缓存/配对的不满盒，若缓存内无该同种盒子则自动存入，有则配对输出；\n3. 缓存容量上限为312盒(26*12)，满后会将溢出的盒子自动排出；\n4. 暂停：拉上黄色混凝土方块的拉杆以停止继续输入；\n5. 可旋转，但镜像需更换单片中大箱子的朝向\n6 输出自带碰撞体积对齐器，可直输合并器。\n\n> 注：不推荐自行扩展单元数量",
         "preview": "/archive/1.16＋自适应均分不满盒暂存v1.2/preview.webp",
         "filename": "1.16+自适应均分不满盒暂存v1.2 [盒子合并].litematic",
         "sub_id": "sub-1778344850978-107"
     },
     {
         "id": "1.18_QuadBulk_Normal_FULL_V7.2",
-        "name": "1.18_QuadBulk_Normal_FULL_V7.2",
+        "name": "1.18 四边形大宗 v7.2",
         "author": "Unknown",
         "tags": [
             "四边形大宗",
             "大宗仓库",
-            "1.16+"
+            "1.19+"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将盒子分类送进相应的单片。整体为收盒设计\n- **适用版本**: Java 1.18+\n- **投影创建者名称**: Feed_The_Vermin\n- **投影创建时间**: 2026-05-09\n- **借物表**：金合欢的盒子分类v5\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
         "preview": "/archive/1.18_QuadBulk_Normal_FULL_V7.2/preview.webp",
         "filename": "1.18_QuadBulk_Normal_FULL_V7.2[四边形大宗].litematic",
         "sub_id": "sub-1778344850981-773"
@@ -69,14 +72,14 @@
     },
     {
         "id": "16gt_MBS_77_v2.0",
-        "name": "16gt_MBS_77_v2.0",
-        "author": "Unknown",
+        "name": "16gt 多物品分类 v2.0",
+        "author": "77",
         "tags": [
-            "潜影盒分类",
+            "1.16+",
             "潜影盒分类相关",
-            "1.16+"
+            "潜影盒分类"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 以16gt的速度将盒子分类。一个片可同时对应多个被分类物品\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Beggar_Boss\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 有需要可自行扩片，每一片为2wt",
         "preview": "/archive/16gt_MBS_77_v2.0/preview.webp",
         "filename": "16gt_MBS_77_v2.0[MBS多种类潜影盒分类].litematic",
         "sub_id": "sub-1778344850986-771"
@@ -89,7 +92,7 @@
             "其他杂物",
             "1.16+"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 基于浮点矫正的水平冰道传输，速度为20bps\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Nvertd\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 在生存实装时，需对齐船的位置",
         "preview": "/archive/20bps 水平物品实体传输 by：Nvertd/preview.webp",
         "filename": "20bps 水平物品实体传输 by：Nvertd[物品传输].litematic",
         "sub_id": "sub-1778344850989-267"
@@ -101,9 +104,9 @@
         "tags": [
             "合成站",
             "生产/合成",
-            "1.16+"
+            "1.21.x"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 输入盒装原材料，并通过单选器进行选择需合成的红石原件\n- **适用版本**: Java 1.21+\n- **投影创建者名称**: 无，地图档\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 通过单选器选择需要合成的物品",
         "preview": "/archive/29_8K红石原件自动合成系统V2/preview.webp",
         "filename": "29_8K红石原件自动合成系统V2[红石合成站].zip",
         "sub_id": "sub-1778344850992-834"
@@ -138,13 +141,14 @@
     },
     {
         "id": "4bit二进制无状态解码4bit-timing-decoder-dropper-output",
-        "name": "4bit二进制无状态解码4bit-timing-decoder-dropper-output",
+        "name": "4bit二进制无状态解码（Dream解码器）",
         "author": "Unknown",
         "tags": [
             "解码器",
-            "1.16+"
+            "1.16+",
+            "二进制"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 通过qc投掷器进行解码，如果时差相同，则投掷器被激活。反之则不激活\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
         "preview": "/archive/4bit二进制无状态解码4bit-timing-decoder-dropper-output/preview.webp",
         "filename": "4bit二进制无状态解码4bit-timing-decoder-dropper-output[解码器].litematic",
         "sub_id": "sub-1778344851002-103"
@@ -158,7 +162,7 @@
             "1.16+",
             "二进制"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 时差解码，如果码正确，铁轨有1gt窗口的时间被侦测器检测。反之则常量\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
         "preview": "/archive/4位2进制解码器4BitBinaryDecoder/preview.webp",
         "filename": "4位2进制解码器4BitBinaryDecoder[解码器].litematic",
         "sub_id": "sub-1778344851007-896"
@@ -169,9 +173,12 @@
         "author": "Trice",
         "tags": [
             "其他杂物",
-            "1.16+"
+            "1.16+",
+            "编码大宗",
+            "编码四边形大宗",
+            "编码大宗仓库"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将仓库与取货分离，通过编好的码进行请求\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Trice054\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 使用时可自由扩片\n\n> 本机器需搭配远程大宗使用",
         "preview": "/archive/4线四边形大宗/preview.webp",
         "filename": "4line_quad_bulk_final[编码相关][远程大宗].litematic",
         "sub_id": "sub-1778344851004-415"
@@ -193,13 +200,14 @@
     },
     {
         "id": "6bit 6code二进制移位寄存器shift_register_6bit_6codes",
-        "name": "6bit 6code二进制移位寄存器shift_register_6bit_6codes",
-        "author": "Unknown",
+        "name": "6bit 6code二进制移位寄存器",
+        "author": "Obi",
         "tags": [
             "其他杂物",
-            "1.16+"
+            "1.16+",
+            "其他组件"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将输入的二进制码暂存，后续再输出。最大可暂存6个码\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Obi0081_\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
         "preview": "/archive/6bit 6code二进制移位寄存器shift_register_6bit_6codes/preview.webp",
         "filename": "6bit 6code二进制移位寄存器shift_register_6bit_6codes[编码相关].litematic",
         "sub_id": "sub-1778344851009-329"
@@ -211,9 +219,9 @@
         "tags": [
             "不可堆叠分类",
             "不可堆叠相关",
-            "1.16+"
+            "1.20.x"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将不可堆叠分类，并根据种类送入相应的容器内\n- **适用版本**: Java 1.20+\n- **投影创建者名称**: Beggar_boss\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
         "preview": "/archive/77_不可堆叠分类v3.0/preview.webp",
         "filename": "77_不可堆叠分类v3.0[不可堆叠分类].litematic",
         "sub_id": "sub-1778344851012-814"
@@ -290,84 +298,50 @@
         "sub_id": "sub-1772730841971"
     },
     {
-        "id": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter",
-        "name": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter",
-        "author": "Unknown",
-        "tags": [
-            "不可堆叠分类",
-            "不可堆叠相关",
-            "1.20.x"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter/preview.webp",
-        "filename": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter[不可堆叠分类].litematic",
-        "sub_id": "sub-1778344851018-38"
-    },
-    {
         "id": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter_Guide",
-        "name": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter_Guide",
-        "author": "Unknown",
+        "name": "CommandLeo 1.20 不可堆叠分类",
+        "author": "CommandLeo",
         "tags": [
             "不可堆叠分类",
             "不可堆叠相关",
             "1.20.x"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将不可堆叠分类，并根据种类送入相应的容器内\n- **适用版本**: Java 1.20+\n- **投影创建者名称**: CommandLeo\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
         "preview": "/archive/CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter_Guide/preview.webp",
         "filename": "CommandLeo_1.20_Ultimate_FHL_Unstackable_Sorter_Guide[不可堆叠分类].litematic",
         "sub_id": "sub-1778344851021-846"
     },
     {
         "id": "Elk_Remote_Bulk",
-        "name": "Elk_Remote_Bulk",
-        "author": "Unknown",
+        "name": "Elk 远程大宗",
+        "author": "麋鹿",
         "tags": [
             "其他杂物",
-            "1.16+"
+            "1.16+",
+            "编码大宗仓库",
+            "编码大宗",
+            "远程大宗"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 一个双线程的二进制远程大宗，计时54个物品后上锁，支持四边形输出。不支持分组输入\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Skmiro\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 输出需搭配大宗近端使用，输入时需搭配编码器使用",
         "preview": "/archive/Elk_Remote_Bulk/preview.webp",
         "filename": "Elk_Remote_Bulk[编码相关][远程大宗].litematic",
         "sub_id": "sub-1778344851023-355"
     },
     {
         "id": "Encoded Bulk v1.1 by linchien26",
-        "name": "Encoded Bulk v1.1 by linchien26",
-        "author": "linchien26",
+        "name": "远程大宗 v1.1 by linchien26",
+        "author": "林间",
         "tags": [
             "其他杂物",
-            "1.16+"
+            "1.16+",
+            "编码大宗",
+            "远程大宗",
+            "编码大宗仓库"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 单线程的远程大宗，计数器计数54个物品后上锁。支持四边形输出，修改后可支持分组输入\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: linchien26\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 使用时**必须**搭配线程优先级，大宗近端，编码器使用",
         "preview": "/archive/Encoded Bulk v1.1 by linchien26/preview.webp",
         "filename": "Encoded Bulk v1.1 by linchien26[编码相关][远程大宗].litematic",
         "sub_id": "sub-1778344851026-304"
-    },
-    {
-        "id": "LessNoisy MIS",
-        "name": "LessNoisy MIS",
-        "author": "Unknown",
-        "tags": [
-            "其他杂物",
-            "1.16+"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/LessNoisy MIS/preview.webp",
-        "filename": "LessNoisyMIS[MIS多物品分类].litematic",
-        "sub_id": "sub-1778344851041-440"
-    },
-    {
-        "id": "luckeY MS",
-        "name": "luckeY MS",
-        "author": "Unknown",
-        "tags": [
-            "仓库成品",
-            "1.16+"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/luckeY MS/preview.webp",
-        "filename": "MS001_luckeY_Main_Storage[[仓库成品]].litematic",
-        "sub_id": "sub-1778344851046-949"
     },
     {
         "id": "Ners自解锁潜影盒分类",
@@ -401,68 +375,43 @@
     {
         "id": "PyraLeft 1.20 不可堆叠分类",
         "name": "PyraLeft 1.20 不可堆叠分类",
-        "author": "Unknown",
+        "author": "PyraLeft",
         "tags": [
             "不可堆叠分类",
             "不可堆叠相关",
             "1.20.x"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将不可堆叠分类，并根据种类送入相应的容器内\n- **适用版本**: Java 1.20+\n- **投影创建者名称**: PyraLeft \n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n",
         "preview": "/archive/PyraLeft 1.20 不可堆叠分类/preview.webp",
         "filename": "PyraLeft_1.20_Unstackable_Sorter_FHL(1)[不可堆叠分类].litematic",
         "sub_id": "sub-1778344851072-585"
     },
     {
         "id": "PyraLeft_TIS_3w",
-        "name": "PyraLeft_TIS_3w",
-        "author": "Unknown",
+        "name": "PyraLeft TIS 全物品单片",
+        "author": "PyraLeft",
         "tags": [
             "全物品单片",
-            "1.16+"
+            "1.16+",
+            "10箱单片"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将物品通过分类器输入进箱子内，分类器为8-10gt混用\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: PyraLeft\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 底箱属于主动漏斗，需填充至少66+24个物品",
         "preview": "/archive/PyraLeft_TIS_3w/preview.webp",
         "filename": "PyraLeft_TIS_3w[全物品单片].litematic",
         "sub_id": "sub-1778344851075-792"
     },
     {
-        "id": "remote_bulk_final",
-        "name": "remote_bulk_final",
-        "author": "Unknown",
-        "tags": [
-            "其他杂物",
-            "1.16+"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/remote_bulk_final/preview.webp",
-        "filename": "remote_bulk_final[编码相关][远程大宗].litematic",
-        "sub_id": "sub-1778344851077-877"
-    },
-    {
         "id": "SBCL_NE-Kahyxen",
-        "name": "SBCL_NE-Kahyxen",
-        "author": "Unknown",
+        "name": "地狱门加载器 - by Kahyxen",
+        "author": "Kahyxen",
         "tags": [
             "地狱门加载器",
             "1.16+"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 加载地狱门自身区块为中心5*5的区块\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Kahyxen\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 需填充一个物品",
         "preview": "/archive/SBCL_NE-Kahyxen/preview.webp",
         "filename": "SBCL_NE-Kahyxen[地狱门加载器].litematic",
         "sub_id": "sub-1778344851080-537"
-    },
-    {
-        "id": "stolen_smol_transcoder",
-        "name": "stolen_smol_transcoder",
-        "author": "Unknown",
-        "tags": [
-            "其他杂物",
-            "1.16+"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/stolen_smol_transcoder/preview.webp",
-        "filename": "stolen_smol_transcoder[编码相关].litematic",
-        "sub_id": "sub-1778344851083-317"
     },
     {
         "id": "Tom自出盒细雪展示",
@@ -481,16 +430,76 @@
     },
     {
         "id": "Variable Filter V2.1b-r4",
-        "name": "Variable Filter V2.1b-r4",
-        "author": "Unknown",
+        "name": "自适应打包机 V2.1b-r4",
+        "author": "Andrews54757",
         "tags": [
             "潜影盒打包机",
-            "1.16+"
+            "1.16+",
+            "自适应打包"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 自适应分类打包，一段时间内无任何输入将自动下漏分类物，后打盒\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Andrews54757\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
         "preview": "/archive/Variable Filter V2.1b-r4/preview.webp",
         "filename": "Variable Filter V2.1b-r4[打包机][自适应打包机].zip",
         "sub_id": "sub-1778344851090-192"
+    },
+    {
+        "id": "YAMS V2.3 MB 1.20",
+        "name": "YAMS V2.3 大宗版本",
+        "author": "skyzy & Passionate Storage Techer 69 & TPS Nighthunter",
+        "tags": [
+            "仓库成品",
+            "1.20.x",
+            "全物品仓库"
+        ],
+        "description": "### 🚀 机器概览\n- **核心功能**: \n  - 将mc生存可获得的所有物品全部分类。仓库基于杂盒流程，拥有低卡顿，效率优秀等特点（144000物品/h）\n  - 大宗拥有150w的储量\n  - 100%锁漏斗\n  - 所有的分类器都可访问\n  - 区块加载失败检测器\n  - 友好的耗材（78493个方块）\n  - 其他生存实用组件\n\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Etikle\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 使用时，切记注意勿卸载区块",
+        "preview": "/archive/YAMS V2.3 MB 1.20/preview.webp",
+        "filename": "YAMS V2.3 MB 1.20[仓库成品].litematic",
+        "sub_id": "sub-1778344851100-809"
+    },
+    {
+        "id": "luckeY MS",
+        "name": "luckeY 全物品",
+        "author": "Kendiii",
+        "tags": [
+            "仓库成品",
+            "1.20.x",
+            "全物品仓库"
+        ],
+        "description": "### 🚀 机器概览\n- **核心功能**: \n  - 为匈牙利主播 luckeY 设计的全物品系统，将mc生存可获得的所有物品全部分类。\n  - 杂盒流程\n  - 85%锁漏斗\n  - 小宗系统\n  - 其他生存实用组件\n  - 少材料（61831个方块）+ 高效率（144000物品/h）\n- **适用版本**: Java 1.20+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 如果输入的盒子数量过多，盒子可能会消失。\n3. 无溢出保护。如果输入的物品过多或箱子已满，物品可能会消失。",
+        "preview": "/archive/luckeY MS/preview.webp",
+        "filename": "MS001_luckeY_Main_Storage[[仓库成品]].litematic",
+        "sub_id": "sub-1778344851046-949"
+    },
+    {
+        "id": "remote_bulk_final",
+        "name": "远程大宗final",
+        "author": "Trice",
+        "tags": [
+            "其他杂物",
+            "1.16+",
+            "编码大宗仓库",
+            "远程大宗",
+            "编码大宗"
+        ],
+        "description": "### 🚀 机器概览\n- **核心功能**: 一个双线程的二进制远程大宗，计时54个物品后上锁，支持四边形输出。不支持分组输入\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Trice054\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 输出需搭配大宗近端使用，输入时需搭配编码器使用",
+        "preview": "/archive/remote_bulk_final/preview.webp",
+        "filename": "remote_bulk_final[编码相关][远程大宗].litematic",
+        "sub_id": "sub-1778344851077-877"
+    },
+    {
+        "id": "stolen_smol_transcoder",
+        "name": "二进制车头（转码器）",
+        "author": "in",
+        "tags": [
+            "其他杂物",
+            "1.16+",
+            "解码器",
+            "二进制"
+        ],
+        "description": "### 🚀 机器概览\n- **核心功能**: 手动输入码后转成解码器能解码的二进制输入\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: ionstrin\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
+        "preview": "/archive/stolen_smol_transcoder/preview.webp",
+        "filename": "stolen_smol_transcoder[编码相关].litematic",
+        "sub_id": "sub-1778344851083-317"
     },
     {
         "id": "wreg初代自适应不满盒暂存",
@@ -507,53 +516,27 @@
         "sub_id": "sub-1772665684250"
     },
     {
-        "id": "YAMS V2.3 MB 1.20",
-        "name": "YAMS V2.3 MB 1.20",
-        "author": "Unknown",
-        "tags": [
-            "仓库成品",
-            "1.20.x"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/YAMS V2.3 MB 1.20/preview.webp",
-        "filename": "YAMS V2.3 MB 1.20[仓库成品].litematic",
-        "sub_id": "sub-1778344851100-809"
-    },
-    {
         "id": "【无实体地狱门加载器 主世界】",
-        "name": "【无实体地狱门加载器 主世界】",
+        "name": "无实体地狱门加载器",
         "author": "Unknown",
         "tags": [
             "地狱门加载器",
             "1.16+"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 加载地狱门自身区块为中心5*5的区块\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n> 注：压缩包内含有地狱，主世界端的投影",
         "preview": "/archive/【无实体地狱门加载器 主世界】/preview.webp",
-        "filename": "【无实体地狱门加载器 主世界】[地狱门加载器].litematic",
+        "filename": "无实体地狱门加载器.zip",
         "sub_id": "sub-1778344851122-131"
     },
     {
-        "id": "【无实体地狱门加载器 地狱】",
-        "name": "【无实体地狱门加载器 地狱】",
-        "author": "Unknown",
-        "tags": [
-            "地狱门加载器",
-            "1.16+"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/【无实体地狱门加载器 地狱】/preview.webp",
-        "filename": "【无实体地狱门加载器 地狱】[地狱门加载器].litematic",
-        "sub_id": "sub-1778344851125-399"
-    },
-    {
         "id": "【无延迟强模信号传输】",
-        "name": "【无延迟强模信号传输】",
+        "name": "无延迟强模信号传输",
         "author": "Unknown",
         "tags": [
             "其他杂物",
             "1.16+"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将强模信号（大于15的信号）无延迟的传输\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
         "preview": "/archive/【无延迟强模信号传输】/preview.webp",
         "filename": "【无延迟强模信号传输】[编码相关].litematic",
         "sub_id": "sub-1778344851127-192"
@@ -564,9 +547,11 @@
         "author": "Unknown",
         "tags": [
             "潜影盒展示",
-            "1.16+"
+            "1.16+",
+            "无残留展示",
+            "自出盒展示"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 自喷盒，无残留，水道收盒的一个盒子展示。取空后自动补盒。箱子从空到有盒子后自动放置盒子\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 需搭配大宗使用",
         "preview": "/archive/三水无残留自出潜影盒展示/preview.webp",
         "filename": "三水无残留自出潜影盒展示[潜影盒展示].litematic",
         "sub_id": "sub-1778344851129-167"
@@ -588,12 +573,13 @@
     {
         "id": "全局重置自适应打包机 v4.4",
         "name": "全局重置自适应打包机 v4.4",
-        "author": "Unknown",
+        "author": "HEIlZMaker，vltir，JayRoi，Floppy，Maidofmoss，eirik",
         "tags": [
             "潜影盒打包机",
-            "1.16+"
+            "1.16+",
+            "自适应打包"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 自适应分类，有物品的时候分类从ss1变成ss2，当长时间无物品输入后全局从ss2降至ss1，直至所有打包机无分类物为止自动打盒\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n> 注：本机器单片可2wt堆叠，本身伪1wt",
         "preview": "/archive/全局重置自适应打包机 v4.4/preview.webp",
         "filename": "Global reset variable loader 4.4[打包机][自适应打包机].litematic",
         "sub_id": "sub-1778344851036-569"
@@ -606,59 +592,33 @@
             "地狱门加载器",
             "1.16+"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 加载地狱门自身区块为中心5*5的区块\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n",
         "preview": "/archive/全锁南瓜加载器/preview.webp",
         "filename": "全锁南瓜加载器[地狱门加载器].litematic",
         "sub_id": "sub-1778344851132-2"
     },
     {
         "id": "全锁无实体输入 1.12",
-        "name": "全锁无实体输入 1.12",
+        "name": "全锁无实体输入系列",
         "author": "Unknown",
         "tags": [
             "无实体输入",
             "1.16+"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 输入以盒子输出，盒子输入箱放入非盒物品，会提取出来并进行混杂打包，进入散货盒子出口。\n- **适用版本**: Java 1.12-1.18+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 文件夹内包含了1.12，1.17，1.18+的设计，按需选择",
         "preview": "/archive/全锁无实体输入 1.12/preview.webp",
-        "filename": "Fully_Locked_Storage_Input_System_1.12[SIS无实体输入].litematic",
+        "filename": "SIS无实体输入系列.zip",
         "sub_id": "sub-1778344851029-716"
-    },
-    {
-        "id": "全锁无实体输入 1.17＋",
-        "name": "全锁无实体输入 1.17＋",
-        "author": "Unknown",
-        "tags": [
-            "无实体输入",
-            "1.17+"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.17+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/全锁无实体输入 1.17＋/preview.webp",
-        "filename": "Fully_Locked_Storage_Input_System_1.17[SIS无实体输入].litematic",
-        "sub_id": "sub-1778344851031-625"
-    },
-    {
-        "id": "全锁无实体输入 1.18",
-        "name": "全锁无实体输入 1.18",
-        "author": "Unknown",
-        "tags": [
-            "无实体输入",
-            "1.16+"
-        ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
-        "preview": "/archive/全锁无实体输入 1.18/preview.webp",
-        "filename": "Fully_Locked_Storage_Input_System_1.18[SIS无实体输入].litematic",
-        "sub_id": "sub-1778344851034-913"
     },
     {
         "id": "全锁预分类整流器",
         "name": "全锁预分类整流器",
-        "author": "Unknown",
+        "author": "wreg",
         "tags": [
             "整流器",
             "1.16+"
         ],
-        "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+        "description": "### 🚀 机器概览\n- **核心功能**: 将物品以漏斗速的方式输出至全物品单片内，做到基本无溢出。内置不可堆叠分离\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: wregR\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 处理16堆叠物品时可能导致输出有些许bug，但不影响正常运行",
         "preview": "/archive/全锁预分类整流器/preview.webp",
         "filename": "全锁预分类整流器[整流器].litematic",
         "sub_id": "sub-1778344851134-754"

@@ -1,14 +1,15 @@
 {
     "id": "sub-1778344851009-329",
-    "name": "6bit 6code二进制移位寄存器shift_register_6bit_6codes",
-    "author": "Unknown",
+    "name": "6bit 6code二进制移位寄存器",
+    "author": "Obi",
     "tags": [
         "其他杂物",
-        "1.16+"
+        "1.16+",
+        "其他组件"
     ],
-    "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+    "description": "### 🚀 机器概览\n- **核心功能**: 将输入的二进制码暂存，后续再输出。最大可暂存6个码\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Obi0081_\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
     "folder": "6bit 6code二进制移位寄存器shift_register_6bit_6codes",
     "preview": "preview.webp",
     "filename": "6bit 6code二进制移位寄存器shift_register_6bit_6codes[编码相关].litematic",
-    "submitDate": "2026-05-09T16:40:51.009Z"
+    "submitDate": "2026-05-10T15:34:35.788Z"
 }

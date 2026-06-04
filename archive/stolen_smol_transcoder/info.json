@@ -1,14 +1,16 @@
 {
     "id": "sub-1778344851083-317",
-    "name": "stolen_smol_transcoder",
-    "author": "Unknown",
+    "name": "二进制车头（转码器）",
+    "author": "in",
     "tags": [
         "其他杂物",
-        "1.16+"
+        "1.16+",
+        "解码器",
+        "二进制"
     ],
-    "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+    "description": "### 🚀 机器概览\n- **核心功能**: 手动输入码后转成解码器能解码的二进制输入\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: ionstrin\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
     "folder": "stolen_smol_transcoder",
     "preview": "preview.webp",
     "filename": "stolen_smol_transcoder[编码相关].litematic",
-    "submitDate": "2026-05-09T16:40:51.083Z"
+    "submitDate": "2026-05-10T16:51:42.114Z"
 }

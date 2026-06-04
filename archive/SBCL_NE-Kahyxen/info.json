@@ -1,14 +1,14 @@
 {
     "id": "sub-1778344851080-537",
-    "name": "SBCL_NE-Kahyxen",
-    "author": "Unknown",
+    "name": "地狱门加载器 - by Kahyxen",
+    "author": "Kahyxen",
     "tags": [
         "地狱门加载器",
         "1.16+"
     ],
-    "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+    "description": "### 🚀 机器概览\n- **核心功能**: 加载地狱门自身区块为中心5*5的区块\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Kahyxen\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 需填充一个物品",
     "folder": "SBCL_NE-Kahyxen",
     "preview": "preview.webp",
     "filename": "SBCL_NE-Kahyxen[地狱门加载器].litematic",
-    "submitDate": "2026-05-09T16:40:51.080Z"
+    "submitDate": "2026-05-10T16:17:01.998Z"
 }

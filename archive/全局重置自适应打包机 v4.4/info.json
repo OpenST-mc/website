@@ -1,14 +1,15 @@
 {
     "id": "sub-1778344851036-569",
     "name": "全局重置自适应打包机 v4.4",
-    "author": "Unknown",
+    "author": "HEIlZMaker，vltir，JayRoi，Floppy，Maidofmoss，eirik",
     "tags": [
         "潜影盒打包机",
-        "1.16+"
+        "1.16+",
+        "自适应打包"
     ],
-    "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+    "description": "### 🚀 机器概览\n- **核心功能**: 自适应分类，有物品的时候分类从ss1变成ss2，当长时间无物品输入后全局从ss2降至ss1，直至所有打包机无分类物为止自动打盒\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n> 注：本机器单片可2wt堆叠，本身伪1wt",
     "folder": "全局重置自适应打包机 v4.4",
     "preview": "preview.webp",
     "filename": "Global reset variable loader 4.4[打包机][自适应打包机].litematic",
-    "submitDate": "2026-05-09T16:40:51.036Z"
+    "submitDate": "2026-05-10T18:18:37.672Z"
 }

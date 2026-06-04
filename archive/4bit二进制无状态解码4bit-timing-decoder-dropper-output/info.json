@@ -1,14 +1,15 @@
 {
     "id": "sub-1778344851002-103",
-    "name": "4bit二进制无状态解码4bit-timing-decoder-dropper-output",
+    "name": "4bit二进制无状态解码（Dream解码器）",
     "author": "Unknown",
     "tags": [
         "解码器",
-        "1.16+"
+        "1.16+",
+        "二进制"
     ],
-    "description": "### 🚀 机器概览\n- **核心功能**: 未知\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。\n2. 机器介绍：未知",
+    "description": "### 🚀 机器概览\n- **核心功能**: 通过qc投掷器进行解码，如果时差相同，则投掷器被激活。反之则不激活\n- **适用版本**: Java 1.16+\n- **投影创建者名称**: Unknown\n- **投影创建时间**: 2026-05-09\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装。",
     "folder": "4bit二进制无状态解码4bit-timing-decoder-dropper-output",
     "preview": "preview.webp",
     "filename": "4bit二进制无状态解码4bit-timing-decoder-dropper-output[解码器].litematic",
-    "submitDate": "2026-05-09T16:40:51.002Z"
+    "submitDate": "2026-05-10T15:26:37.859Z"
 }

@@ -24,6 +24,9 @@ OpenST的官方网站
 git clone https://github.com/OpenST-mc/website.git
 ```  
 ```bash
+cd website
+```
+```bash
 npm install
 ```
 
