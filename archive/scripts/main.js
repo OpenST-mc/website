@@ -284,11 +284,10 @@ const AppOptions = {
         // 2. 统一身份校验
         await this.checkIdentity();
 
-        // 3. 数据并行加载 (路径改回原版的 ./ 确保文件能找到)
         try {
             const [dataRes, dictRes] = await Promise.all([
-                fetch('./data/database.json'), // 还原为 ./
-                fetch('./Traditional-Simplefild/STCharacters.txt') // 还原为 ./
+                fetch('archive/data/database.json'),
+                fetch('./Traditional-Simplefild/STCharacters.txt')
             ]);
 
             // 解析字典
