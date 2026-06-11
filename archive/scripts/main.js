@@ -4,7 +4,7 @@ import { TAG_CONFIG, CATEGORIES } from './config.js';
 import { PortalAuth } from '../../auth/auth.js';
 
 const { createApp } = Vue;
-const WORKER_URL = 'https://openstsubmission.linvin.net';
+const WORKER_URL = 'https://api.openstmc.com';
 
 // 懒加载指令
 const lazyDirective = {
