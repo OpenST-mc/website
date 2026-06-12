@@ -238,14 +238,19 @@
                 const res = await fetch('../data/database.json');
                 const database = await res.json();
                 const item = database.find(i => i.id === folder);
-                if (item) this.editForm = JSON.parse(JSON.stringify(item));
-                if (!this.editForm.folder) {
-                    this.editForm.folder = item.folder || item.id || folderName;
-                console.log("✅ 加载成功，当前操作目录:", this.editForm.folder);
-            } else {
-                    console.warn("⚠️ 在数据库中未找到该稿件:", folderName);
+
+                if (item) {
+                    this.editForm = JSON.parse(JSON.stringify(item));
+                    if (!this.editForm.folder) {
+                        this.editForm.folder = item.folder || item.id || folder;
+                    }
+                    console.log("✅ 加载成功，当前操作目录:", this.editForm.folder);
+                } else {
+                    console.warn("⚠️ 在数据库中未找到该稿件:", folder);
                 }
-            } catch (e) { console.error("Load failed", e); }
+            } catch (e) {
+                console.error("Load failed", e);
+            }
         },
         methods: {
             toggleTag(tag) {
@@ -258,13 +263,15 @@
                 console.log("当前稿件文件夹:", this.editForm.folder);
                 const file = e.target.files[0];
                 if (!file) return;
+
                 const reader = new FileReader();
-                reader.onload = (ev) => { this.localPreviewUrl = ev.target.result; };
                 reader.readAsDataURL(file);
+
                 const auth = JSON.parse(localStorage.getItem('gh_auth'));
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('folder', this.editForm.folder);
+
                 this.isUploadingPreview = true;
                 try {
                     const res = await fetch(`${this.WORKER_URL}/api/admin/update-preview`, {
@@ -287,23 +294,22 @@
                 }
             },
 
-            // 文件更换逻辑
-            async handleFileChange(e) {
+            async handleLitematicChange(e) {
                 const file = e.target.files[0];
                 if (!file) return;
-                const allowedExts = ['.litematic', '.zip', '.rar',];
+                const allowedExts = ['.litematic', '.zip', '.rar'];
                 const isAllowed = allowedExts.some(ext => file.name.toLowerCase().endsWith(ext));
                 if (!isAllowed) {
                     return alert(`目前只支持以下格式: ${allowedExts.join(', ')}`);
                 }
                 if (!confirm(`确定要替换资源文件为: ${file.name}?`)) return;
 
-                this.isUploadingFile = true;
+                this.isUploadingLitematic = true;
                 try {
                     const auth = JSON.parse(localStorage.getItem('gh_auth'));
                     const formData = new FormData();
                     formData.append('file', file);
-                    formData.append('folder', this.editForm.id); // 这里的 id 就是文件夹名
+                    formData.append('folder', this.editForm.id);
 
                     const res = await fetch(`${this.WORKER_URL}/api/admin/replace-litematic`, {
                         method: 'POST',
@@ -322,7 +328,7 @@
                     console.error(e);
                     alert("❌ 网络错误，请检查控制台");
                 } finally {
-                    this.isUploadingFile = false;
+                    this.isUploadingLitematic = false;
                 }
             },
 
