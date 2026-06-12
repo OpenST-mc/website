@@ -199,7 +199,7 @@ const UploadApp = {
                 fd.append('zip', zipBlob, `submission_${safeFolderName}.zip`);
                 fd.append('preview', this.form.previewFile);
 
-                const workerRes = await fetch(`${WORKER_URL}/api/wiki/submit-archive`, { method: 'POST', body: fd });
+                const workerRes = await fetch(WORKER_URL, { method: 'POST', body: fd });
                 if (!workerRes.ok) throw new Error('Worker 文件中继失败');
 
                 const { filePath } = await workerRes.json();
