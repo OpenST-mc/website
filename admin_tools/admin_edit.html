@@ -203,6 +203,7 @@
                 isUploadingPreview: false,
                 isUploadingLitematic: false,
                 TAG_CONFIG,
+                localPreviewUrl: '',
                 editForm: {
                     id: '',
                     sub_id: '',
@@ -224,9 +225,17 @@
                 return marked.parse(this.editForm.description || '_等待输入内容..._');
             },
             currentPreviewUrl() {
+                // 如果有刚选择的本地图片，优先展示本地预览
+                if (this.localPreviewUrl) return this.localPreviewUrl;
                 if (!this.editForm.preview) return '';
                 if (this.editForm.preview.startsWith('data:image')) return this.editForm.preview;
-                const rawPath = decodeURIComponent(this.editForm.preview);
+
+                let rawPath = decodeURIComponent(this.editForm.preview);
+                if (!rawPath.includes('/')) {
+                    const currentFolder = this.editForm.folder || this.editForm.id;
+                    rawPath = `archive/${currentFolder}/${rawPath}`;
+                }
+
                 const safePath = rawPath.split('/').map(s => encodeURIComponent(s)).join('/');
                 return `https://cdn.jsdmirror.com/gh/OpenST-mc/website@main/${safePath}`;
             }
@@ -246,7 +255,10 @@
                     }
                     console.log("✅ 加载成功，当前操作目录:", this.editForm.folder);
                 } else {
-                    console.warn("⚠️ 在数据库中未找到该稿件:", folder);
+                    // 容错处理：如果数据库暂未收录该文件夹，允许基于 URL 参数建立基础表单
+                    this.editForm.id = folder;
+                    this.editForm.folder = folder;
+                    console.warn("⚠️ 在数据库中未找到该稿件，已自动初始化目录参数:", folder);
                 }
             } catch (e) {
                 console.error("Load failed", e);
@@ -260,17 +272,14 @@
 
             // 更换预览图
             async handlePreviewChange(e) {
-                console.log("当前稿件文件夹:", this.editForm.folder);
                 const file = e.target.files[0];
                 if (!file) return;
-
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
+                this.localPreviewUrl = URL.createObjectURL(file);
 
                 const auth = JSON.parse(localStorage.getItem('gh_auth'));
                 const formData = new FormData();
                 formData.append('file', file);
-                formData.append('folder', this.editForm.folder);
+                formData.append('folder', this.editForm.folder || this.editForm.id);
 
                 this.isUploadingPreview = true;
                 try {
@@ -279,21 +288,25 @@
                         headers: { 'Authorization': `Bearer ${auth?.token}` },
                         body: formData
                     });
+
                     if (res.ok) {
-                        const data = await res.json();
-                        this.editForm.preview = data.newName;
-                        alert("✅ 预览图更新成功");
+                        const ext = file.name.split('.').pop() || 'png';
+                        this.editForm.preview = `preview.${ext}`;
+                        alert("✅ 预览图同步成功");
                     } else {
-                        alert("❌ 上传失败，请检查登录状态");
+                        this.localPreviewUrl = '';
+                        alert("❌ 上传失败，请检查管理登录状态");
                     }
                 } catch (e) {
                     console.error(e);
-                    alert("❌ 网络错误");
+                    this.localPreviewUrl = '';
+                    alert("❌ 网络错误，无法连接到服务器");
                 } finally {
                     this.isUploadingPreview = false;
                 }
             },
 
+            // 文件更换逻辑
             async handleLitematicChange(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -319,7 +332,7 @@
 
                     if (res.ok) {
                         this.editForm.filename = file.name;
-                        alert("✅ 资源文件已成功替换");
+                        alert("✅ 资源文件替换成功");
                     } else {
                         const error = await res.text();
                         alert(`❌ 替换失败: ${error}`);
@@ -334,7 +347,7 @@
 
             // 删除稿件
             async handleDeleteArchive() {
-                const confirmID = prompt(`⚠️ 危险操作：此操作将永久删除该存档！\n请输入该存档 ID [ ${this.editForm.id} ] 以确认：`);
+                const confirmID = prompt(`⚠️ 危险操作：此操作将从 GitHub 中永久删除该稿件！\n请输入该稿件 ID [ ${this.editForm.id} ] 以确认：`);
                 if (confirmID !== this.editForm.id) {
                     if (confirmID !== null) alert("❌ ID 输入错误");
                     return;
@@ -350,13 +363,13 @@
                         body: JSON.stringify({ folder: this.editForm.id })
                     });
                     if (res.ok) {
-                        alert("🗑️ 稿件已彻底删除");
+                        alert("🗑️ 稿件已彻底彻底删除");
                         window.location.href = '../archive/index.html';
                     } else alert("❌ 删除失败");
                 } catch (e) { alert("❌ 请求错误"); }
             },
 
-            // 原有保存逻辑
+            // 统一元数据保存
             async submitSave() {
                 if (this.isSaving) return;
                 const raw = localStorage.getItem('gh_auth');
@@ -390,10 +403,10 @@
                         body: JSON.stringify({ folder: source.id, newInfo: finalInfoJson })
                     });
                     if (res.ok) {
-                        alert("✅ 信息修改成功！");
+                        alert("✅ 存档元数据同步成功！");
                         window.location.href = '../archive/index.html';
-                    } else alert("❌ 提交失败");
-                } catch (e) { alert("❌ 网络错误"); }
+                    } else alert("❌ 提交修改失败");
+                } catch (e) { alert("❌ 网络异常"); }
                 finally { this.isSaving = false; }
             }
         }
