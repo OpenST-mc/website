@@ -157,9 +157,8 @@ const AppOptions = {
         // 编辑跳转逻辑
         openEdit(item) {
             if (!item || !item.id) return;
-            const folder = item.id.trim();
-            // 确保跳转到 admin_tools 目录下的编辑器
-            window.location.href = `../../admin_tools/admin_edit.html`;
+            const folder = encodeURIComponent(item.id.trim());
+            window.location.href = `../../admin_tools/admin_edit.html?folder=${folder}`;
         },
 
         // 详情页控制
