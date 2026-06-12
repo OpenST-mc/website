@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '..');
 
-const ARCHIVE_DIR = path.join(root, 'archive');
+const ARCHIVE_DIR = path.join(root, 'archive/archive');
 const OUTPUT_FILE = path.join(root, 'data/database.json');
 
 // 支持的原始图片格式优先顺序
