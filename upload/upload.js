@@ -199,7 +199,7 @@ const UploadApp = {
                 fd.append('zip', zipBlob, `submission_${safeFolderName}.zip`);
                 fd.append('preview', this.form.previewFile);
 
-                const workerRes = await fetch(`${WORKER_URL}/api/archive-upload/?v=${Date.now()}`, {
+                const workerRes = await fetch(`${WORKER_URL}/api/archive-upload`, {
                     method: 'POST',
                     body: fd
                 });
