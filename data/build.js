@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '..');
 
 const ARCHIVE_DIR = path.join(root, 'archive/archive');
-const OUTPUT_FILE = path.join(root, 'data/database.json');
+const OUTPUT_FILE = path.join(root, 'archive/data/database.json');
 
 // 支持的原始图片格式优先顺序
 const SUPPORTED_IMG_EXTS = ['.png', '.jpg', '.jpeg','.webp',];
