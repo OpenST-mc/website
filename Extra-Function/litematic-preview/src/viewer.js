@@ -259,6 +259,18 @@ class LitematicEngine {
     if (joystick) {
       joystick.style.display = 'block';
     }
+
+    // 移动端显示触控提示，首次触摸后消失
+    var hints = document.getElementById('touch-hints');
+    if (hints && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+      hints.classList.remove('hidden');
+      var hideHints = function() {
+        hints.style.opacity = '0';
+        setTimeout(function() { hints.classList.add('hidden'); }, 500);
+        document.removeEventListener('touchstart', hideHints);
+      };
+      document.addEventListener('touchstart', hideHints, { once: true });
+    }
   }
 
   render = () => {

@@ -120,6 +120,40 @@
         #joystick-zone, #vertical-controls button {
             pointer-events: auto;
         }
+
+        /* 移动端操作提示 */
+        #touch-hints {
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        #touch-hints .hint-zone {
+            position: absolute;
+            top: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #touch-hints .hint-left {
+            left: 0; width: 40%;
+            background: linear-gradient(90deg, rgba(64,181,173,0.12) 0%, transparent 100%);
+        }
+        #touch-hints .hint-right {
+            right: 0; width: 60%;
+            background: linear-gradient(270deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+        }
+        #touch-hints .hint-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            pointer-events: none;
+        }
+        #touch-hints .hint-icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.6;
+        }
     </style>
 </head>
 
@@ -127,6 +161,22 @@
 <div class="top-bar"></div>
 
 <div id="viewer"></div>
+
+<!-- 移动端触控提示 -->
+<div id="touch-hints" class="fixed inset-0 z-[190] hidden">
+    <div class="hint-zone hint-left">
+        <div class="hint-text">
+            <span class="hint-icon material-icons">swipe</span>
+            拖拽移动
+        </div>
+    </div>
+    <div class="hint-zone hint-right">
+        <div class="hint-text">
+            <span class="hint-icon material-icons">rotate_right</span>
+            拖拽旋转
+        </div>
+    </div>
+</div>
 
 
 <div id="mobile-joystick" class="fixed inset-0 z-[200] lg:hidden select-none touch-none">
