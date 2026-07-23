@@ -55,54 +55,51 @@ function readLitematicFromNBTData(nbtdata) {
 }
 
 function processNBTRegionData(regionData, nbits, width, height, depth) {
-  // Function to take the raw array and convert it into a 3D array
-  // The raw data is a list of nbits-wide numbers all packed together into a single array of 64-bit* ints
-  // I ripped off some python code for this, can't remember where from.
-  // (* of course this is javascript so each int is split into an array fo 2 32-bit ints)
-  
-  mask = (1 << nbits) - 1;
-  
-  y_shift = Math.abs(width * depth);
-  z_shift = Math.abs(width);
-  var blocks = new Array();
-  for (let x=0; x < Math.abs(width); x++) {
-    blocks[x] = new Array();
-    for (let y=0; y < Math.abs(height); y++) {
-      blocks[x][y] = new Array();
-      for (let z=0; z < Math.abs(depth); z++) {
-        
-        index = y * y_shift + z * z_shift + x;
-        
-        start_offset = index * nbits;
-        
-        start_arr_index = start_offset >>> 5; /// divide by 32
-        end_arr_index = ((index + 1) * nbits - 1) >>> 5;
-        start_bit_offset = start_offset & 0x1F; // % 32
-        
-        // This bit here is to handle the fact that the 64 bit numbers have to be broken down to
-        // 32bit numbers in javascript.
-        half_ind = start_arr_index >>> 1;
+  // 使用 Y-major 平坦 TypedArray 替代 3D JS 数组，大幅降低内存占用
+  // 索引公式: index = y * width * depth + z * width + x
+
+  var w = Math.abs(width);
+  var h = Math.abs(height);
+  var d = Math.abs(depth);
+  var total = w * h * d;
+  var mask = (1 << nbits) - 1;
+  var y_shift = w * d;
+  var z_shift = w;
+
+  var blocks = new Uint16Array(total);
+
+  for (var x = 0; x < w; x++) {
+    for (var y = 0; y < h; y++) {
+      var baseIdx = y * y_shift + x;
+      for (var z = 0; z < d; z++) {
+        var linearIdx = y * y_shift + z * z_shift + x;
+
+        var start_offset = linearIdx * nbits;
+        var start_arr_index = start_offset >>> 5;
+        var end_arr_index = ((linearIdx + 1) * nbits - 1) >>> 5;
+        var start_bit_offset = start_offset & 0x1F;
+
+        var half_ind = start_arr_index >>> 1;
+        var blockStart, blockEnd;
         if ((start_arr_index & 0x1) == 0) {
           blockStart = regionData[half_ind][1];
           blockEnd = regionData[half_ind][0];
         } else {
           blockStart = regionData[half_ind][0];
-          if (half_ind+1 < regionData.length) {
-            blockEnd = regionData[half_ind+1][1];
+          if (half_ind + 1 < regionData.length) {
+            blockEnd = regionData[half_ind + 1][1];
           } else {
-            // It seems that sometimes the index can extend past the end of the array, but this fix works (for now)
             blockEnd = 0x0;
           }
         }
-        
+
         if (start_arr_index == end_arr_index) {
-            blocks[x][y][z] = (blockStart >>> start_bit_offset) & mask;
+          blocks[baseIdx + z * z_shift] = (blockStart >>> start_bit_offset) & mask;
         } else {
-            end_offset = 32 - start_bit_offset; // num curtailed bits
-            val = ((blockStart >>> start_bit_offset) & mask) | ((blockEnd << end_offset) & mask);
-            blocks[x][y][z] = val;// & mask;
+          var end_offset = 32 - start_bit_offset;
+          var val = ((blockStart >>> start_bit_offset) & mask) | ((blockEnd << end_offset) & mask);
+          blocks[baseIdx + z * z_shift] = val;
         }
-        
       }
     }
   }
@@ -150,24 +147,25 @@ function __stripNBTTyping(nbtData) {
 function getMaterialList(litematic) {
   var blockCounts = {};
 
-  for (const region of litematic.regions) {
+  for (var ri = 0; ri < litematic.regions.length; ri++) {
+    var region = litematic.regions[ri];
     var blocks = region.blocks;
     var blockPalette = region.blockPalette;
+    var w = region.width;
+    var h = region.height;
+    var d = region.depth;
+    var wd = w * d;
 
-    width = blocks.length;
-    height = blocks[0].length;
-    depth = blocks[0][0].length;
-    for (let x=0; x < width; x++) {
-      for (let y=0; y < height; y++) {
-        for (let z=0; z < depth; z++) {
-          blockID = blocks[x][y][z];
+    for (var x = 0; x < w; x++) {
+      for (var y = 0; y < h; y++) {
+        var idx = y * wd + x;
+        for (var z = 0; z < d; z++, idx += w) {
+          var blockID = blocks[idx];
           if (blockID > 0) {
-            if(blockID < blockPalette.length) {
-              blockInfo = blockPalette[blockID];
-              blockName = blockInfo.Name;
+            if (blockID < blockPalette.length) {
+              var blockName = blockPalette[blockID].Name;
               blockCounts[blockName] = (blockCounts[blockName] || 0) + 1;
             } else {
-              // Something obvious so we know when things go wrong
               blockCounts["unknown"] = (blockCounts["unknown"] || 0) + 1;
             }
           }
@@ -175,7 +173,6 @@ function getMaterialList(litematic) {
       }
     }
   }
-  //console.log("Material list:", blockCounts);
 
   return blockCounts;
 }

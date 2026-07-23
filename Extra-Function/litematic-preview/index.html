@@ -87,8 +87,8 @@
         }
 
         /* 隐藏滚动条 */
-        #materialList::-webkit-scrollbar { width: 4px; }
-        #materialList::-webkit-scrollbar-thumb { background: var(--primary); }
+        #settings-material-list::-webkit-scrollbar { width: 4px; }
+        #settings-material-list::-webkit-scrollbar-thumb { background: var(--primary); }
 
         .count-item {
             background: rgba(0, 0, 0, 0.6) !important;
@@ -102,23 +102,8 @@
             background: linear-gradient(90deg, transparent, var(--primary), transparent);
             z-index: 50;
         }
-        #mobile-joystick {
-            pointer-events: none;
-        }
-
-        #joystick-zone {
-            pointer-events: auto;
-            touch-action: none;
-        }
         #mobile-joystick, #vertical-controls {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-            pointer-events: none;
-        }
-
-        #joystick-zone, #vertical-controls button {
-            pointer-events: auto;
+            display: none;
         }
 
         /* 移动端操作提示 */
@@ -128,18 +113,9 @@
         }
         #touch-hints .hint-zone {
             position: absolute;
-            top: 0; bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #touch-hints .hint-left {
-            left: 0; width: 40%;
-            background: linear-gradient(90deg, rgba(64,181,173,0.12) 0%, transparent 100%);
-        }
-        #touch-hints .hint-right {
-            right: 0; width: 60%;
-            background: linear-gradient(270deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
         }
         #touch-hints .hint-text {
             font-family: 'Inter', sans-serif;
@@ -164,33 +140,12 @@
 
 <!-- 移动端触控提示 -->
 <div id="touch-hints" class="fixed inset-0 z-[190] hidden">
-    <div class="hint-zone hint-left">
+    <div class="hint-zone">
         <div class="hint-text">
-            <span class="hint-icon material-icons">swipe</span>
-            拖拽移动
+            <span class="hint-icon material-icons">touch_app</span>
+            单指旋转视角 | 双指平移
         </div>
     </div>
-    <div class="hint-zone hint-right">
-        <div class="hint-text">
-            <span class="hint-icon material-icons">rotate_right</span>
-            拖拽旋转
-        </div>
-    </div>
-</div>
-
-
-<div id="mobile-joystick" class="fixed inset-0 z-[200] lg:hidden select-none touch-none">
-    <div id="joystick-zone" class="absolute bottom-10 left-10 w-40 h-40 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
-        <div id="joystick-knob" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-[#40B5AD]/50 shadow-[0_0_15px_#40B5AD] transition-transform duration-75"></div>
-    </div>
-</div>
-<div id="vertical-controls" class="fixed bottom-10 right-10 flex flex-col gap-4 z-[200] hidden">
-    <button id="btn-up" class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center active:bg-[#40B5AD]/50 active:shadow-[0_0_15px_#40B5AD]">
-        <i class="material-icons text-white">keyboard_arrow_up</i>
-    </button>
-    <button id="btn-down" class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center active:bg-[#40B5AD]/50 active:shadow-[0_0_15px_#40B5AD]">
-        <i class="material-icons text-white">keyboard_arrow_down</i>
-    </button>
 </div>
 
 <div id="loading-overlay" class="fixed inset-0 z-[999] bg-black/80 flex justify-center items-center hidden">
@@ -199,11 +154,6 @@
         <p class="text-[#40B5AD] font-mono text-xs tracking-widest">DECODING_NBT...</p>
     </div>
 </div>
-
-<button id="materialListButton" class="fixed top-20 left-6 z-20 text-white/50 hover:text-[#40B5AD] transition-colors" hidden onclick="toggleMaterialList()">
-    <span class="material-icons" style="font-size: 32px;">inventory_2</span>
-</button>
-<div id="materialList" class="fixed top-32 left-6 p-2 hidden z-20 glass-panel max-h-[60vh] overflow-y-auto w-64"></div>
 
 <div id="sliders" class="fixed bottom-10 right-10 flex gap-4 z-50"></div>
 
@@ -247,6 +197,7 @@
                 onclick="history.replaceState(null, '', ' '); location.reload();">
             取消预览
         </button>
+        <div id="settings-material-list" class="max-h-[40vh] overflow-y-auto mb-8 space-y-1"></div>
         <div id="settings-container" class="space-y-6"></div>
     </div>
 </div>
@@ -351,9 +302,6 @@
     function showLoading() { document.getElementById('loading-overlay').classList.remove('hidden'); }
     function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
 
-    function toggleMaterialList() {
-        document.getElementById('materialList').classList.toggle('hidden');
-    }
 </script>
 </body>
 </html>

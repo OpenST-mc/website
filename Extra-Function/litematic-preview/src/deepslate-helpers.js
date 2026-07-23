@@ -81,9 +81,10 @@ function structuresFromLitematic(litematic, y_min, y_max) {
     var blockPalette = r.blockPalette;
     var pos = r.position || [0, 0, 0];
 
-    var w = blocks.length;
-    var h = blocks[0].length;
-    var d = blocks[0][0].length;
+    var w = r.width;
+    var h = r.height;
+    var d = r.depth;
+    var wd = w * d;
 
     var effYMax = (y_max == -1) ? h : Math.min(y_max, h);
     var regBlockCount = 0;
@@ -92,23 +93,24 @@ function structuresFromLitematic(litematic, y_min, y_max) {
 
     for (var x = 0; x < w; x++) {
       for (var y = y_min; y < effYMax; y++) {
-        for (var z = 0; z < d; z++) {
-          var blockID = blocks[x][y][z];
+        var idx = y * wd + x;
+        for (var z = 0; z < d; z++, idx += w) {
+          var blockID = blocks[idx];
 
           if (blockID <= 0) continue;
-
-          if (blockID < blockPalette.length) {
-            var blockInfo = blockPalette[blockID];
-            var blockName = blockInfo.Name;
-            regBlockCount++;
-
-            if (blockInfo.hasOwnProperty("Properties")) {
-              structure.addBlock([x, y, z], blockName, blockInfo.Properties);
-            } else {
-              structure.addBlock([x, y, z], blockName);
-            }
-          } else {
+          if (blockID >= blockPalette.length) {
             structure.addBlock([x, y, z], "minecraft:cake");
+            continue;
+          }
+
+          var blockInfo = blockPalette[blockID];
+          regBlockCount++;
+          var props = blockInfo.Properties;
+
+          if (props) {
+            structure.addBlock([x, y, z], blockInfo.Name, props);
+          } else {
+            structure.addBlock([x, y, z], blockInfo.Name);
           }
         }
       }

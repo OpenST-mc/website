@@ -44,7 +44,6 @@ class LitematicEngine {
 
     this._setupInputs();
     this._startMovementTick();
-    this._setupVerticalButtons();
   }
 
   _setupInputs() {
@@ -101,90 +100,73 @@ class LitematicEngine {
   }
 
   _setupTouchInteractions() {
-    this.moveVector = glMatrix.vec3.create();
-    let stickId = null;
-    let stickStart = null;
-    this.lastTouchPos = [0, 0];
+    this.touchState = { mode: 'none', startPos: null, lastPos: null,
+      touchIds: [], lastPinchDist: 0, lastPinchY: 0 };
 
-    const joystickContainer = document.getElementById('mobile-joystick');
-    const knob = document.getElementById('joystick-knob');
+    var self = this;
 
-    // 初始隐藏摇杆，直到模型加载
-    if (joystickContainer) joystickContainer.style.display = 'none';
-
-     const handleTouch = (e, type) => {
-      if (this.renderers.length === 0) return;
-      if (joystickContainer) joystickContainer.style.display = 'block';
-
+    this.canvas.addEventListener('touchstart', function(e) {
+      if (self.renderers.length === 0) return;
       if (e.cancelable) e.preventDefault();
 
-      for (let touch of e.changedTouches) {
-        if (touch.target.closest('#vertical-controls')) continue;
-        if (type === 'start') {
-          // 左半屏 40% 区域启动摇杆
-          if (touch.clientX < window.innerWidth * 0.4 && stickId === null) {
-            stickId = touch.identifier;
-            stickStart = [touch.clientX, touch.clientY];
-          } else if (stickId === null || touch.identifier !== stickId) {
-            this.lastTouchPos = [touch.clientX, touch.clientY];
-          }
-        }
-        else if (type === 'move') {
-          if (touch.identifier === stickId && stickStart) {
-            const dx = touch.clientX - stickStart[0];
-            const dy = touch.clientY - stickStart[1];
-            const dist = Math.min(Math.hypot(dx, dy), 60);
-            const angle = Math.atan2(dy, dx);
-
-            if (knob) {
-              knob.style.transform = `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px))`;
-            }
-
-            const power = dist / 60;
-            var baseSpeed = 0.3;
-            this.moveVector[0] = Math.cos(angle) * power * baseSpeed;
-            this.moveVector[2] = -Math.sin(angle) * power * baseSpeed;
-          } else if (touch.identifier !== stickId) {
-            const rdx = touch.clientX - this.lastTouchPos[0];
-            const rdy = touch.clientY - this.lastTouchPos[1];
-            this.camera.yaw += rdx * 0.008;
-            this.camera.pitch += rdy * 0.008;
-            this.lastTouchPos = [touch.clientX, touch.clientY];
-          }
-        }
-        else if (type === 'end') {
-          if (touch.identifier === stickId) {
-            stickId = null;
-            stickStart = null;
-            if (knob) knob.style.transform = `translate(-50%, -50%)`;
-            glMatrix.vec3.set(this.moveVector, 0, 0, 0);
-          }
-        }
+      if (e.touches.length === 1) {
+        self.touchState.mode = 'rotate';
+        self.touchState.startPos = [e.touches[0].clientX, e.touches[0].clientY];
+        self.touchState.lastPos = [e.touches[0].clientX, e.touches[0].clientY];
+      } else if (e.touches.length >= 2) {
+        self.touchState.mode = 'pan';
+        var cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        var cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        self.touchState.lastPos = [cx, cy];
+        self.touchState.lastPinchDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
       }
-      this.requestRender();
-    };
+    }, { passive: false });
 
-    this.canvas.addEventListener('touchstart', e => handleTouch(e, 'start'), { passive: false });
-    this.canvas.addEventListener('touchmove', e => handleTouch(e, 'move'), { passive: false });
-    this.canvas.addEventListener('touchend', e => handleTouch(e, 'end'), { passive: false });
-  }
+    this.canvas.addEventListener('touchmove', function(e) {
+      if (self.renderers.length === 0) return;
+      if (e.cancelable) e.preventDefault();
 
-  _setupVerticalButtons() {
-    const btnUp = document.getElementById('btn-up');
-    const btnDown = document.getElementById('btn-down');
-    const container = document.getElementById('vertical-controls');
-    const bindBtn = (el, keyCode) => {
-      el.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        this.pressedKeys.add(keyCode);
-      });
-      el.addEventListener('touchend', () => {
-        this.pressedKeys.delete(keyCode);
-      });
-    };
+      if (self.touchState.mode === 'rotate' && e.touches.length === 1) {
+        var dx = e.touches[0].clientX - self.touchState.lastPos[0];
+        var dy = e.touches[0].clientY - self.touchState.lastPos[1];
+        self.camera.yaw += dx * 0.008;
+        self.camera.pitch += dy * 0.008;
+        self.touchState.lastPos = [e.touches[0].clientX, e.touches[0].clientY];
+        self.requestRender();
+      } else if (self.touchState.mode === 'pan' && e.touches.length >= 2) {
+        var cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        var cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        var pdx = cx - self.touchState.lastPos[0];
+        var pdy = cy - self.touchState.lastPos[1];
+        self._pan([-pdx, -pdy]);
 
-    bindBtn(btnUp, 'Space');
-    bindBtn(btnDown, 'ShiftLeft');
+        var dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        var zoomDelta = (dist - self.touchState.lastPinchDist) * self.speedScale * 0.02;
+        var forward = glMatrix.vec3.fromValues(0, 0, zoomDelta);
+        glMatrix.vec3.rotateX(forward, forward, [0, 0, 0], -self.camera.pitch);
+        glMatrix.vec3.rotateY(forward, forward, [0, 0, 0], -self.camera.yaw);
+        glMatrix.vec3.add(self.camera.pos, self.camera.pos, forward);
+
+        self.touchState.lastPos = [cx, cy];
+        self.touchState.lastPinchDist = dist;
+        self.requestRender();
+      }
+    }, { passive: false });
+
+    this.canvas.addEventListener('touchend', function(e) {
+      if (e.touches.length === 0) {
+        self.touchState.mode = 'none';
+      } else if (e.touches.length === 1) {
+        self.touchState.mode = 'rotate';
+        self.touchState.lastPos = [e.touches[0].clientX, e.touches[0].clientY];
+      }
+    });
   }
 
   _pan(offset) {
@@ -215,7 +197,7 @@ class LitematicEngine {
     this.structures = structuresList;
     this.renderers = structuresList.map(function(s) {
       return {
-        renderer: new deepslate.StructureRenderer(this.gl, s.structure, deepslateResources, {chunkSize: 8}),
+        renderer: new deepslate.StructureRenderer(this.gl, s.structure, deepslateResources, {chunkSize: 16}),
         position: s.position || [0, 0, 0]
       };
     }, this);
@@ -248,17 +230,6 @@ class LitematicEngine {
     this.speedScale = Math.min(Math.max(Math.pow(maxDim, 0.5) / 5, 0.2), 5);
 
     this.requestRender();
-    const vControls = document.getElementById('vertical-controls');
-    const joystick = document.getElementById('mobile-joystick');
-
-    if (vControls) {
-      vControls.classList.remove('hidden');
-      vControls.style.opacity = "1";
-      vControls.style.pointerEvents = "auto";
-    }
-    if (joystick) {
-      joystick.style.display = 'block';
-    }
 
     // 移动端显示触控提示，首次触摸后消失
     var hints = document.getElementById('touch-hints');
@@ -340,12 +311,6 @@ class LitematicEngine {
       this.pressedKeys.forEach(k => {
         if (keyMap[k]) glMatrix.vec3.add(direction, direction, keyMap[k]);
       });
-
-       if (this.moveVector) {
-         var mv = glMatrix.vec3.create();
-         glMatrix.vec3.scale(mv, this.moveVector, this.speedScale);
-         glMatrix.vec3.add(direction, direction, mv);
-       }
 
       if (glMatrix.vec3.length(direction) > 0) {
         this.move3d(direction, false);

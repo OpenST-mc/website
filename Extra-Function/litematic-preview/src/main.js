@@ -49,7 +49,7 @@ function loadAndProcessFile(file) {
                var r = structureLitematic.regions[ri];
                var pos = r.position || [0, 0, 0];
                var s = r.size || [r.width, r.height, r.depth];
-               var rh = r.blocks && r.blocks[0] ? r.blocks[0].length : s[1];
+               var rh = r.height || s[1];
 
                if (rh > max_y) max_y = rh;
 
@@ -96,31 +96,40 @@ function loadAndProcessFile(file) {
 }
 
 function createMaterialsList(blockCounts) {
-   const materialList = document.getElementById('materialList');
+   const materialList = document.getElementById('settings-material-list');
    if (!materialList) return;
 
-   // 渲染列表内容
-   materialList.innerHTML = Object.entries(blockCounts)
-       .sort(([,a], [,b]) => b - a)
-       .map(([key, val]) => `
-      <div class="count-item flex justify-between items-center group">
-         <span class="opacity-70 group-hover:opacity-100 transition-opacity">${key.replace('minecraft:', '')}</span>
-         <span class="font-mono text-[#40B5AD]">${val}</span>
-      </div>`)
-       .join('');
+   var totalBlocks = Object.values(blockCounts).reduce(function(a, b) { return a + b; }, 0);
 
-   const btn = document.getElementById('materialListButton');
-   if (btn) btn.hidden = false;
+   var header = document.createElement('div');
+   header.className = 'text-xs font-mono text-white/50 uppercase tracking-wider mb-2';
+   header.innerText = 'Material List (' + totalBlocks + ' blocks)';
 
-   // 导出 CSV 功能
-   const downloadBtn = document.createElement('button');
-   downloadBtn.innerHTML = '<i class="material-icons" style="font-size:18px">download</i>';
-   downloadBtn.className = "w-full mt-4 py-2 border border-[#40B5AD]/30 hover:bg-[#40B5AD]/10 text-[#40B5AD] transition-all rounded text-xs font-mono uppercase";
-   downloadBtn.onclick = () => {
-      const csv = Object.entries(blockCounts).sort(([,a], [,b]) => b-a).map(([k,v]) => `${k},${v}`).join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+   materialList.innerHTML = '';
+   materialList.appendChild(header);
+
+   Object.entries(blockCounts)
+       .sort(function(a, b) { return b[1] - a[1]; })
+       .forEach(function(entry) {
+          var key = entry[0];
+          var val = entry[1];
+          var item = document.createElement('div');
+          item.className = 'count-item flex justify-between items-center group';
+          item.innerHTML = '<span class="opacity-70 group-hover:opacity-100 transition-opacity">' +
+             key.replace('minecraft:', '') + '</span>' +
+             '<span class="font-mono text-[#40B5AD]">' + val + '</span>';
+          materialList.appendChild(item);
+       });
+
+   var downloadBtn = document.createElement('button');
+   downloadBtn.innerHTML = '<i class="material-icons" style="font-size:16px;vertical-align:middle">download</i> CSV';
+   downloadBtn.className = 'w-full mt-2 py-1.5 border border-[#40B5AD]/30 hover:bg-[#40B5AD]/10 text-[#40B5AD] transition-all rounded text-xs font-mono uppercase';
+   downloadBtn.onclick = function() {
+      var csv = Object.entries(blockCounts).sort(function(a, b) { return b[1] - a[1]; })
+         .map(function(e) { return e[0] + ',' + e[1]; }).join('\n');
+      var blob = new Blob([csv], { type: 'text/csv' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
       a.href = url;
       a.download = 'material_list.csv';
       a.click();
@@ -162,18 +171,22 @@ function createRangeSliders(max_y) {
    maxSlider.value = max_y;
    createStyling(maxSlider);
 
-   let y_min = 0;
-   let y_max = max_y;
+    let y_min = 0;
+    let y_max = max_y;
+    var updateScheduled = false;
 
     const updateView = () => {
-       if (window.vEngine) {
-          // 确保 y_min 不会大于 y_max
-          const actualMin = Math.min(y_min, y_max);
-          const actualMax = Math.max(y_min, y_max);
-
-          var structures = structuresFromLitematic(structureLitematic, actualMin, actualMax);
-          window.vEngine.setStructures(structures);
-       }
+       if (updateScheduled) return;
+       updateScheduled = true;
+       requestAnimationFrame(function() {
+          updateScheduled = false;
+          if (window.vEngine) {
+             var actualMin = Math.min(y_min, y_max);
+             var actualMax = Math.max(y_min, y_max);
+             var structures = structuresFromLitematic(structureLitematic, actualMin, actualMax);
+             window.vEngine.setStructures(structures);
+          }
+       });
     };
 
    // 使用 oninput 实现实时预览，而非 onchange
