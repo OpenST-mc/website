@@ -36,33 +36,52 @@ function loadAndProcessFile(file) {
          const nbtdata = deepslate.readNbt(new Uint8Array(reader.result));
          structureLitematic = readLitematicFromNBTData(nbtdata);
 
-         // 健壮性获取 max_y
-         let max_y = 256; // 默认值
+         // 计算所有 Region 合并后的总包围盒和 max_y
+         let max_y = 256;
+         let totalSize = [0, 0, 0];
          if (structureLitematic.regions && structureLitematic.regions.length > 0) {
-            const region = structureLitematic.regions[0];
-            // 有些版本是 .size，有些可能需要从 blocks 的长度推算
-            if (region.size) {
-               max_y = Math.abs(region.size[1]);
-            } else if (region.blocks && region.blocks[0]) {
-               max_y = region.blocks[0].length;
+            var minY = 0, maxY = 0;
+            var minX = 0, maxX = 0;
+            var minZ = 0, maxZ = 0;
+            var first = true;
+
+            for (var ri = 0; ri < structureLitematic.regions.length; ri++) {
+               var r = structureLitematic.regions[ri];
+               var pos = r.position || [0, 0, 0];
+               var s = r.size || [r.width, r.height, r.depth];
+               var rh = r.blocks && r.blocks[0] ? r.blocks[0].length : s[1];
+
+               if (rh > max_y) max_y = rh;
+
+               if (first) {
+                  minX = pos[0]; minY = pos[1]; minZ = pos[2];
+                  maxX = pos[0] + s[0]; maxY = pos[1] + s[1]; maxZ = pos[2] + s[2];
+                  first = false;
+               } else {
+                  if (pos[0] < minX) minX = pos[0];
+                  if (pos[1] < minY) minY = pos[1];
+                  if (pos[2] < minZ) minZ = pos[2];
+                  if (pos[0] + s[0] > maxX) maxX = pos[0] + s[0];
+                  if (pos[1] + s[1] > maxY) maxY = pos[1] + s[1];
+                  if (pos[2] + s[2] > maxZ) maxZ = pos[2] + s[2];
+               }
             }
+            totalSize = [maxX - minX, maxY - minY, maxZ - minZ];
          }
 
          if (window.vEngine) {
-            const structure = structureFromLitematic(structureLitematic);
-            window.vEngine.setStructure(structure);
+            var structures = structuresFromLitematic(structureLitematic, 0, -1);
+            window.vEngine.setStructures(structures);
 
-            // 自动将相机移动到模型中心
-            if (structureLitematic.regions[0].size) {
-               const s = structureLitematic.regions[0].size;
-               glMatrix.vec3.set(window.vEngine.camera.pos, -s[0]/2, -s[1]/2, -s[2]/2);
-            }
+            // 自动将相机移动到合并模型的中心
+            glMatrix.vec3.set(window.vEngine.camera.pos,
+               -totalSize[0] / 2, -totalSize[1] / 2, -totalSize[2] / 2);
          }
 
-         createRangeSliders(max_y);
-         const blockCounts = getMaterialList(structureLitematic);
-         createMaterialsList(blockCounts);
-         hideLoading();
+          createRangeSliders(max_y);
+          const blockCounts = getMaterialList(structureLitematic);
+          createMaterialsList(blockCounts);
+          hideLoading();
 
       } catch (err) {
          console.error("解析文件时出错:", err);
@@ -146,16 +165,16 @@ function createRangeSliders(max_y) {
    let y_min = 0;
    let y_max = max_y;
 
-   const updateView = () => {
-      if (window.vEngine) {
-         // 确保 y_min 不会大于 y_max
-         const actualMin = Math.min(y_min, y_max);
-         const actualMax = Math.max(y_min, y_max);
+    const updateView = () => {
+       if (window.vEngine) {
+          // 确保 y_min 不会大于 y_max
+          const actualMin = Math.min(y_min, y_max);
+          const actualMax = Math.max(y_min, y_max);
 
-         const structure = structureFromLitematic(structureLitematic, actualMin, actualMax);
-         window.vEngine.setStructure(structure);
-      }
-   };
+          var structures = structuresFromLitematic(structureLitematic, actualMin, actualMax);
+          window.vEngine.setStructures(structures);
+       }
+    };
 
    // 使用 oninput 实现实时预览，而非 onchange
    minSlider.oninput = (e) => {
@@ -168,8 +187,8 @@ function createRangeSliders(max_y) {
       updateView();
    };
 
-   slidersDiv.appendChild(minLabel);
-   slidersDiv.appendChild(minSlider);
-   slidersDiv.appendChild(maxLabel);
-   slidersDiv.appendChild(maxSlider);
+    slidersDiv.appendChild(minLabel);
+    slidersDiv.appendChild(minSlider);
+    slidersDiv.appendChild(maxLabel);
+     slidersDiv.appendChild(maxSlider);
 }

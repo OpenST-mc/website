@@ -65,51 +65,59 @@ function loadDeepslateResources(textureImage) {
   return deepslateResources;
 }
 
-function structureFromLitematic(litematic, y_min=0, y_max=-1) {
-  var blocks = litematic.regions[0].blocks;
-  var blockPalette = litematic.regions[0].blockPalette;
+function structuresFromLitematic(litematic, y_min, y_max) {
+  if (typeof y_min === 'undefined') y_min = 0;
+  if (typeof y_max === 'undefined') y_max = -1;
 
-  // Could probably make an intermediate block array type for this
-  // Does js have good 3D arrays?
-  width = blocks.length;
-  height = blocks[0].length;
-  depth = blocks[0][0].length;
+  var regions = litematic.regions;
+  var result = [];
+  var totalBlocks = 0;
 
-  if (y_max == -1) { y_max = height; } // there's probably a nicer expression here
-  y_max = Math.min(y_max, height);
+  console.log("Building blocks from", regions.length, "regions...");
 
-  const structure = new deepslate.Structure([width, height, depth]);
+  for (var ri = 0; ri < regions.length; ri++) {
+    var r = regions[ri];
+    var blocks = r.blocks;
+    var blockPalette = r.blockPalette;
+    var pos = r.position || [0, 0, 0];
 
-  // Add blocks manually from the blocks loaded from the NBT
-  var blockCount = 0;
-  console.log("Building blocks...");
-  for (let x=0; x < width; x++) {
-    for (let y=y_min; y < y_max; y++) {
-      for (let z=0; z < depth; z++) {
-        blockID = blocks[x][y][z];
+    var w = blocks.length;
+    var h = blocks[0].length;
+    var d = blocks[0][0].length;
 
-        if (blockID > 0) { // Skip air-blocks
+    var effYMax = (y_max == -1) ? h : Math.min(y_max, h);
+    var regBlockCount = 0;
 
-          if(blockID < blockPalette.length) {
-            blockInfo = blockPalette[blockID];
-            blockName = blockInfo.Name;
-            blockCount++;
+    var structure = new deepslate.Structure([w, h, d]);
+
+    for (var x = 0; x < w; x++) {
+      for (var y = y_min; y < effYMax; y++) {
+        for (var z = 0; z < d; z++) {
+          var blockID = blocks[x][y][z];
+
+          if (blockID <= 0) continue;
+
+          if (blockID < blockPalette.length) {
+            var blockInfo = blockPalette[blockID];
+            var blockName = blockInfo.Name;
+            regBlockCount++;
 
             if (blockInfo.hasOwnProperty("Properties")) {
               structure.addBlock([x, y, z], blockName, blockInfo.Properties);
             } else {
               structure.addBlock([x, y, z], blockName);
             }
-
           } else {
-            // Something obvious so we know when things go wrong
-            structure.addBlock([x, y, z], "minecraft:cake")
+            structure.addBlock([x, y, z], "minecraft:cake");
           }
         }
       }
     }
-  }
-  console.log("Done!", blockCount, " blocks created");
 
-  return structure;
+    result.push({ structure: structure, position: pos });
+    totalBlocks += regBlockCount;
+  }
+
+  console.log("Done!", totalBlocks, " blocks created across", regions.length, "regions");
+  return result;
 }

@@ -30,6 +30,13 @@
             --panel-bg: rgba(20, 20, 20, 0.85);
         }
 
+        *, *::before, *::after {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
         body {
             background-color: var(--bg-dark);
             color: #e0e0e0;

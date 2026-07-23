@@ -33,8 +33,20 @@ function readLitematicFromNBTData(nbtdata) {
     var blocks = processNBTRegionData(blockData, nbits, width, height, depth);
 
     var litematicRegion = new LitematicRegion(width, height, depth);
+    litematicRegion.name = regionName;
+    litematicRegion.size = [width, height, depth];
     litematicRegion.blocks = blocks;
     litematicRegion.blockPalette = blockPalette;
+
+    // 解析子投影的世界坐标偏移量
+    if (region.Position) {
+      var posX = region.Position.value.x.value;
+      var posY = region.Position.value.y.value;
+      var posZ = region.Position.value.z.value;
+      litematicRegion.position = [posX, posY, posZ];
+    } else {
+      litematicRegion.position = [0, 0, 0];
+    }
 
     litematic.regions.push(litematicRegion);
   }

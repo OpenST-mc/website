@@ -5,6 +5,9 @@ class LitematicEngine {
     this.gl = null;
     this.renderer = null;
     this.structure = null;
+    this.structures = [];
+    this.renderers = [];
+    this.speedScale = 1.0;
 
     this.camera = {
       pitch: 0.5,
@@ -32,7 +35,7 @@ class LitematicEngine {
         this.lastAspect = currentAspect;
      // window.location.reload();
         this.resize();
-        if (this.structure) this.setStructure(this.structure);
+        if (this.structures.length > 0) this.setStructures(this.structures);
       } else {
         // 普通的窗口微调，走常规重绘
         this.resize();
@@ -45,14 +48,11 @@ class LitematicEngine {
   }
 
   _setupInputs() {
-    // 按键按下
-    document.addEventListener('keydown', e => {
-      // 防止页面在操作时滚动
-      if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-        e.preventDefault();
-      }
-      this.pressedKeys.add(e.code);
-    });
+     // 按键按下，阻止所有浏览器快捷键
+     document.addEventListener('keydown', e => {
+       e.preventDefault();
+       this.pressedKeys.add(e.code);
+     });
 
     // 按键松开
     document.addEventListener('keyup', e => {
@@ -112,9 +112,8 @@ class LitematicEngine {
     // 初始隐藏摇杆，直到模型加载
     if (joystickContainer) joystickContainer.style.display = 'none';
 
-    const handleTouch = (e, type) => {
-      // 只有当渲染器就绪时才允许摇杆逻辑
-      if (!this.renderer) return;
+     const handleTouch = (e, type) => {
+      if (this.renderers.length === 0) return;
       if (joystickContainer) joystickContainer.style.display = 'block';
 
       if (e.cancelable) e.preventDefault();
@@ -122,11 +121,11 @@ class LitematicEngine {
       for (let touch of e.changedTouches) {
         if (touch.target.closest('#vertical-controls')) continue;
         if (type === 'start') {
-          // 只要是左半屏就启动摇杆，不限制像素大小，适配 iPad
-          if (touch.clientX < window.innerWidth / 2 && stickId === null) {
+          // 左半屏 40% 区域启动摇杆
+          if (touch.clientX < window.innerWidth * 0.4 && stickId === null) {
             stickId = touch.identifier;
             stickStart = [touch.clientX, touch.clientY];
-          } else {
+          } else if (stickId === null || touch.identifier !== stickId) {
             this.lastTouchPos = [touch.clientX, touch.clientY];
           }
         }
@@ -142,13 +141,14 @@ class LitematicEngine {
             }
 
             const power = dist / 60;
-            this.moveVector[0] = Math.cos(angle) * power * 0.3;
-            this.moveVector[2] = -Math.sin(angle) * power * 0.3;
+            var baseSpeed = 0.3;
+            this.moveVector[0] = Math.cos(angle) * power * baseSpeed;
+            this.moveVector[2] = -Math.sin(angle) * power * baseSpeed;
           } else if (touch.identifier !== stickId) {
             const rdx = touch.clientX - this.lastTouchPos[0];
             const rdy = touch.clientY - this.lastTouchPos[1];
-            this.camera.yaw += rdx * 0.005;
-            this.camera.pitch += rdy * 0.005;
+            this.camera.yaw += rdx * 0.008;
+            this.camera.pitch += rdy * 0.008;
             this.lastTouchPos = [touch.clientX, touch.clientY];
           }
         }
@@ -208,9 +208,45 @@ class LitematicEngine {
   }
 
   setStructure(structure) {
-    this.structure = structure;
-    // 每次重新创建 Renderer，彻底刷掉旧矩阵的缓存
-    this.renderer = new deepslate.StructureRenderer(this.gl, structure, deepslateResources, {chunkSize: 8});
+    this.setStructures([{ structure: structure, position: [0, 0, 0] }]);
+  }
+
+  setStructures(structuresList) {
+    this.structures = structuresList;
+    this.renderers = structuresList.map(function(s) {
+      return {
+        renderer: new deepslate.StructureRenderer(this.gl, s.structure, deepslateResources, {chunkSize: 8}),
+        position: s.position || [0, 0, 0]
+      };
+    }, this);
+
+    // 根据模型包围盒动态计算移动速度
+    var maxDim = 1;
+    if (structuresList.length > 0) {
+      var minX = 0, minY = 0, minZ = 0;
+      var maxX = 0, maxY = 0, maxZ = 0;
+      var first = true;
+      for (var i = 0; i < structuresList.length; i++) {
+        var st = structuresList[i];
+        var dims = st.structure.getSize();
+        var pos = st.position || [0, 0, 0];
+        if (first) {
+          minX = pos[0]; minY = pos[1]; minZ = pos[2];
+          maxX = pos[0] + dims[0]; maxY = pos[1] + dims[1]; maxZ = pos[2] + dims[2];
+          first = false;
+        } else {
+          if (pos[0] < minX) minX = pos[0];
+          if (pos[1] < minY) minY = pos[1];
+          if (pos[2] < minZ) minZ = pos[2];
+          if (pos[0] + dims[0] > maxX) maxX = pos[0] + dims[0];
+          if (pos[1] + dims[1] > maxY) maxY = pos[1] + dims[1];
+          if (pos[2] + dims[2] > maxZ) maxZ = pos[2] + dims[2];
+        }
+      }
+      maxDim = Math.max(maxX - minX, maxY - minY, maxZ - minZ);
+    }
+    this.speedScale = Math.min(Math.max(Math.pow(maxDim, 0.5) / 5, 0.2), 5);
+
     this.requestRender();
     const vControls = document.getElementById('vertical-controls');
     const joystick = document.getElementById('mobile-joystick');
@@ -226,7 +262,7 @@ class LitematicEngine {
   }
 
   render = () => {
-    if (!this.renderer) return;
+    if (this.renderers.length === 0) return;
     const {mat4, vec3} = glMatrix;
     const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
     const projectionMatrix = mat4.create();
@@ -235,13 +271,16 @@ class LitematicEngine {
     this.camera.pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.camera.pitch));
     mat4.rotateX(view, view, this.camera.pitch);
     mat4.rotateY(view, view, this.camera.yaw);
-    // 再应用相机的平移 相机移动 [x,y,z]，世界就要向反方向移动
     mat4.translate(view, view, this.camera.pos);
 
-    // 执行渲染
-    // 确保传入了最新的 projectionMatrix
-    this.renderer.drawStructure(view, projectionMatrix);
-    this.renderer.drawGrid(view, projectionMatrix);
+    for (var i = 0; i < this.renderers.length; i++) {
+      var r = this.renderers[i];
+      var offsetView = mat4.clone(view);
+      mat4.translate(offsetView, offsetView,
+        [r.position[0], r.position[1], r.position[2]]);
+      r.renderer.drawStructure(offsetView, projectionMatrix);
+    }
+    this.renderers[0].renderer.drawGrid(view, projectionMatrix);
   }
 
   requestRender() {
@@ -275,21 +314,26 @@ class LitematicEngine {
   _startMovementTick() {
     setInterval(() => {
       let direction = glMatrix.vec3.create();
+      var s = this.speedScale;
 
-      // 键盘逻辑：加入高度
       const keyMap = {
-        KeyW: [0, 0, 0.2],   // 前
-        KeyS: [0, 0, -0.2],  // 后
-        KeyA: [-0.2, 0, 0],   // 左 (正位移)
-        KeyD: [0.2, 0, 0],  // 右 (负位移)
-        Space: [0, -0.2, 0], ShiftLeft: [0, 0.2, 0] // 修正垂直方向
+        KeyW: [0, 0, 0.2 * s],
+        KeyS: [0, 0, -0.2 * s],
+        KeyA: [-0.2 * s, 0, 0],
+        KeyD: [0.2 * s, 0, 0],
+        Space: [0, -0.2 * s, 0],
+        ShiftLeft: [0, 0.2 * s, 0]
       };
 
       this.pressedKeys.forEach(k => {
         if (keyMap[k]) glMatrix.vec3.add(direction, direction, keyMap[k]);
       });
 
-      if (this.moveVector) glMatrix.vec3.add(direction, direction, this.moveVector);
+       if (this.moveVector) {
+         var mv = glMatrix.vec3.create();
+         glMatrix.vec3.scale(mv, this.moveVector, this.speedScale);
+         glMatrix.vec3.add(direction, direction, mv);
+       }
 
       if (glMatrix.vec3.length(direction) > 0) {
         this.move3d(direction, false);
