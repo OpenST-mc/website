@@ -10,6 +10,8 @@ class LitematicEngine {
     this.speedScale = 1.0;
     this.isPaused = false;
     this.cachedStructures = null;
+    this.joystickVector = glMatrix.vec3.create();
+    this.mirrorMode = false;
 
     this.camera = {
       pitch: 0.5,
@@ -45,6 +47,7 @@ class LitematicEngine {
     });
 
     this._setupInputs();
+    this._setupVerticalButtons();
     this._startMovementTick();
     this._setupIntersectionObserver();
   }
@@ -109,19 +112,28 @@ class LitematicEngine {
   }
 
   _setupTouchInteractions() {
-    this.touchState = { mode: 'none', startPos: null, lastPos: null,
-      touchIds: [], lastPinchDist: 0, lastPinchY: 0 };
+    this.touchState = { mode: 'none', lastPos: null, joystickStart: null, lastPinchDist: 0 };
 
     var self = this;
+
+    function isJoystickZone(x) {
+      return self.mirrorMode ? (x >= window.innerWidth * 0.6) : (x < window.innerWidth * 0.4);
+    }
 
     this.canvas.addEventListener('touchstart', function(e) {
       if (self.renderers.length === 0) return;
       if (e.cancelable) e.preventDefault();
 
       if (e.touches.length === 1) {
-        self.touchState.mode = 'rotate';
-        self.touchState.startPos = [e.touches[0].clientX, e.touches[0].clientY];
-        self.touchState.lastPos = [e.touches[0].clientX, e.touches[0].clientY];
+        var tx = e.touches[0].clientX;
+        var ty = e.touches[0].clientY;
+        if (isJoystickZone(tx)) {
+          self.touchState.mode = 'joystick';
+          self.touchState.joystickStart = [tx, ty];
+        } else {
+          self.touchState.mode = 'rotate';
+          self.touchState.lastPos = [tx, ty];
+        }
       } else if (e.touches.length >= 2) {
         self.touchState.mode = 'pan';
         var cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
@@ -129,8 +141,7 @@ class LitematicEngine {
         self.touchState.lastPos = [cx, cy];
         self.touchState.lastPinchDist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
+          e.touches[0].clientY - e.touches[1].clientY);
       }
     }, { passive: false });
 
@@ -138,7 +149,20 @@ class LitematicEngine {
       if (self.renderers.length === 0) return;
       if (e.cancelable) e.preventDefault();
 
-      if (self.touchState.mode === 'rotate' && e.touches.length === 1) {
+      if (self.touchState.mode === 'joystick' && e.touches.length >= 1) {
+        for (var i = e.touches.length - 1; i >= 0; i--) {
+          if (isJoystickZone(e.touches[i].clientX)) {
+            var dx = e.touches[i].clientX - self.touchState.joystickStart[0];
+            var dy = e.touches[i].clientY - self.touchState.joystickStart[1];
+            var dist = Math.min(Math.hypot(dx, dy), 60);
+            var angle = Math.atan2(dy, dx);
+            var power = dist / 60;
+            self.joystickVector[0] = Math.cos(angle) * power;
+            self.joystickVector[2] = -Math.sin(angle) * power;
+            break;
+          }
+        }
+      } else if (self.touchState.mode === 'rotate' && e.touches.length === 1) {
         var dx = e.touches[0].clientX - self.touchState.lastPos[0];
         var dy = e.touches[0].clientY - self.touchState.lastPos[1];
         self.camera.yaw += dx * 0.008;
@@ -154,8 +178,7 @@ class LitematicEngine {
 
         var dist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
+          e.touches[0].clientY - e.touches[1].clientY);
         var zoomDelta = (dist - self.touchState.lastPinchDist) * self.speedScale * 0.02;
         var forward = glMatrix.vec3.fromValues(0, 0, zoomDelta);
         glMatrix.vec3.rotateX(forward, forward, [0, 0, 0], -self.camera.pitch);
@@ -168,14 +191,23 @@ class LitematicEngine {
       }
     }, { passive: false });
 
-    this.canvas.addEventListener('touchend', function(e) {
-      if (e.touches.length === 0) {
-        self.touchState.mode = 'none';
-      } else if (e.touches.length === 1) {
-        self.touchState.mode = 'rotate';
-        self.touchState.lastPos = [e.touches[0].clientX, e.touches[0].clientY];
+    this.canvas.addEventListener('touchend', function() {
+      if (self.touchState.mode === 'joystick') {
+        glMatrix.vec3.set(self.joystickVector, 0, 0, 0);
       }
+      self.touchState.mode = 'none';
     });
+  }
+
+  _setupVerticalButtons() {
+    var btnUp = document.getElementById('btn-up');
+    var btnDown = document.getElementById('btn-down');
+    if (!btnUp || !btnDown) return;
+    var self = this;
+    btnUp.addEventListener('touchstart', function(e) { e.preventDefault(); self.pressedKeys.add('Space'); });
+    btnUp.addEventListener('touchend', function() { self.pressedKeys.delete('Space'); });
+    btnDown.addEventListener('touchstart', function(e) { e.preventDefault(); self.pressedKeys.add('ShiftLeft'); });
+    btnDown.addEventListener('touchend', function() { self.pressedKeys.delete('ShiftLeft'); });
   }
 
   _pan(offset) {
@@ -206,6 +238,8 @@ class LitematicEngine {
     this.isPaused = true;
     this.cachedStructures = this.structures;
     this.renderers = [];
+    this.pressedKeys.clear();
+    glMatrix.vec3.set(this.joystickVector, 0, 0, 0);
     if (this.canvas) {
       this.canvas.width = 0;
       this.canvas.height = 0;
@@ -277,17 +311,25 @@ class LitematicEngine {
 
     this.requestRender();
 
-    // 移动端显示触控提示，首次触摸后消失
+    // 移动端显示触控提示 + 上下按钮，首次触摸后消失
+    var isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    if (!isTouch) return;
+
+    var vControls = document.getElementById('vertical-controls');
     var hints = document.getElementById('touch-hints');
-    if (hints && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
-      hints.classList.remove('hidden');
-      var hideHints = function() {
-        hints.style.opacity = '0';
-        setTimeout(function() { hints.classList.add('hidden'); }, 500);
-        document.removeEventListener('touchstart', hideHints);
-      };
-      document.addEventListener('touchstart', hideHints, { once: true });
-    }
+    if (vControls) vControls.classList.remove('hidden');
+    if (!hints) return;
+
+    hints.classList.remove('hidden');
+    document.addEventListener('touchstart', function() {
+      hints.style.opacity = '0';
+      setTimeout(function() {
+        hints.classList.add('hidden');
+        hints.style.opacity = '';
+      }, 500);
+      // 上下按钮保留，仅消退引导色
+      if (vControls) vControls.classList.add('fade-guide');
+    }, { once: true });
   }
 
   render = () => {
@@ -295,7 +337,7 @@ class LitematicEngine {
     const {mat4, vec3} = glMatrix;
     const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
     const projectionMatrix = mat4.create();
-    mat4.perspective(projectionMatrix, 70 * Math.PI / 180, aspect, 0.1, 1000.0);
+    mat4.perspective(projectionMatrix, 70 * Math.PI / 180, aspect, 1, 5000.0);
     const view = mat4.create();
     this.camera.pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.camera.pitch));
     mat4.rotateX(view, view, this.camera.pitch);
@@ -358,6 +400,15 @@ class LitematicEngine {
       this.pressedKeys.forEach(k => {
         if (keyMap[k]) glMatrix.vec3.add(direction, direction, keyMap[k]);
       });
+
+      if (this.joystickVector) {
+        var jv = this.joystickVector;
+        if (jv[0] !== 0 || jv[2] !== 0) {
+          var js = 0.3 * s;
+          glMatrix.vec3.add(direction, direction,
+            [jv[0] * js, 0, jv[2] * js]);
+        }
+      }
 
       if (glMatrix.vec3.length(direction) > 0) {
         this.move3d(direction, false);

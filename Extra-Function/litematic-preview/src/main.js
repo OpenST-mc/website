@@ -81,6 +81,8 @@ function loadAndProcessFile(file) {
           createRangeSliders(max_y);
           const blockCounts = getMaterialList(structureLitematic);
           createMaterialsList(blockCounts);
+          var cancelBtn = document.getElementById('cancel-preview-btn');
+          if (cancelBtn) cancelBtn.classList.remove('hidden');
           hideLoading();
 
       } catch (err) {
@@ -138,13 +140,11 @@ function createMaterialsList(blockCounts) {
 }
 
 function createRangeSliders(max_y) {
-   const slidersDiv = document.getElementById('sliders');
+   const slidersDiv = document.getElementById('settings-sliders');
    if (!slidersDiv) return;
 
-   slidersDiv.innerHTML = ''; // 清空可能存在的旧滑块
-   slidersDiv.className = "fixed bottom-10 left-1/2 -translate-x-1/2 flex flex-col gap-2 z-50 w-64 glass-panel p-4";
+   slidersDiv.innerHTML = '';
 
-   // 统一样式函数
    const createStyling = (el) => {
       el.className = "w-full accent-[#40B5AD] bg-white/10 h-1 rounded-lg appearance-none cursor-pointer";
    };

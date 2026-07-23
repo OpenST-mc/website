@@ -102,34 +102,93 @@
             background: linear-gradient(90deg, transparent, var(--primary), transparent);
             z-index: 50;
         }
-        #mobile-joystick, #vertical-controls {
-            display: none;
+        #vertical-controls {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 200;
+        }
+        #vertical-controls.hidden { display: none; }
+        #vertical-controls button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(128, 0, 255, 0.3);
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(128, 0, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            touch-action: none;
+        }
+        #vertical-controls button:active {
+            background: rgba(128, 0, 255, 0.6);
+            box-shadow: 0 0 20px rgba(128, 0, 255, 0.5);
+        }
+        #vertical-controls button i {
+            color: white;
+            font-size: 28px;
+        }
+        /* 首次触摸后消退引导色，保留可用按钮 */
+        #vertical-controls.fade-guide button {
+            background: rgba(128, 0, 255, 0.15);
+            border-color: rgba(128, 0, 255, 0.2);
+        }
+        #vertical-controls.fade-guide button:active {
+            background: rgba(128, 0, 255, 0.4);
+            box-shadow: none;
+        }
+        /* 镜像开关 */
+        #mirror-toggle:checked + div {
+            background: rgba(64, 181, 173, 0.2);
+            border-color: var(--primary);
+        }
+        #mirror-toggle:checked + div > div {
+            transform: translateX(20px);
+            background: var(--primary);
         }
 
         /* 移动端操作提示 */
         #touch-hints {
             pointer-events: none;
             transition: opacity 0.5s ease;
+            z-index: 190;
         }
-        #touch-hints .hint-zone {
+        #touch-hints .hint-left {
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
+            top: 0; left: 0; bottom: 0; width: 40%;
+            background: linear-gradient(135deg, rgba(0, 200, 0, 0.15) 0%, transparent 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #touch-hints .hint-right {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 40%;
+            background: linear-gradient(225deg, rgba(255, 50, 50, 0.10) 0%, transparent 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #touch-hints .hint-text {
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            color: rgba(255,255,255,0.6);
+            font-size: 15px;
+            font-weight: 600;
+            text-shadow: 0 0 12px rgba(0,0,0,0.8);
             text-align: center;
             pointer-events: none;
         }
         #touch-hints .hint-icon {
-            font-size: 40px;
+            font-size: 36px;
             display: block;
-            margin-bottom: 8px;
-            opacity: 0.6;
+            margin-bottom: 6px;
         }
+        #touch-hints .hint-left .hint-text { color: rgba(100, 255, 100, 0.8); }
+        #touch-hints .hint-right .hint-text { color: rgba(255, 100, 100, 0.8); }
     </style>
 </head>
 
@@ -139,12 +198,29 @@
 <div id="viewer"></div>
 
 <!-- 移动端触控提示 -->
-<div id="touch-hints" class="fixed inset-0 z-[190] hidden">
-    <div class="hint-zone">
+<div id="touch-hints" class="fixed inset-0 hidden">
+    <div class="hint-left">
         <div class="hint-text">
             <span class="hint-icon material-icons">touch_app</span>
-            单指旋转视角 | 双指平移
+            单指移动
         </div>
+    </div>
+    <div class="hint-right">
+        <div class="hint-text">
+            <span class="hint-icon material-icons">rotate_right</span>
+            单指旋转
+        </div>
+    </div>
+</div>
+
+<div id="vertical-controls" class="hidden">
+    <button id="btn-up">
+        <i class="material-icons">keyboard_arrow_up</i>
+    </button>
+    <button id="btn-down">
+        <i class="material-icons">keyboard_arrow_down</i>
+    </button>
+</div>
     </div>
 </div>
 
@@ -154,8 +230,6 @@
         <p class="text-[#40B5AD] font-mono text-xs tracking-widest">DECODING_NBT...</p>
     </div>
 </div>
-
-<div id="sliders" class="fixed bottom-10 right-10 flex gap-4 z-50"></div>
 
 <a href="javascript:void(0)" id="settings-button" class="fixed top-6 right-8 z-[110] text-white/50 hover:text-[#40B5AD] transition-all" onclick="openSettings()">
     <i class="fa fa-cog"></i>
@@ -193,16 +267,38 @@
     <a href="javascript:void(0)" class="absolute top-6 right-6 text-3xl text-white/50 hover:text-white" onclick="closeSettings()">&times;</a>
     <div class="p-8">
         <h3 class="text-xl font-bold text-[#40B5AD] mb-8 font-mono">设置</h3>
-        <button class="w-full py-3 mb-10 bg-red-900/40 border border-red-500/50 text-red-200 text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
+        <button id="cancel-preview-btn" class="w-full py-3 mb-10 bg-red-900/40 border border-red-500/50 text-red-200 text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all hidden"
                 onclick="history.replaceState(null, '', ' '); location.reload();">
             取消预览
         </button>
+        <div id="settings-sliders" class="mb-8 space-y-3"></div>
+        <!-- 镜像模式 -->
+        <label class="flex items-center gap-3 mb-8 cursor-pointer">
+            <input type="checkbox" id="mirror-toggle" class="sr-only setting" data-setting="mirrorMode"
+                   onchange="var m=this.checked;if(window.vEngine)window.vEngine.mirrorMode=m;applyMirrorLayout(m)">
+            <div class="w-10 h-5 rounded-full bg-white/10 border border-white/20 transition-colors relative">
+                <div class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#40B5AD] transition-transform"></div>
+            </div>
+            <span class="text-xs font-mono text-white/60">Mirror View</span>
+        </label>
         <div id="settings-material-list" class="max-h-[40vh] overflow-y-auto mb-8 space-y-1"></div>
         <div id="settings-container" class="space-y-6"></div>
     </div>
 </div>
 
 <img id="atlas" src="/Extra-Function/litematic-preview/resource/atlas.png" crossorigin="anonymous" hidden>
+<img id="chest-normal" src="/Extra-Function/litematic-preview/resource/chest/normal.png" crossorigin="anonymous" hidden>
+<img id="chest-normal-left" src="/Extra-Function/litematic-preview/resource/chest/normal_left.png" crossorigin="anonymous" hidden>
+<img id="chest-normal-right" src="/Extra-Function/litematic-preview/resource/chest/normal_right.png" crossorigin="anonymous" hidden>
+<img id="chest-trapped" src="/Extra-Function/litematic-preview/resource/chest/trapped.png" crossorigin="anonymous" hidden>
+<img id="chest-trapped-left" src="/Extra-Function/litematic-preview/resource/chest/trapped_left.png" crossorigin="anonymous" hidden>
+<img id="chest-trapped-right" src="/Extra-Function/litematic-preview/resource/chest/trapped_right.png" crossorigin="anonymous" hidden>
+<img id="chest-ender" src="/Extra-Function/litematic-preview/resource/chest/ender.png" crossorigin="anonymous" hidden>
+<img id="chest-front-upper" src="/Extra-Function/litematic-preview/resource/chest/normal/前上半边.png" crossorigin="anonymous" hidden>
+<img id="chest-front-lower" src="/Extra-Function/litematic-preview/resource/chest/normal/前下半边.png" crossorigin="anonymous" hidden>
+<img id="chest-side-upper" src="/Extra-Function/litematic-preview/resource/chest/normal/后+右+左上半边.png" crossorigin="anonymous" hidden>
+<img id="chest-side-lower" src="/Extra-Function/litematic-preview/resource/chest/normal/后+右+左下半边.png" crossorigin="anonymous" hidden>
+<img id="chest-top-bottom" src="/Extra-Function/litematic-preview/resource/chest/normal/top+buttom.png" crossorigin="anonymous" hidden>
 
 <script src="/Extra-Function/litematic-preview/src/deepslate-helpers.js"></script>
 <script src="/Extra-Function/litematic-preview/src/litematic-utils.js"></script>
@@ -214,10 +310,31 @@
     // 初始化 UI 交互逻辑
     document.addEventListener("DOMContentLoaded", () => {
         const image = document.getElementById('atlas');
+        const chestIds = ['chest-normal','chest-normal-left','chest-normal-right',
+          'chest-trapped','chest-trapped-left','chest-trapped-right','chest-ender',
+          'chest-front-upper','chest-front-lower','chest-side-upper','chest-side-lower','chest-top-bottom'];
         const initResources = () => loadDeepslateResources(image);
 
-        if (image.complete) initResources();
-        else image.addEventListener('load', initResources);
+        var loaded = 0;
+        var total = 1 + chestIds.length;
+        function checkAll() { loaded++; if (loaded >= total) initResources(); }
+        function onError(id) { loaded++; if (loaded >= total) initResources(); }
+
+        if (image.complete) checkAll(); else { image.addEventListener('load', checkAll); image.addEventListener('error', function(){ onError('atlas'); }); }
+        chestIds.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                if (el.complete && el.naturalWidth > 0) checkAll();
+                else { el.addEventListener('load', checkAll); el.addEventListener('error', function(){ onError(id); }); }
+            } else { onError(id); }
+        });
+
+        // 恢复镜像模式
+        var mirrorCb = document.getElementById('mirror-toggle');
+        if (mirrorCb && mirrorCb.checked && window.vEngine) {
+            window.vEngine.mirrorMode = true;
+            applyMirrorLayout(true);
+        }
 
         // 检查 ?viewerUse=URL 参数
         var params = new URLSearchParams(window.location.search);
@@ -314,6 +431,33 @@
 
     function showLoading() { document.getElementById('loading-overlay').classList.remove('hidden'); }
     function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
+
+    function applyMirrorLayout(mirror) {
+        var leftHint = document.querySelector('#touch-hints .hint-left');
+        var rightHint = document.querySelector('#touch-hints .hint-right');
+        var vCtrl = document.getElementById('vertical-controls');
+        if (mirror) {
+            if (leftHint) {
+                leftHint.querySelector('.hint-text').innerHTML = '<span class="hint-icon material-icons">rotate_right</span>单指旋转';
+                leftHint.style.background = 'linear-gradient(135deg, rgba(255, 50, 50, 0.10) 0%, transparent 100%)';
+            }
+            if (rightHint) {
+                rightHint.querySelector('.hint-text').innerHTML = '<span class="hint-icon material-icons">touch_app</span>单指移动';
+                rightHint.style.background = 'linear-gradient(225deg, rgba(0, 200, 0, 0.15) 0%, transparent 100%)';
+            }
+            if (vCtrl) { vCtrl.style.right = 'auto'; vCtrl.style.left = '20px'; }
+        } else {
+            if (leftHint) {
+                leftHint.querySelector('.hint-text').innerHTML = '<span class="hint-icon material-icons">touch_app</span>单指移动';
+                leftHint.style.background = '';
+            }
+            if (rightHint) {
+                rightHint.querySelector('.hint-text').innerHTML = '<span class="hint-icon material-icons">rotate_right</span>单指旋转';
+                rightHint.style.background = '';
+            }
+            if (vCtrl) { vCtrl.style.left = 'auto'; vCtrl.style.right = '20px'; }
+        }
+    }
 
 </script>
 </body>
