@@ -6,505 +6,505 @@
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
     <loc>https://openstmc.com/</loc>
-    <lastmod>2026-07-23T15:59:47.037Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.723Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive</loc>
-    <lastmod>2026-07-23T15:59:47.037Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.723Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772764832049</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344850969-309</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344850978-107</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344850981-773</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344850984-889</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344850986-771</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344850989-267</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344850992-834</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1774887018775</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772765742396</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851002-103</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851007-896</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851004-415</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772667666907</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851009-329</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851012-814</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1774646113585</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1777730636323</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772476286973</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1777770150840</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772730841971</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851021-846</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851023-355</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851026-304</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851046-949</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772475420526</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1774559620756</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851072-585</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851075-792</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851077-877</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851080-537</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851083-317</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772643835289</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851090-192</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772665684250</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851100-809</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1782403150143</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851122-131</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851127-192</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851129-167</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772666784162</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851036-569</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851132-2</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851029-716</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851134-754</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772665990091</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851136-915</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851140-986</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851142-904</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851145-775</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851148-397</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851112-987</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851151-391</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772667193043</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1777730271855</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851154-596</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851156-372</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851159-805</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851161-358</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772769488104</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851167-578</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1777771455413</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851169-799</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1775130765367</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851039-332</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851171-633</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851174-783</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851117-638</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851119-130</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772666563986</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851176-91</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772665002634</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772558708871</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851097-670</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851067-302</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851179-279</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772666365850</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851014-391</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851181-487</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1772474624236</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851184-888</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://openstmc.com/archive?sub-1778344851044-945</loc>
-    <lastmod>2026-07-23T15:59:47.038Z</lastmod>
+    <lastmod>2026-07-23T17:39:03.724Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>

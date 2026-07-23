@@ -287,18 +287,6 @@
 </div>
 
 <img id="atlas" src="/Extra-Function/litematic-preview/resource/atlas.png" crossorigin="anonymous" hidden>
-<img id="chest-normal" src="/Extra-Function/litematic-preview/resource/chest/normal.png" crossorigin="anonymous" hidden>
-<img id="chest-normal-left" src="/Extra-Function/litematic-preview/resource/chest/normal_left.png" crossorigin="anonymous" hidden>
-<img id="chest-normal-right" src="/Extra-Function/litematic-preview/resource/chest/normal_right.png" crossorigin="anonymous" hidden>
-<img id="chest-trapped" src="/Extra-Function/litematic-preview/resource/chest/trapped.png" crossorigin="anonymous" hidden>
-<img id="chest-trapped-left" src="/Extra-Function/litematic-preview/resource/chest/trapped_left.png" crossorigin="anonymous" hidden>
-<img id="chest-trapped-right" src="/Extra-Function/litematic-preview/resource/chest/trapped_right.png" crossorigin="anonymous" hidden>
-<img id="chest-ender" src="/Extra-Function/litematic-preview/resource/chest/ender.png" crossorigin="anonymous" hidden>
-<img id="chest-front-upper" src="/Extra-Function/litematic-preview/resource/chest/normal/前上半边.png" crossorigin="anonymous" hidden>
-<img id="chest-front-lower" src="/Extra-Function/litematic-preview/resource/chest/normal/前下半边.png" crossorigin="anonymous" hidden>
-<img id="chest-side-upper" src="/Extra-Function/litematic-preview/resource/chest/normal/后右左上半边.png" crossorigin="anonymous" hidden>
-<img id="chest-side-lower" src="/Extra-Function/litematic-preview/resource/chest/normal/后右左下半边.png" crossorigin="anonymous" hidden>
-<img id="chest-top-bottom" src="/Extra-Function/litematic-preview/resource/chest/normal/top+buttom.png" crossorigin="anonymous" hidden>
 
 <script src="/Extra-Function/litematic-preview/src/deepslate-helpers.js"></script>
 <script src="/Extra-Function/litematic-preview/src/litematic-utils.js"></script>
@@ -310,24 +298,10 @@
     // 初始化 UI 交互逻辑
     document.addEventListener("DOMContentLoaded", () => {
         const image = document.getElementById('atlas');
-        const chestIds = ['chest-normal','chest-normal-left','chest-normal-right',
-          'chest-trapped','chest-trapped-left','chest-trapped-right','chest-ender',
-          'chest-front-upper','chest-front-lower','chest-side-upper','chest-side-lower','chest-top-bottom'];
         const initResources = () => loadDeepslateResources(image);
 
-        var loaded = 0;
-        var total = 1 + chestIds.length;
-        function checkAll() { loaded++; if (loaded >= total) initResources(); }
-        function onError(id) { loaded++; if (loaded >= total) initResources(); }
-
-        if (image.complete) checkAll(); else { image.addEventListener('load', checkAll); image.addEventListener('error', function(){ onError('atlas'); }); }
-        chestIds.forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) {
-                if (el.complete && el.naturalWidth > 0) checkAll();
-                else { el.addEventListener('load', checkAll); el.addEventListener('error', function(){ onError(id); }); }
-            } else { onError(id); }
-        });
+        if (image.complete) initResources();
+        else image.addEventListener('load', initResources);
 
         // 恢复镜像模式
         var mirrorCb = document.getElementById('mirror-toggle');

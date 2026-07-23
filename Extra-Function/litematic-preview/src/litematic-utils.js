@@ -9,41 +9,39 @@ class LitematicRegion {
 }
 
 function readLitematicFromNBTData(nbtdata) {
-  // Get rid of all the annoying stuff basically
 
   var litematic = new Litematic();
-  litematic.regions = new Array();
+  litematic.regions = [];
 
   var regions = nbtdata.value.Regions.value;
-  for (let regionName in regions) {
-    
+  for (var regionName in regions) {
+
     var region = regions[regionName].value;
-    
+
     var blockPalette = __stripNBTTyping(region.BlockStatePalette);
-    
-    // Find the minimum number of bits needed to express all blocks
-    nbits = Math.ceil(Math.log2(blockPalette.length));
 
-    width = Math.abs(region.Size.value.x.value); 
-    height = Math.abs(region.Size.value.y.value);
-    depth = Math.abs(region.Size.value.z.value); 
+    var nbits = Math.ceil(Math.log2(blockPalette.length));
 
-    var blockData = region.BlockStates.value;
+    var w = Math.abs(region.Size.value.x.value);
+    var h = Math.abs(region.Size.value.y.value);
+    var d = Math.abs(region.Size.value.z.value);
 
-    var blocks = processNBTRegionData(blockData, nbits, width, height, depth);
+    var packedData = region.BlockStates.value;
 
-    var litematicRegion = new LitematicRegion(width, height, depth);
+    var litematicRegion = new LitematicRegion(w, h, d);
     litematicRegion.name = regionName;
-    litematicRegion.size = [width, height, depth];
-    litematicRegion.blocks = blocks;
+    litematicRegion.size = [w, h, d];
+    litematicRegion.packedData = packedData;
+    litematicRegion.nbits = nbits;
     litematicRegion.blockPalette = blockPalette;
 
     // 解析子投影的世界坐标偏移量
     if (region.Position) {
-      var posX = region.Position.value.x.value;
-      var posY = region.Position.value.y.value;
-      var posZ = region.Position.value.z.value;
-      litematicRegion.position = [posX, posY, posZ];
+      litematicRegion.position = [
+        region.Position.value.x.value,
+        region.Position.value.y.value,
+        region.Position.value.z.value
+      ];
     } else {
       litematicRegion.position = [0, 0, 0];
     }
@@ -54,25 +52,26 @@ function readLitematicFromNBTData(nbtdata) {
   return litematic;
 }
 
-function processNBTRegionData(regionData, nbits, width, height, depth) {
-  // 使用 Y-major 平坦 TypedArray 替代 3D JS 数组，大幅降低内存占用
-  // 索引公式: index = y * width * depth + z * width + x
+// 按需解码：从 packed bit 数据中解码指定 Y 范围，回调仅对非空气方块触发
+function iterateRegionBlocks(region, y_min, y_max, callback) {
+  var packedData = region.packedData;
+  var nbits = region.nbits;
+  var w = region.width;
+  var h = region.height;
+  var d = region.depth;
 
-  var w = Math.abs(width);
-  var h = Math.abs(height);
-  var d = Math.abs(depth);
-  var total = w * h * d;
+  var effectiveMax = (y_max === -1 || typeof y_max === 'undefined') ? h : Math.min(y_max, h);
+  if (y_min >= h) return;
+
   var mask = (1 << nbits) - 1;
-  var y_shift = w * d;
-  var z_shift = w;
-
-  var blocks = new Uint16Array(total);
+  var wd = w * d;
+  var packedLen = packedData.length;
 
   for (var x = 0; x < w; x++) {
-    for (var y = 0; y < h; y++) {
-      var baseIdx = y * y_shift + x;
+    for (var y = y_min; y < effectiveMax; y++) {
+      var baseIdx = y * wd + x;
       for (var z = 0; z < d; z++) {
-        var linearIdx = y * y_shift + z * z_shift + x;
+        var linearIdx = baseIdx + z * w;
 
         var start_offset = linearIdx * nbits;
         var start_arr_index = start_offset >>> 5;
@@ -81,29 +80,32 @@ function processNBTRegionData(regionData, nbits, width, height, depth) {
 
         var half_ind = start_arr_index >>> 1;
         var blockStart, blockEnd;
-        if ((start_arr_index & 0x1) == 0) {
-          blockStart = regionData[half_ind][1];
-          blockEnd = regionData[half_ind][0];
+        if ((start_arr_index & 0x1) === 0) {
+          blockStart = packedData[half_ind][1];
+          blockEnd = packedData[half_ind][0];
         } else {
-          blockStart = regionData[half_ind][0];
-          if (half_ind + 1 < regionData.length) {
-            blockEnd = regionData[half_ind + 1][1];
+          blockStart = packedData[half_ind][0];
+          if (half_ind + 1 < packedLen) {
+            blockEnd = packedData[half_ind + 1][1];
           } else {
-            blockEnd = 0x0;
+            blockEnd = 0;
           }
         }
 
-        if (start_arr_index == end_arr_index) {
-          blocks[baseIdx + z * z_shift] = (blockStart >>> start_bit_offset) & mask;
+        var blockID;
+        if (start_arr_index === end_arr_index) {
+          blockID = (blockStart >>> start_bit_offset) & mask;
         } else {
           var end_offset = 32 - start_bit_offset;
-          var val = ((blockStart >>> start_bit_offset) & mask) | ((blockEnd << end_offset) & mask);
-          blocks[baseIdx + z * z_shift] = val;
+          blockID = ((blockStart >>> start_bit_offset) & mask) | ((blockEnd << end_offset) & mask);
+        }
+
+        if (blockID > 0) {
+          callback(x, y, z, blockID);
         }
       }
     }
   }
-  return blocks;
 }
 
 // Hacky function needed to convert NBT to pure JSON
@@ -149,29 +151,16 @@ function getMaterialList(litematic) {
 
   for (var ri = 0; ri < litematic.regions.length; ri++) {
     var region = litematic.regions[ri];
-    var blocks = region.blocks;
     var blockPalette = region.blockPalette;
-    var w = region.width;
-    var h = region.height;
-    var d = region.depth;
-    var wd = w * d;
 
-    for (var x = 0; x < w; x++) {
-      for (var y = 0; y < h; y++) {
-        var idx = y * wd + x;
-        for (var z = 0; z < d; z++, idx += w) {
-          var blockID = blocks[idx];
-          if (blockID > 0) {
-            if (blockID < blockPalette.length) {
-              var blockName = blockPalette[blockID].Name;
-              blockCounts[blockName] = (blockCounts[blockName] || 0) + 1;
-            } else {
-              blockCounts["unknown"] = (blockCounts["unknown"] || 0) + 1;
-            }
-          }
-        }
+    iterateRegionBlocks(region, 0, -1, function(x, y, z, blockID) {
+      if (blockID < blockPalette.length) {
+        var blockName = blockPalette[blockID].Name;
+        blockCounts[blockName] = (blockCounts[blockName] || 0) + 1;
+      } else {
+        blockCounts["unknown"] = (blockCounts["unknown"] || 0) + 1;
       }
-    }
+    });
   }
 
   return blockCounts;

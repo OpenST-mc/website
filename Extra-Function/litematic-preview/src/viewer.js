@@ -337,7 +337,7 @@ class LitematicEngine {
     const {mat4, vec3} = glMatrix;
     const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
     const projectionMatrix = mat4.create();
-    mat4.perspective(projectionMatrix, 70 * Math.PI / 180, aspect, 1, 5000.0);
+    mat4.perspective(projectionMatrix, 70 * Math.PI / 180, aspect, 0.1, 1000.0);
     const view = mat4.create();
     this.camera.pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.camera.pitch));
     mat4.rotateX(view, view, this.camera.pitch);

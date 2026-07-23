@@ -32,9 +32,10 @@ function loadAndProcessFile(file) {
    reader.readAsArrayBuffer(file);
 
    reader.onload = function(evt) {
-      try {
-         const nbtdata = deepslate.readNbt(new Uint8Array(reader.result));
-         structureLitematic = readLitematicFromNBTData(nbtdata);
+       try {
+          const nbtdata = deepslate.readNbt(new Uint8Array(reader.result));
+          structureLitematic = readLitematicFromNBTData(nbtdata);
+          nbtdata.value = null; // 释放 NBT 包装数据，仅保留 packedData
 
          // 计算所有 Region 合并后的总包围盒和 max_y
          let max_y = 256;
