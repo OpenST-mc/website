@@ -8,6 +8,8 @@ class LitematicEngine {
     this.structures = [];
     this.renderers = [];
     this.speedScale = 1.0;
+    this.isPaused = false;
+    this.cachedStructures = null;
 
     this.camera = {
       pitch: 0.5,
@@ -44,6 +46,7 @@ class LitematicEngine {
 
     this._setupInputs();
     this._startMovementTick();
+    this._setupIntersectionObserver();
   }
 
   _setupInputs() {
@@ -183,6 +186,41 @@ class LitematicEngine {
     vec3.add(this.camera.pos, this.camera.pos, move);
   }
 
+  _setupIntersectionObserver() {
+    if (typeof IntersectionObserver === 'undefined') return;
+    var self = this;
+    var observer = new IntersectionObserver(function(entries) {
+      for (var e of entries) {
+        if (e.isIntersecting) {
+          self.resume();
+        } else {
+          self.pause();
+        }
+      }
+    }, { threshold: 0 });
+    observer.observe(this.container);
+  }
+
+  pause() {
+    if (this.isPaused) return;
+    this.isPaused = true;
+    this.cachedStructures = this.structures;
+    this.renderers = [];
+    if (this.canvas) {
+      this.canvas.width = 0;
+      this.canvas.height = 0;
+    }
+  }
+
+  resume() {
+    if (!this.isPaused) return;
+    this.isPaused = false;
+    if (this.cachedStructures && this.cachedStructures.length > 0) {
+      this.setStructures(this.cachedStructures);
+    }
+    this.resize();
+  }
+
   resize() {
     const dpr = window.devicePixelRatio || 1;
     this.canvas.width = window.innerWidth * dpr;
@@ -201,6 +239,8 @@ class LitematicEngine {
 
   setStructures(structuresList) {
     this.structures = structuresList;
+    this.cachedStructures = structuresList;
+    if (this.isPaused) return;
     this.renderers = structuresList.map(function(s) {
       return {
         renderer: new deepslate.StructureRenderer(this.gl, s.structure, deepslateResources, {chunkSize: 16}),
@@ -251,7 +291,7 @@ class LitematicEngine {
   }
 
   render = () => {
-    if (this.renderers.length === 0) return;
+    if (this.isPaused || this.renderers.length === 0) return;
     const {mat4, vec3} = glMatrix;
     const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
     const projectionMatrix = mat4.create();
@@ -302,6 +342,7 @@ class LitematicEngine {
 
   _startMovementTick() {
     setInterval(() => {
+      if (this.isPaused) return;
       let direction = glMatrix.vec3.create();
       var s = this.speedScale;
 

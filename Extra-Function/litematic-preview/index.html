@@ -219,6 +219,19 @@
         if (image.complete) initResources();
         else image.addEventListener('load', initResources);
 
+        // 检查 ?viewerUse=URL 参数
+        var params = new URLSearchParams(window.location.search);
+        var viewerUse = params.get('viewerUse');
+        if (viewerUse) {
+            var mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                setTimeout(function() { mainContent.style.display = 'none'; }, 500);
+            }
+            readFileURL(viewerUse);
+            return;
+        }
+
         // 执行哈希路由检查
         handleHashRoute();
     });
