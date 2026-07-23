@@ -24,9 +24,9 @@ function readLitematicFromNBTData(nbtdata) {
     // Find the minimum number of bits needed to express all blocks
     nbits = Math.ceil(Math.log2(blockPalette.length));
 
-    width = region.Size.value.x.value; 
-    height = region.Size.value.y.value;
-    depth = region.Size.value.z.value; 
+    width = Math.abs(region.Size.value.x.value); 
+    height = Math.abs(region.Size.value.y.value);
+    depth = Math.abs(region.Size.value.z.value); 
 
     var blockData = region.BlockStates.value;
 

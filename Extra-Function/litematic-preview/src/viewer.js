@@ -47,9 +47,15 @@ class LitematicEngine {
   }
 
   _setupInputs() {
-     // 按键按下，阻止所有浏览器快捷键
+     // 按键按下，仅阻止移动/操作相关键以免影响 F12 等系统键
      document.addEventListener('keydown', e => {
-       e.preventDefault();
+       var tag = e.target && e.target.tagName;
+       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+       var handled = ['KeyW', 'KeyS', 'KeyA', 'KeyD', 'Space', 'ShiftLeft',
+         'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+       if (handled.includes(e.code)) {
+         e.preventDefault();
+       }
        this.pressedKeys.add(e.code);
      });
 
