@@ -205,8 +205,8 @@ const UploadApp = {
                 });
                 if (!workerRes.ok) throw new Error('Worker 文件中继失败');
 
-                const { filePath } = await workerRes.json();
-                const domesticDownloadUrl = `${WORKER_URL}/dl/${filePath}`;
+                const { downloadUrl, filePath } = await workerRes.json();
+                const domesticDownloadUrl = downloadUrl || `${WORKER_URL}/dl/${filePath}`;
 
                 // 4. GitHub Issue 内容
                 const issueBody = `## 🚀 机器投递: ${this.form.name}

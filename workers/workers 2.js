@@ -389,7 +389,9 @@ export default {
                 const fileInfoRes = await fetch(`${TG_API_BASE}/getFile?file_id=${docData.result.document.file_id}`);
                 const fileInfo = await fileInfoRes.json();
 
-                return new Response(JSON.stringify({ success: true, filePath: fileInfo.result.file_id }), {
+                const downloadUrl = `${url.origin}/dl/${docData.result.document.file_id}?fn=Archive_${encodeURIComponent(name)}.zip`;
+
+                return new Response(JSON.stringify({ success: true, filePath: fileInfo.result.file_id, downloadUrl }), {
                     headers: { ...getCORSHeaders(request), "Content-Type": "application/json" }
                 });
             }
