@@ -78,13 +78,18 @@ export default {
                 const userData = await userRes.json();
                 const repoData = await repoRes.json();
 
-                return new Response(JSON.stringify({
+                const payload = {
                     user: {
                         login: userData.login,
                         avatar_url: userData.avatar_url
                     },
                     isAdmin: repoData.permissions?.push === true
-                }), {
+                };
+
+                // 预热会话缓存，回调后的 fetchSession 直接命中，不再重复请求 GitHub
+                await writeSessionCache(await sha256Hex(data.access_token), payload);
+
+                return new Response(JSON.stringify(payload), {
                     headers: {
                         ...getCORSHeaders(request),
                         "Content-Type": "application/json",
@@ -106,17 +111,9 @@ export default {
                     });
                 }
 
-                // 并发校验用户信息与仓库写权限
-                const [userRes, repoRes] = await Promise.all([
-                    fetch('https://api.github.com/user', {
-                        headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
-                    }),
-                    fetch(`https://api.github.com/repos/${GH_REPO}`, {
-                        headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
-                    })
-                ]);
-
-                if (!userRes.ok) {
+                // 带 10 分钟缓存的会话解析，减少 GitHub API 调用
+                const payload = await resolveSession(token, GH_REPO);
+                if (!payload) {
                     return new Response(JSON.stringify({ user: null, isAdmin: false }), {
                         headers: {
                             ...getCORSHeaders(request),
@@ -127,16 +124,7 @@ export default {
                     });
                 }
 
-                const userData = await userRes.json();
-                const repoData = await repoRes.json();
-
-                return new Response(JSON.stringify({
-                    user: {
-                        login: userData.login,
-                        avatar_url: userData.avatar_url
-                    },
-                    isAdmin: repoData.permissions?.push === true
-                }), {
+                return new Response(JSON.stringify(payload), {
                     headers: {
                         ...getCORSHeaders(request),
                         "Content-Type": "application/json",
@@ -183,17 +171,9 @@ export default {
                     });
                 }
 
-                // 并发校验用户信息与仓库写权限
-                const [userRes, repoRes] = await Promise.all([
-                    fetch('https://api.github.com/user', {
-                        headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
-                    }),
-                    fetch(`https://api.github.com/repos/${GH_REPO}`, {
-                        headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
-                    })
-                ]);
-
-                if (!userRes.ok) {
+                // 带 10 分钟缓存的会话解析，减少 GitHub API 调用
+                const payload = await resolveSession(token, GH_REPO);
+                if (!payload) {
                     return new Response(JSON.stringify({ user: null, isAdmin: false }), {
                         headers: {
                             ...getCORSHeaders(request),
@@ -204,16 +184,7 @@ export default {
                     });
                 }
 
-                const userData = await userRes.json();
-                const repoData = await repoRes.json();
-
-                return new Response(JSON.stringify({
-                    user: {
-                        login: userData.login,
-                        avatar_url: userData.avatar_url
-                    },
-                    isAdmin: repoData.permissions?.push === true
-                }), {
+                return new Response(JSON.stringify(payload), {
                     headers: {
                         ...getCORSHeaders(request),
                         "Content-Type": "application/json",
@@ -860,6 +831,78 @@ function buildAuthCookie(token) {
 // 清除认证 Cookie
 function clearAuthCookie() {
     return `gh_token=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0`;
+}
+
+// 计算 SHA-256 哈希（用于会话缓存键，避免明文 token 进入缓存键）
+async function sha256Hex(text) {
+    const data = new TextEncoder().encode(text);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// 会话缓存 TTL（秒）：同一 token 10 分钟内复用校验结果
+const SESSION_CACHE_TTL = 600;
+
+function sessionCacheKey(tokenHash) {
+    return `https://api.openstmc.com/__session_cache/${tokenHash}`;
+}
+
+async function readSessionCache(tokenHash) {
+    try {
+        const cached = await caches.default.match(sessionCacheKey(tokenHash));
+        if (!cached) return null;
+        return await cached.json();
+    } catch (e) {
+        return null;
+    }
+}
+
+async function writeSessionCache(tokenHash, payload) {
+    try {
+        await caches.default.put(sessionCacheKey(tokenHash), new Response(JSON.stringify(payload), {
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': `public, max-age=${SESSION_CACHE_TTL}`
+            }
+        }));
+    } catch (e) {
+        // 缓存写入失败不影响会话功能
+    }
+}
+
+// 校验 token 并解析会话（优先走缓存，减少 GitHub API 调用）
+async function resolveSession(token, ghRepo) {
+    const tokenHash = await sha256Hex(token);
+
+    const cached = await readSessionCache(tokenHash);
+    if (cached && cached.user) return cached;
+
+    // 并发校验用户信息与仓库写权限
+    const [userRes, repoRes] = await Promise.all([
+        fetch('https://api.github.com/user', {
+            headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
+        }),
+        fetch(`https://api.github.com/repos/${ghRepo}`, {
+            headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
+        })
+    ]);
+
+    // token 失效时不缓存
+    if (!userRes.ok) return null;
+
+    const userData = await userRes.json();
+    const repoData = await repoRes.json();
+
+    const payload = {
+        user: {
+            login: userData.login,
+            avatar_url: userData.avatar_url
+        },
+        isAdmin: repoData.permissions?.push === true
+    };
+
+    await writeSessionCache(tokenHash, payload);
+    return payload;
 }
 
 // CSRF 校验：浏览器请求必须携带合法 Origin（非浏览器请求无 Origin，放行）

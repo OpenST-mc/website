@@ -31,6 +31,12 @@ export const PortalAuth = {
     // 向后端查询会话（后端读取 HttpOnly Cookie 校验），返回 { user, isAdmin }
     // 主路径 /api/session 被 CF WAF 挑战拦截时自动降级到 /api/check-admin
     async fetchSession(WORKER_URL) {
+        // 本地缓存 10 分钟内直接复用，减少 Worker 调用
+        const local = PortalAuth.get();
+        if (local && local.user && Date.now() - local.timestamp < 10 * 60 * 1000) {
+            return { user: local.user, isAdmin: local.isAdmin };
+        }
+
         const endpoints = [
             `${WORKER_URL}/api/session`,
             `${WORKER_URL}/api/check-admin`
@@ -49,6 +55,11 @@ export const PortalAuth = {
             } catch (e) {
                 console.error("Session fetch failed", e);
             }
+        }
+
+        // 网络全部失败时回退到本地缓存（可能是临时网络或 WAF 问题）
+        if (local && local.user) {
+            return { user: local.user, isAdmin: local.isAdmin };
         }
         return null;
     },
