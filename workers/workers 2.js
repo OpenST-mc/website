@@ -14,7 +14,11 @@ export default {
             .map(s => Number(s.trim()))
             .filter(n => !isNaN(n));
         if (blacklistAsns.includes(asn)) {
-            return new Response("Access Denied: Blocked Infrastructure", { status: 403 });
+            // 携带 CORS 头与 ASN 诊断信息，便于被误伤的访问者排查
+            return new Response(JSON.stringify({ error: "Blocked Infrastructure", asn: asn }), {
+                status: 403,
+                headers: { ...getCORSHeaders(request), "Content-Type": "application/json" }
+            });
         }
 
         const url = new URL(request.url);
