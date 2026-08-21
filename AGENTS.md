@@ -20,7 +20,7 @@ npm run preview          # 预览 Vite 构建产物
 - **前端**: Vue 3 SPA（无 Router/CLI）；Vue/marked/JSZip/DOMPurify 等第三方库全部自托管于 `vendor/`（`npm run build:vendor` 生成，页面用 `/vendor/*.js` 绝对路径引用，禁止再引入外部 CDN 脚本）。注意不能用 `public/` 目录——Vercel 仓库根部署不会服务 `public/`。
 - **CSS**: Tailwind CSS v4，三个入口 `css/input.css`(Portal) / `css/ArchiveInput.css`(Archive) / `css/AdminInput.css`（404、admin_tools、profile 页，`@source` 显式声明扫描范围）。
 - **部署方式**: Vercel 直接以仓库根目录为静态站点（archive/admin_tools 等页面原样服务），非 dist；因此各页面脚本保持“全局库 + 原生 ESM 相对导入”模式，不要在原始页面里写 npm 裸导入（insights 脚本用 `js/insights-src.js` 源码 → esbuild 打包为 IIFE）。
-- **安全头**: `vercel.json` 全局下发严格 CSP（script-src 仅 'self' + va.vercel-scripts.com）、nosniff、frame-ancestors、Referrer-Policy: no-referrer。**所有 HTML 禁止内联 `<script>` 与内联事件属性**（onclick 等），页面逻辑一律放 `js/` 目录外部文件。
+- **安全头**: `vercel.json` 全局下发严格 CSP（script-src 仅 'self' + va.vercel-scripts.com + unsafe-eval——后者是 Vue 运行时模板编译所需，inline 脚本仍被禁）、nosniff、frame-ancestors、Referrer-Policy: no-referrer。**所有 HTML 禁止内联 `<script>` 与内联事件属性**（onclick 等），页面逻辑一律放 `js/` 目录外部文件。
 - **认证**: GitHub OAuth token 仅存 HttpOnly Cookie（`gh_token`，Worker 设置，7 天）；前端 `PortalAuth`（`auth/auth.js`）只缓存非敏感资料。OAuth 回调必须校验一次性 `state`（sessionStorage），scope 为 `public_repo`。
 - **后端**: CF Workers 部署于 `https://api.openstmc.com`，前端在 `archive/scripts/main.js`、`upload/upload.js`、`admin_tools/admin_edit.js` 中硬编码此地址。
   - 源码有两份：`workers/workers.js`（占位 token 的旧版）与 `workers/workers 2.js`（"Security Enhanced Edition"，从 `env.*` 读密钥、ASN 黑名单走 `env.BLACKLIST_ASNS`）。当前使用后者。
