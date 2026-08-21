@@ -1,12 +1,26 @@
 // 下载计数 + 302 跳转
 // GET /api/download?id=<sub_id 或稿件文件夹名>
-// 依赖 Vercel KV（KV_REST_API_URL / KV_REST_API_TOKEN）；未配置时仅跳转不计数
-import { kv } from '@vercel/kv';
+// 依赖 Upstash Redis（UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN）；
+// 未配置时仅跳转不计数
+import { Redis } from '@upstash/redis';
 import crypto from 'node:crypto';
 
 const DB_URL = 'https://openstmc.com/archive/data/database.json';
 const RAW_BASE = 'https://raw.githubusercontent.com/OpenST-mc/website/main';
 const PROXY_BASE = 'https://cdn.openstmc.com/https:/raw.githubusercontent.com/OpenST-mc/website/main';
+
+let redisClient = null;
+
+// 懒加载 Redis 客户端，环境变量缺失时返回 null
+function getRedis() {
+    const url = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+    if (!url || !token) return null;
+    if (!redisClient) {
+        redisClient = new Redis({ url, token });
+    }
+    return redisClient;
+}
 
 function badRequest(res, message) {
     res.statusCode = 400;
@@ -18,10 +32,6 @@ function badRequest(res, message) {
 function sanitizeId(id) {
     return typeof id === 'string' && id.length > 0 && id.length <= 200 &&
         !/[\\/]/.test(id) && !/[\u0000-\u001f]/.test(id) ? id : null;
-}
-
-function kvAvailable() {
-    return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 }
 
 export default async function handler(req, res) {
@@ -50,8 +60,9 @@ export default async function handler(req, res) {
     const target = `${PROXY_BASE}/archive/archive/${safeFolder}/${safeFile}`;
     const rawTarget = `${RAW_BASE}/archive/archive/${safeFolder}/${safeFile}`;
 
-    // 计数（KV 未配置时静默跳过，不影响下载）
-    if (kvAvailable()) {
+    // 计数（Redis 未配置时静默跳过，不影响下载）
+    const redis = getRedis();
+    if (redis) {
         try {
             const counterKey = `dl:${String(item.sub_id || item.id).replace(/[^a-zA-Z0-9\-_.]/g, '_')}`;
             const forwarded = req.headers['x-forwarded-for'] || '';
@@ -60,13 +71,13 @@ export default async function handler(req, res) {
 
             // 同一 IP 24 小时内对同一稿件只计一次
             const dedupKey = `dl:ip:${counterKey}:${ipHash}`;
-            const fresh = await kv.set(dedupKey, '1', { nx: true, ex: 86400 });
+            const fresh = await redis.set(dedupKey, '1', { nx: true, ex: 86400 });
             if (fresh) {
-                await kv.incr(counterKey);
-                await kv.incr('dl:total');
+                await redis.incr(counterKey);
+                await redis.incr('dl:total');
             }
         } catch (e) {
-            console.error('KV 计数失败:', e.message);
+            console.error('Redis 计数失败:', e.message);
         }
     }
 
