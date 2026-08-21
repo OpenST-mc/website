@@ -7,7 +7,7 @@ import esbuild from 'esbuild';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '..');
-const outDir = path.join(root, 'public/vendor');
+const outDir = path.join(root, 'vendor');
 
 const copies = [
   { from: 'node_modules/vue/dist/vue.global.prod.js', to: 'vue.global.prod.js' },
@@ -24,7 +24,7 @@ const copies = [
 
 const dirCopies = [
   // font-awesome css 内 url 为 ../webfonts/，需放在 /webfonts/ 根目录
-  { from: 'node_modules/@fortawesome/fontawesome-free/webfonts', to: 'public/webfonts' }
+  { from: 'node_modules/@fortawesome/fontawesome-free/webfonts', to: 'webfonts' }
 ];
 
 async function build() {

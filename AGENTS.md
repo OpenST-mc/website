@@ -12,12 +12,12 @@ npm run preview          # 预览 Vite 构建产物
 
 - `npm run build` 依次执行：`build:sitemap` → `node data/build.js` → `build:ArchiveCSS` → `build:PortalCSS` → `build:AdminCSS` → `build:vendor` → `vite build`。
 - 单独构建 CSS：`npm run build:ArchiveCSS` / `npm run build:PortalCSS` / `npm run build:AdminCSS`（产物 `css/ArchiveOutput.css`、`css/output.css`、`css/AdminOutput.css` 已提交）。
-- `npm run build:vendor`（`scripts/build-vendor.js`）：从 node_modules 复制第三方 dist 文件到 `public/vendor/` 并用 esbuild 打包压缩。vendor 文件已提交，仅升级依赖后需重跑。
+- `npm run build:vendor`（`scripts/build-vendor.js`）：从 node_modules 复制第三方 dist 文件到 `vendor/` 并用 esbuild 打包压缩。vendor 文件已提交，仅升级依赖后需重跑。
 - **顺序缺陷**：`build:sitemap` 在 `data/build.js` 之前执行，但 `sitemap.js` 读取由 `build.js` 生成的 `archive/data/database.json`，因此 sitemap 会用到上一次提交的旧数据。CI 里顺序是正确的（先 build.js 后 sitemap.js）。
 
 ## 架构
 
-- **前端**: Vue 3 SPA（无 Router/CLI）；Vue/marked/JSZip/DOMPurify 等第三方库全部自托管于 `public/vendor/`（`npm run build:vendor` 生成，页面用 `/vendor/*.js` 绝对路径引用，禁止再引入外部 CDN 脚本）。
+- **前端**: Vue 3 SPA（无 Router/CLI）；Vue/marked/JSZip/DOMPurify 等第三方库全部自托管于 `vendor/`（`npm run build:vendor` 生成，页面用 `/vendor/*.js` 绝对路径引用，禁止再引入外部 CDN 脚本）。注意不能用 `public/` 目录——Vercel 仓库根部署不会服务 `public/`。
 - **CSS**: Tailwind CSS v4，三个入口 `css/input.css`(Portal) / `css/ArchiveInput.css`(Archive) / `css/AdminInput.css`（404、admin_tools、profile 页，`@source` 显式声明扫描范围）。
 - **部署方式**: Vercel 直接以仓库根目录为静态站点（archive/admin_tools 等页面原样服务），非 dist；因此各页面脚本保持“全局库 + 原生 ESM 相对导入”模式，不要在原始页面里写 npm 裸导入（insights 脚本用 `js/insights-src.js` 源码 → esbuild 打包为 IIFE）。
 - **安全头**: `vercel.json` 全局下发严格 CSP（script-src 仅 'self' + va.vercel-scripts.com）、nosniff、frame-ancestors、Referrer-Policy: no-referrer。**所有 HTML 禁止内联 `<script>` 与内联事件属性**（onclick 等），页面逻辑一律放 `js/` 目录外部文件。
@@ -44,7 +44,7 @@ npm run preview          # 预览 Vite 构建产物
 | `auth/` | GitHub OAuth 共享模块（localStorage 只存非敏感资料，token 在 Cookie） |
 | `admin_tools/` | 管理员编辑页（`admin_edit.js` / `admin_tools.js` 为页面逻辑） |
 | `js/` | 各页面外部脚本（`portal.js`、`404.js`、`health.js`、`auth-callback.js`、`credits.js`、`insights-src.js`） |
-| `public/vendor/` | 自托管第三方库（已提交，`npm run build:vendor` 生成） |
+| `vendor/` | 自托管第三方库（已提交，`npm run build:vendor` 生成；`webfonts/` 为 font-awesome 字体） |
 | `scripts/build-vendor.js` | vendor 构建脚本 |
 
 ## CI / 部署
