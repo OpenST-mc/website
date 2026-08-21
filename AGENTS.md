@@ -53,6 +53,7 @@ npm run preview          # 预览 Vite 构建产物
 - Vercel：前端纯静态（**仓库根目录直接部署**，非 dist）；`vercel.json` 配置 cleanUrls、`/archive/*.litematic`、`/vendor/*` 等资源 1 年缓存 + 全局安全头/严格 CSP。
 - 管理员功能依赖 GitHub OAuth token 对 `OpenST-mc/website` 仓库的写入权限。
 - Worker 接口有 CSRF Origin 校验、内存限流、Content-Length 上限；上传仅接受图片预览与 zip；生产建议叠加 Cloudflare WAF 速率限制。
+- **Cloudflare WAF 注意**：api.openstmc.com 的 WAF 规则若采用「端点白名单 + Managed Challenge」模式，新增端点必须同步加白，否则 fetch 无法通过挑战（表现为 403 + 无 CORS 头）。当前全部 API 端点清单：`/api/session`、`/api/logout`、`/api/exchange-token`、`/api/submit-issue`、`/api/archive-upload`、`/api/admin/update-info`、`/api/admin/update-preview`、`/api/admin/replace-litematic`、`/api/admin/delete-archive`、`/api/wiki/submit-archive`、`/dl/*`、`/health`。
 
 ## 安全约定 (强制)
 
