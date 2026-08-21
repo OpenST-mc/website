@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <link rel="icon" href="/images/favicon.png" sizes="any">
     <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-2.png">
     <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-2.png">
@@ -10,9 +11,10 @@
     <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon-2.png">
     <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png">
     <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any">
-    <script src="archive/scripts/insights.js" type="module"></script>
+    <script src="/vendor/insights.bundle.js" defer></script>
+    <script src="/js/404.js" defer></script>
     <title>OpenST | 定位失败</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/AdminOutput.css">
     <style>
         :root { --brand: #40B5AD; }
         body {
@@ -77,46 +79,5 @@
     </div>
 </div>
 
-<script>
-    const path = window.location.pathname.split('/').pop();
-    const searchingEl = document.getElementById('searching');
-    const errorBoxEl = document.getElementById('error-box');
-    const targetPathEl = document.getElementById('target-path');
-    const errorIdEl = document.getElementById('error-id');
-
-    // 显示当前解析的路径
-    targetPathEl.innerText = path ? `COORD: ${path}` : "ROOT_ACCESS";
-
-    async function handleRouting() {
-        // 只有以 sub- 开头的路径才尝试劫持
-        if (path && path.startsWith('sub-')) {
-            try {
-                // 1. 尝试获取数据库
-                const res = await fetch('/data/database.json');
-                const database = await res.json();
-
-                // 2. 检查 ID 是否真的存在
-                const exists = database.some(item => item.sub_id === path);
-
-                if (exists) {
-                    // 命中目标，跳回主页并带上 hash
-                    window.location.replace('/#' + path);
-                    return;
-                }
-            } catch (e) {
-                console.error("Database fetch failed", e);
-            }
-        }
-
-        // 如果不是 sub- 开头，或者数据库里没找到
-        setTimeout(() => {
-            searchingEl.classList.add('hidden');
-            errorBoxEl.classList.remove('hidden');
-            errorIdEl.innerText = path || "null";
-        }, 1000); // 给 1 秒的“分析”假象，提升仪式感
-    }
-
-    handleRouting();
-</script>
 </body>
 </html>

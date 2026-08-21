@@ -9,7 +9,9 @@
     "build:sitemap": "node data/sitemap.js",
     "build:ArchiveCSS": "tailwindcss -i ./css/ArchiveInput.css -o ./css/ArchiveOutput.css --minify",
     "build:PortalCSS": "tailwindcss -i ./css/input.css -o ./css/output.css --minify",
-    "build": "npm run build:sitemap && node data/build.js && npm run build:ArchiveCSS && npm run build:PortalCSS && vite build"
+    "build:AdminCSS": "tailwindcss -i ./css/AdminInput.css -o ./css/AdminOutput.css --minify",
+    "build:vendor": "node scripts/build-vendor.js",
+    "build": "npm run build:sitemap && node data/build.js && npm run build:ArchiveCSS && npm run build:PortalCSS && npm run build:AdminCSS && npm run build:vendor && vite build"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.2.4",
@@ -20,8 +22,16 @@
     "vue": "^3.5.27"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^7.3.1",
     "@tailwindcss/vite": "^4.2.4",
     "@vitejs/plugin-vue": "^6.0.3",
+    "deepslate": "^0.10.1",
+    "dompurify": "^3.4.14",
+    "gl-matrix": "^3.4.3",
+    "jszip": "^3.10.1",
+    "marked": "^18.0.10",
+    "material-icons": "^1.13.14",
+    "pako": "^3.0.1",
     "tailwindcss": "^4.2.4",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.5"

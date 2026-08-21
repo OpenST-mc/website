@@ -5,14 +5,20 @@ const { createApp } = Vue;
 
 const WORKER_URL = 'https://api.openstmc.com';
 const CLIENT_ID = 'Ov23liTildfj3XAkvbr8';
-const GH_REPO = 'OpenST-mc/Submissions';
+
+console.log(
+    "%c如果你并非网页开发人员，请勿在控制台内输入任何人传给你的脚本！\n%c在控制台输入脚本可能会让攻击者盗取你的 GitHub 访问令牌（Token），从而控制你的仓库或篡改数据。",
+    "color: #333; font-size: 16px; font-weight: bold;",
+    "color: red; font-size: 14px;"
+);
 
 const UploadApp = {
     data() {
         return {
             config: TAG_CONFIG,
             step: 1,
-            userToken: '',
+            loggedIn: false,
+            user: null,
             form: {
                 name: '',
                 author: '',
@@ -27,49 +33,41 @@ const UploadApp = {
     },
 
     async mounted() {
-        // 1. 检查登录状态：对齐档案馆
-        const auth = PortalAuth.get();
-        if (auth) {
-            this.userToken = auth.token;
-            this.user = auth.user; // 这样上传页也能显示是谁在投递了
-        }
-
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
 
-        if (code && this.step !== 2) {
-            this.step = 2;
-
-            // 清理 URL
+        if (code) {
             const cleanUrl = window.location.origin + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
 
-            try {
-                const res = await fetch(`${WORKER_URL}/api/exchange-token?code=${code}`);
-                const data = await res.json();
+            // 校验 OAuth state，防止登录 CSRF
+            const state = urlParams.get('state');
+            const savedState = sessionStorage.getItem('oauth_state');
+            sessionStorage.removeItem('oauth_state');
 
-                if (data.access_token) {
-                    // 不再调用 saveAuth，直接用 PortalAuth 补完用户信息
-                    // 传 true 是为了让 auth.js 去 fetch 用户头像和 login 名
-                    await PortalAuth.save(data, true);
-
-                    // 重新同步本地状态
-                    const updatedAuth = PortalAuth.get();
-                    this.userToken = updatedAuth.token;
-                    this.user = updatedAuth.user;
+            if (state && savedState && state === savedState) {
+                try {
+                    await fetch(`${WORKER_URL}/api/exchange-token?code=${code}`, { credentials: 'include' });
+                } catch (e) {
+                    console.error("Auth Error:", e);
                 }
-            } catch (e) {
-                console.error("Auth Error:", e);
-            } finally {
-                this.step = 1;
             }
+        }
+
+        // 从后端会话恢复登录状态
+        const session = await PortalAuth.fetchSession(WORKER_URL);
+        if (session) {
+            this.loggedIn = true;
+            this.user = session.user;
         }
     },
 
     computed: {
         previewHtml() {
             if (!this.form.desc) return '<span class="text-gray-600 italic">在此输入简介...</span>';
-            return typeof marked !== 'undefined' ? marked.parse(this.form.desc) : 'Markdown 插件加载中...';
+            const rawHtml = typeof marked !== 'undefined' ? marked.parse(this.form.desc) : 'Markdown 插件加载中...';
+            // DOMPurify 净化，防止 XSS
+            return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml;
         },
         flatConfig() {
             const res = {};
@@ -107,32 +105,23 @@ const UploadApp = {
     },
 
     methods: {
-        saveAuth(token) {
-            this.userToken = token;
-            const authData = { token: token, timestamp: new Date().getTime() };
-            localStorage.setItem('gh_auth', JSON.stringify(authData));
-        },
-        checkLoginExpiry() {
-            const rawData = localStorage.getItem('gh_auth');
-            if (!rawData) return;
-            try {
-                const authData = JSON.parse(rawData);
-                const isExpired = (new Date().getTime() - authData.timestamp) > 7 * 24 * 60 * 60 * 1000;
-                if (isExpired) { this.logout(); } else { this.userToken = authData.token; }
-            } catch (e) { this.logout(); }
-        },
-        logout() {
-            this.userToken = '';
-            localStorage.removeItem('gh_auth');
+        async logout() {
+            await PortalAuth.logout(WORKER_URL);
+            this.loggedIn = false;
+            this.user = null;
         },
         loginWithGitHub() {
             const CLIENT_ID = 'Ov23liTildfj3XAkvbr8'
             const redirect_uri = window.location.origin + window.location.pathname; // 指向 index.html
+            // 生成一次性 state，防止登录 CSRF
+            const state = crypto.randomUUID();
+            sessionStorage.setItem('oauth_state', state);
 
             window.location.href = `https://github.com/login/oauth/authorize` +
                 `?client_id=${CLIENT_ID}` +
                 `&scope=public_repo` +
-                `&redirect_uri=${encodeURIComponent(redirect_uri)}`;
+                `&redirect_uri=${encodeURIComponent(redirect_uri)}` +
+                `&state=${state}`;
         },
         toggleTag(tag, parentKey = null) {
             const index = this.form.tags.indexOf(tag);
@@ -162,7 +151,7 @@ const UploadApp = {
             }
         },
         async handleUpload() {
-            if (!this.userToken || this.step === 2) return;
+            if (!this.loggedIn || this.step === 2) return;
 
             this.step = 2; // 进入上传中状态
             try {
@@ -228,14 +217,11 @@ ${this.form.desc}
 
 _Generated by OpenST Portal 4.0_`;
 
-                const ghRes = await fetch(`https://api.github.com/repos/${GH_REPO}/issues`, {
+                // 通过 Worker 代理创建 Issue，token 仅在 Cookie 中传递
+                const ghRes = await fetch(`${WORKER_URL}/api/submit-issue`, {
                     method: 'POST',
-                    credentials: 'omit',
-                    headers: {
-                        'Authorization': `Bearer ${this.userToken}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         title: `[档案馆] ${this.form.name} @${this.form.author}`,
                         labels: ['档案馆'],
@@ -268,7 +254,7 @@ _Generated by OpenST Portal 4.0_`;
               <p class="text-[#40B5AD] text-[10px] font-bold uppercase tracking-[0.2em] mt-1">Submission Portal</p>
             </div>
             <div class="flex items-center gap-4">
-              <button v-if="userToken" @click="logout"
+              <button v-if="loggedIn" @click="logout"
                       class="text-xs text-red-500/60 hover:text-red-500 underline uppercase tracking-widest">注销登录
               </button>
               <a href="../archive/index.html"
@@ -277,7 +263,7 @@ _Generated by OpenST Portal 4.0_`;
           </div>
 
           <div class="p-8">
-            <div v-if="!userToken && step === 1"
+            <div v-if="!loggedIn && step === 1"
                  class="py-20 text-center space-y-8 animate-in fade-in zoom-in-95 duration-500">
               <div
                   class="w-20 h-20 bg-[#40B5AD]/10 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-[#40B5AD]/20 rotate-3">
@@ -301,7 +287,7 @@ _Generated by OpenST Portal 4.0_`;
                 OAuth</p>
             </div>
 
-            <div v-if="userToken && step === 1"
+            <div v-if="loggedIn && step === 1"
                  class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <label

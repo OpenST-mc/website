@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="referrer" content="no-referrer">
 
     <meta name="description" content="OpenST 档案馆：归档、转换并在线预览 Minecraft 优秀储电作品。提供精密机器存档下载与 WebGL 投影预览。">
     <meta property="og:description" content="OpenST：归档、转换并在线预览 Minecraft 优秀储电作品。支持 WebGL 投影预览。">
@@ -17,8 +18,6 @@
     <meta name="twitter:image" content="https://openstmc.com/images/favicon-1.png">
     <meta property="twitter:card" content="summary_large_image">
 
-    <link rel="preconnect" href="https://cdn.jsdmirror.com" crossorigin>
-
     <link rel="icon" href="../images/favicon.png" sizes="any">
     <link rel="icon" type="image/png" sizes="48x48" href="../images/favicon-2.png">
     <link rel="icon" type="image/png" sizes="64x64" href="../images/favicon-2.png">
@@ -28,9 +27,10 @@
     <link rel="apple-touch-icon" href="../images/favicon.png" sizes="any">
     <title>OpenST Archive</title>
     <link rel="stylesheet" href="../css/ArchiveOutput.css">
-    <script src="https://lib.baomitu.com/marked/11.1.1/marked.min.js" defer></script>
+    <script src="/vendor/marked.min.js" defer></script>
+    <script src="/vendor/purify.min.js" defer></script>
     <link rel="stylesheet" href="../css/style.css">
-    <script src="scripts/insights.js" type="module"></script>
+    <script src="/vendor/insights.bundle.js" defer></script>
 </head>
 <body class="bg-dark text-white overflow-hidden font-sans">
 <div id="app" v-cloak class="flex flex-col h-screen h-[100dvh] overflow-hidden" @click="handleImageZoom">
@@ -154,16 +154,9 @@
 
 </div>
 
-<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="/vendor/vue.global.prod.js"></script>
 <!--<script src="scripts/mock.js"></script>-->
 <script type="module" src="/archive/scripts/main.js"></script>
-<script>
-    console.log(
-        "%c如果你并非网页开发人员，请勿在控制台内输入任何人传给你的脚本！\n%c在控制台输入脚本可能会让攻击者盗取你的 GitHub 访问令牌（Token），从而控制你的仓库或篡改数据。",
-        "color: #333; font-size: 16px; font-weight: bold;",
-        "color: red; font-size: 14px;"
-    );
-</script>
 <script type="application/ld+json">
     {
         "@context": "https://schema.org",

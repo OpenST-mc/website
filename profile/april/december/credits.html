@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="preconnect" href="https://cdn.jsdmirror.com">
+    <meta name="referrer" content="no-referrer">
     <title>OpenST Credits</title>
     <link rel="icon" href="/images/favicon.png" sizes="any">
     <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-2.png">
@@ -12,7 +12,9 @@
     <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon-2.png">
     <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png">
     <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any">
-    <script src="https://cdn.jsdmirror.com/npm/marked/marked.min.js"></script>
+    <script src="/vendor/marked.min.js"></script>
+    <script src="/vendor/purify.min.js" defer></script>
+    <script src="/js/credits.js" defer></script>
     <style>
         :root { --brand: #ffffff; --text-secondary: #86868b; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; background: #000; font-family: -apple-system, BlinkMacSystemFont, sans-serif; scroll-behavior: smooth; }
@@ -59,7 +61,7 @@
 </head>
 <body>
 
-<div id="portal" onclick="this.style.opacity='0'; setTimeout(()=>this.remove(), 1000)">
+<div id="portal">
     <div class="portal-btn">INIT OPENST</div>
 </div>
 
@@ -68,65 +70,5 @@
 
 <div id="credits-wrap" class="markdown-body"></div>
 
-<script>
-    const wrap = document.getElementById('credits-wrap');
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-
-    async function loadCredits() {
-        try {
-            const res = await fetch('./credits.md');
-            const md = await res.text();
-            wrap.innerHTML = marked.parse(md) + '<a href="https://openstmc.com" class="back-home">BACK TO ARCHIVE</a>';
-        } catch (e) {
-            wrap.innerHTML = "<h2>OpenST Credits</h2><a href='https://openstmc.com' class='back-home'>RETURN</a>";
-        }
-    }
-
-    function initStars() {
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
-        ctx.scale(dpr, dpr);
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = window.innerHeight + 'px';
-        const starCount = window.innerWidth < 768 ? 800 : 1800;
-
-        stars = Array(starCount).fill().map(() => ({
-            x: (Math.random() - 0.5) * window.innerWidth * 2.5,
-            y: (Math.random() - 0.5) * window.innerHeight * 2.5,
-            z: Math.random() * window.innerWidth,
-            s: Math.random() * 1.2 + 0.3
-        }));
-    }
-
-    function animateStars() {
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-
-        stars.forEach(s => {
-            s.z -= 0.3;
-            if(s.z <= 0) s.z = window.innerWidth;
-            let k = 400 / s.z;
-            let px = s.x * k + window.innerWidth / 2;
-            let py = s.y * k + window.innerHeight / 2;
-
-            if (px >= 0 && px <= window.innerWidth && py >= 0 && py <= window.innerHeight) {
-                let size = (1 - s.z / window.innerWidth) * s.s;
-                ctx.fillStyle = `rgba(255,255,255,${(1 - s.z / window.innerWidth) * 0.7})`;
-                ctx.beginPath();
-                ctx.arc(px, py, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        });
-        requestAnimationFrame(animateStars);
-    }
-
-    window.addEventListener('resize', initStars);
-    initStars();
-    animateStars();
-    loadCredits();
-</script>
 </body>
 </html>

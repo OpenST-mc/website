@@ -189,7 +189,9 @@ export const DetailModal = {
         renderedDescription() {
             if (!this.item?.description) return '<p class="italic opacity-50 text-gray-600">作者没留下任何简介，一定是大佬吧！</p>';
             // 使用 marked 解析 Markdown，支持换行和 GitHub 风格
-            return marked.parse(this.item.description, { breaks: true, gfm: true });
+            const rawHtml = marked.parse(this.item.description, { breaks: true, gfm: true });
+            // DOMPurify 净化，防止存储型 XSS
+            return DOMPurify.sanitize(rawHtml);
         }
     },
     methods: {

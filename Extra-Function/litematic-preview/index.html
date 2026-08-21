@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <link rel="preconnect" href="https://cdn.jsdmirror.com">
+    <meta name="referrer" content="no-referrer">
     <title>OpenST | Litematic Viewer</title>
     <link rel="icon" href="/images/favicon.png" sizes="any">
     <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-2.png">
@@ -13,15 +13,15 @@
     <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png">
     <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any">
 
-    <script src="https://unpkg.com/deepslate@0.10.1"></script>
-    <script src="https://unpkg.com/gl-matrix@3.4.3/gl-matrix-min.js"></script>
+    <script src="/vendor/deepslate.umd.js"></script>
+    <script src="/vendor/gl-matrix-min.js"></script>
     <script src="/Extra-Function/litematic-preview/resource/assets.js"></script>
     <script src="/Extra-Function/litematic-preview/resource/opaque.js"></script>
 
     <link rel="stylesheet" href="../../css/ArchiveOutput.css">
-    <link rel="stylesheet" href="https://fonts.geekzu.org/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://cdn.jsdmirror.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <script src="/archive/scripts/insights.js" type="module"></script>
+    <link rel="stylesheet" href="/vendor/material-icons.css">
+    <link rel="stylesheet" href="/vendor/font-awesome.css">
+    <script src="/vendor/insights.bundle.js" defer></script>
 
     <style>
         :root {
@@ -231,7 +231,7 @@
     </div>
 </div>
 
-<a href="javascript:void(0)" id="settings-button" class="fixed top-6 right-8 z-[110] text-white/50 hover:text-[#40B5AD] transition-all" onclick="openSettings()">
+<a href="#" id="settings-button" class="fixed top-6 right-8 z-[110] text-white/50 hover:text-[#40B5AD] transition-all">
     <i class="fa fa-cog"></i>
 </a>
 
@@ -241,8 +241,8 @@
         <p class="text-xs font-mono text-white/40 mb-10 uppercase tracking-[0.3em]">Litematic Preview</p>
 
         <div id="file-loader-panel">
-            <input id="file-upload" type="file" onchange="readFileInput(this)" hidden />
-            <label for="file-upload" id="drop-zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+            <input id="file-upload" type="file" hidden />
+            <label for="file-upload" id="drop-zone">
                 <div class="flex flex-col items-center pointer-events-none">
                     <i class="material-icons text-5xl text-[#40B5AD] mb-4">cloud_upload</i>
                     <h3 class="text-xl font-bold mb-1">选择投影</h3>
@@ -254,7 +254,7 @@
                 <div class="relative group">
                     <input id="remote-url-input" type="text" placeholder="Paste remote link here..."
                            class="w-full bg-white/5 border-b border-white/10 p-4 focus:outline-none focus:border-[#40B5AD] transition-all font-mono text-sm">
-                    <button class="absolute right-2 top-2 p-2 text-[#40B5AD]" onclick="submitRemoteFile()">
+                    <button id="submit-remote-btn" class="absolute right-2 top-2 p-2 text-[#40B5AD]">
                         <i class="material-icons">send</i>
                     </button>
                 </div>
@@ -264,18 +264,16 @@
 </div>
 
 <div id="settings-panel">
-    <a href="javascript:void(0)" class="absolute top-6 right-6 text-3xl text-white/50 hover:text-white" onclick="closeSettings()">&times;</a>
+    <a href="#" id="settings-close" class="absolute top-6 right-6 text-3xl text-white/50 hover:text-white">&times;</a>
     <div class="p-8">
         <h3 class="text-xl font-bold text-[#40B5AD] mb-8 font-mono">设置</h3>
-        <button id="cancel-preview-btn" class="w-full py-3 mb-10 bg-red-900/40 border border-red-500/50 text-red-200 text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all hidden"
-                onclick="history.replaceState(null, '', ' '); location.reload();">
+        <button id="cancel-preview-btn" class="w-full py-3 mb-10 bg-red-900/40 border border-red-500/50 text-red-200 text-xs font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all hidden">
             取消预览
         </button>
         <div id="settings-sliders" class="mb-8 space-y-3"></div>
         <!-- 镜像模式 -->
         <label class="flex items-center gap-3 mb-8 cursor-pointer">
-            <input type="checkbox" id="mirror-toggle" class="sr-only setting" data-setting="mirrorMode"
-                   onchange="var m=this.checked;if(window.vEngine)window.vEngine.mirrorMode=m;applyMirrorLayout(m)">
+            <input type="checkbox" id="mirror-toggle" class="sr-only setting" data-setting="mirrorMode">
             <div class="w-10 h-5 rounded-full bg-white/10 border border-white/20 transition-colors relative">
                 <div class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#40B5AD] transition-transform"></div>
             </div>
@@ -294,145 +292,6 @@
 <script src="/Extra-Function/litematic-preview/src/main.js"></script>
 <script src="/Extra-Function/litematic-preview/src/settings.js"></script>
 
-<script>
-    // 初始化 UI 交互逻辑
-    document.addEventListener("DOMContentLoaded", () => {
-        const image = document.getElementById('atlas');
-        const initResources = () => loadDeepslateResources(image);
-
-        if (image.complete) initResources();
-        else image.addEventListener('load', initResources);
-
-        // 恢复镜像模式
-        var mirrorCb = document.getElementById('mirror-toggle');
-        if (mirrorCb && mirrorCb.checked && window.vEngine) {
-            window.vEngine.mirrorMode = true;
-            applyMirrorLayout(true);
-        }
-
-        // 检查 ?viewerUse=URL 参数
-        var params = new URLSearchParams(window.location.search);
-        var viewerUse = params.get('viewerUse');
-        if (viewerUse) {
-            var mainContent = document.getElementById('main-content');
-            if (mainContent) {
-                mainContent.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-                setTimeout(function() { mainContent.style.display = 'none'; }, 500);
-            }
-            readFileURL(viewerUse);
-            return;
-        }
-
-        // 执行哈希路由检查
-        handleHashRoute();
-    });
-
-    // #https://...
-    function handleHashRoute() {
-        const hash = window.location.hash.substring(1); // 去掉开头的 #
-        if (hash && hash.startsWith('http')) {
-            console.log(`🚀 发现哈希路由: ${hash}`);
-
-            // 同步显示到输入框（视觉反馈）
-            const urlInput = document.getElementById('remote-url-input');
-            if (urlInput) urlInput.value = hash;
-
-            readFileURL(hash);
-        }
-    }
-
-    // 监听地址栏手动修改
-    window.addEventListener('hashchange', handleHashRoute);
-    // 文件上传统一入口 (适配 File 和 Blob)
-    function handleFileSelection(file) {
-        if (!file) return;
-        showLoading();
-
-        // 隐藏主面板的动画
-        const main = document.getElementById('main-content');
-        main.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-
-        if (typeof loadAndProcessFile === 'function') {
-            loadAndProcessFile(file);
-        }
-    }
-
-    function readFileInput(input) {
-        if (input.files && input.files[0]) handleFileSelection(input.files[0]);
-    }
-
-    function dropHandler(ev) {
-        ev.preventDefault();
-        const file = ev.dataTransfer.items ? ev.dataTransfer.items[0].getAsFile() : ev.dataTransfer.files[0];
-        handleFileSelection(file);
-    }
-
-    function dragOverHandler(ev) { ev.preventDefault(); }
-
-    function submitRemoteFile() {
-        const urlInput = document.getElementById('remote-url-input');
-        const url = urlInput.value.trim();
-        if (url) {
-            readFileURL(url);
-        } else {
-            alert("请先输入有效的 URL 链接");
-        }
-    }
-
-    function readFileURL(url) {
-        showLoading();
-        console.log(`正在发起请求: ${url}`);
-
-        // 直接 Fetch，不经过任何中转
-        fetch(url, { mode: 'cors' })
-            .then(res => {
-                if (!res.ok) throw new Error(`服务器响应失败: ${res.status}`);
-                return res.blob();
-            })
-            .then(blob => {
-                // 将 Blob 传递给解析引擎
-                handleFileSelection(blob);
-            })
-            .catch(err => {
-                console.error("失败:", err);
-                alert("远程加载失败。请检查：\n1. 链接是否正确\n2. 目标服务器是否允许 CORS 跨域访问");
-                hideLoading();
-                // 恢复 UI 状态
-                const main = document.getElementById('main-content');
-                main.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
-            });
-    }
-
-    function showLoading() { document.getElementById('loading-overlay').classList.remove('hidden'); }
-    function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
-
-    function applyMirrorLayout(mirror) {
-        var leftHint = document.querySelector('#touch-hints .hint-left');
-        var rightHint = document.querySelector('#touch-hints .hint-right');
-        var vCtrl = document.getElementById('vertical-controls');
-        if (mirror) {
-            if (leftHint) {
-                leftHint.querySelector('.hint-text').innerHTML = '<span class="hint-icon material-icons">rotate_right</span>单指旋转';
-                leftHint.style.background = 'linear-gradient(135deg, rgba(255, 50, 50, 0.10) 0%, transparent 100%)';
-            }
-            if (rightHint) {
-                rightHint.querySelector('.hint-text').innerHTML = '<span class="hint-icon material-icons">touch_app</span>单指移动';
-                rightHint.style.background = 'linear-gradient(225deg, rgba(0, 200, 0, 0.15) 0%, transparent 100%)';
-            }
-            if (vCtrl) { vCtrl.style.right = 'auto'; vCtrl.style.left = '20px'; }
-        } else {
-            if (leftHint) {
-                leftHint.querySelector('.hint-text').innerHTML = '<span class="hint-icon material-icons">touch_app</span>单指移动';
-                leftHint.style.background = '';
-            }
-            if (rightHint) {
-                rightHint.querySelector('.hint-text').innerHTML = '<span class="hint-icon material-icons">rotate_right</span>单指旋转';
-                rightHint.style.background = '';
-            }
-            if (vCtrl) { vCtrl.style.left = 'auto'; vCtrl.style.right = '20px'; }
-        }
-    }
-
-</script>
+<script src="/Extra-Function/litematic-preview/src/ui-init.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://cdn.jsdmirror.com">
+    <meta name="referrer" content="no-referrer">
     <title>OpenST | Litematica Converter</title>
     <link rel="stylesheet" href="../../css/ArchiveOutput.css">
     <link rel="icon" href="/images/favicon.png" sizes="any">
@@ -13,7 +13,7 @@
     <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon-2.png">
     <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png">
     <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any">
-    <script src="/archive/scripts/insights.js" type="module"></script>
+    <script src="/vendor/insights.bundle.js" defer></script>
     <style>
         :root { --brand-color: #40B5AD; }
         body {
@@ -129,8 +129,7 @@
     </footer>
 </div>
 
-<script src="https://cdn.jsdmirror.com/gh/OpenST-mc/library@main/pako.min.js"></script>
-<script src="https://cdn.jsdmirror.com/gh/OpenST-mc/library@main/pnbt.js"></script>
+<script src="/vendor/pako.min.js"></script>
 <script src="/Extra-Function/litematic-converter/index.js"></script>
 </body>
 </html>

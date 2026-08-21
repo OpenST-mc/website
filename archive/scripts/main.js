@@ -6,6 +6,12 @@ import { PortalAuth } from '../../auth/auth.js';
 const { createApp } = Vue;
 const WORKER_URL = 'https://api.openstmc.com';
 
+console.log(
+    "%c如果你并非网页开发人员，请勿在控制台内输入任何人传给你的脚本！\n%c在控制台输入脚本可能会让攻击者盗取你的 GitHub 访问令牌（Token），从而控制你的仓库或篡改数据。",
+    "color: #333; font-size: 16px; font-weight: bold;",
+    "color: red; font-size: 14px;"
+);
+
 // 懒加载指令
 const lazyDirective = {
     mounted(el, binding) {
@@ -189,25 +195,22 @@ const AppOptions = {
         async handleLogin() {
             const CLIENT_ID = 'Ov23liTildfj3XAkvbr8';
             const redirect_uri = window.location.origin + window.location.pathname;
-            window.location.href = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=repo&redirect_uri=${encodeURIComponent(redirect_uri)}`;
+            // 生成一次性 state，防止登录 CSRF
+            const state = crypto.randomUUID();
+            sessionStorage.setItem('oauth_state', state);
+            window.location.href = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=public_repo&redirect_uri=${encodeURIComponent(redirect_uri)}&state=${state}`;
         },
         async checkIdentity() {
-            const auth = PortalAuth.get();
-            if (!auth) return;
-            this.user = auth.user;
-            try {
-                const res = await fetch(`${WORKER_URL}/api/check-admin`, {
-                    headers: { 'Authorization': `Bearer ${auth.token}` }
-                });
-                const data = await res.json();
-                this.isAdmin = data.isAdmin;
-            } catch (e) { console.error("Admin check failed", e); }
+            const session = await PortalAuth.fetchSession(WORKER_URL);
+            if (session) {
+                this.user = session.user;
+                this.isAdmin = session.isAdmin;
+            }
         },
-        handleLogout() {
+        async handleLogout() {
             this.user = null;
             this.isAdmin = false;
-            this.userToken = '';
-            PortalAuth.logout();
+            await PortalAuth.logout(WORKER_URL);
             window.location.reload();
         },
 
@@ -261,6 +264,48 @@ const AppOptions = {
             return this.favorites.includes(itemId);
         },
 
+        // 加载数据库与繁简字典（独立于身份校验，可并行）
+        async loadData() {
+            try {
+                const [dataRes, dictRes] = await Promise.all([
+                    fetch('archive/data/database.json'),
+                    fetch('./Traditional-Simplefild/STCharacters.txt')
+                ]);
+
+                // 解析字典
+                const dictText = await dictRes.text();
+
+                const fs = [];
+                const ft = [];
+
+                dictText.split(/\r?\n/).forEach(line => {
+                    if (!line || line.startsWith('#')) return;
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length >= 2) {
+                        parts.slice(1).forEach(t => {
+                            fs.push(parts[0]);
+                            ft.push(t);
+                        });
+                    }
+                });
+
+                this.dictSArray = Object.freeze(fs);
+                this.dictTArray = Object.freeze(ft);
+
+                // 装载数据库 (这行没跑通，投影就不会出来)
+                const rawData = await dataRes.json();
+                this.allData = Object.freeze(rawData);
+
+                // 数据加载完后再执行 URL 定位
+                this.checkUrlLocation();
+                if (this.detailItem) {
+                    document.title = `${this.detailItem.name} - OpenST 档案馆`;
+                }
+
+            } catch (e) {
+                console.error("Data Load Error: 检查文件路径是否正确", e);
+            }
+        }
     },
 
     async mounted() {
@@ -269,60 +314,27 @@ const AppOptions = {
         const code = urlParams.get('code');
 
         if (code) {
-            try {
-                const res = await fetch(`${WORKER_URL}/api/exchange-token?code=${code}`);
-                const data = await res.json();
-                if (data.access_token) {
-                    // 注意：这里必须 await，确保头像数据抓完存好
-                    await PortalAuth.save(data, true);
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-            } catch (e) { console.error("Auth Callback Error", e); }
-        }
+            // 校验 OAuth state，防止登录 CSRF
+            const state = urlParams.get('state');
+            const savedState = sessionStorage.getItem('oauth_state');
+            sessionStorage.removeItem('oauth_state');
 
-        // 2. 统一身份校验
-        await this.checkIdentity();
-
-        try {
-            const [dataRes, dictRes] = await Promise.all([
-                fetch('archive/data/database.json'),
-                fetch('./Traditional-Simplefild/STCharacters.txt')
-            ]);
-
-            // 解析字典
-            const dictText = await dictRes.text();
-
-            // 确保定义了变量
-            const fs = [];
-            const ft = [];
-
-            dictText.split(/\r?\n/).forEach(line => {
-                if (!line || line.startsWith('#')) return;
-                const parts = line.trim().split(/\s+/);
-                if (parts.length >= 2) {
-                    parts.slice(1).forEach(t => {
-                        fs.push(parts[0]);
-                        ft.push(t);
-                    });
-                }
-            });
-
-            this.dictSArray = Object.freeze(fs);
-            this.dictTArray = Object.freeze(ft);
-
-            // 装载数据库 (这行没跑通，投影就不会出来)
-            const rawData = await dataRes.json();
-            this.allData = Object.freeze(rawData);
-
-            // 4. 数据加载完后再执行 URL 定位
-            this.checkUrlLocation();
-            if (this.detailItem) {
-                document.title = `${this.detailItem.name} - OpenST 档案馆`;
+            if (state && savedState && state === savedState) {
+                try {
+                    const res = await fetch(`${WORKER_URL}/api/exchange-token?code=${code}`, { credentials: 'include' });
+                    const data = await res.json();
+                    if (data.user) {
+                        await PortalAuth.save(data.user, data.isAdmin);
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (e) { console.error("Auth Callback Error", e); }
+            } else {
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
-
-        } catch (e) {
-            console.error("Data Load Error: 检查文件路径是否正确", e);
         }
+
+        // 2. 并发执行身份校验与数据加载
+        await Promise.all([this.checkIdentity(), this.loadData()]);
 
         window.addEventListener('popstate', () => {
             // 当点击浏览器返回键时，重新检测 URL 决定是否显示弹窗

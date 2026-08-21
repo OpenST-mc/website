@@ -1,23 +1,13 @@
-<!-- auth-callback.html-->
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    const state = urlParams.get('state'); // 这里存的是当初点击登录的页面地址
-
-    if (code) {
-        // 1. 去 Worker 换 Token
-        fetch(`api/exchange-token?code=${code}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.access_token) {
-                    // 2. 存入全站通用的 localStorage
-                    localStorage.setItem('gh_auth', JSON.stringify({
-                        token: data.access_token,
-                        timestamp: new Date().getTime()
-                    }));
-                    // 3. 根据 state 完美回源
-                    window.location.href = state ? atob(state) : './archive/index.html';
-                }
-            });
-    }
-</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>OpenST | 登录回调</title>
+    <script src="/js/auth-callback.js" defer></script>
+</head>
+<body>
+    <p style="text-align:center;font-family:sans-serif;color:#888;">正在处理登录...</p>
+</body>
+</html>

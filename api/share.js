@@ -2,20 +2,36 @@ export default async function handler(req, res) {
     const queryKeys = Object.keys(req.query);
     const subId = req.query.id || queryKeys.find(k => k.startsWith('sub-'));
 
+    // 校验 sub_id 格式，拒绝注入载荷
+    const safeSubId = typeof subId === 'string' && /^sub-\d+$/.test(subId) ? subId : null;
+
+    if (!safeSubId) {
+        return res.send('<script>location.replace("https://openstmc.com/archive")</script>');
+    }
+
     try {
         const data = await fetch('https://openstmc.com/archive/data/database.json')
             .then(r => r.json());
 
-        const item = data.find(i => i.sub_id === subId);
+        const item = data.find(i => i.sub_id === safeSubId);
 
         if (!item) {
             return res.send('<script>location.replace("https://openstmc.com/archive")</script>');
         }
 
-        const title = `${item.name} - OpenST Archive`;
-        const desc = item.description.replace(/[#*`>!-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 150);
-        const image = `https://openstmc.com/${item.preview}`;
-        const finalUrl = `https://openstmc.com/archive?${subId}`;
+        // HTML 实体转义，防止属性/脚本注入
+        const escapeHtml = (s) => String(s ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        const title = `${escapeHtml(item.name)} - OpenST Archive`;
+        const desc = escapeHtml(item.description.replace(/[#*`>!-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 150));
+        const image = escapeHtml(`https://openstmc.com/${item.preview}`);
+        const finalUrl = `https://openstmc.com/archive?${safeSubId}`;
+        const finalUrlJson = JSON.stringify(finalUrl).replace(/</g, '\\u003c');
 
         const html = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -46,7 +62,7 @@ export default async function handler(req, res) {
 <body style="background: #1a1a1a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
     <div style="text-align: center;">
         <p>查找稿件中...</p>
-        <script>location.replace("${finalUrl}");</script>
+        <script>location.replace(${finalUrlJson});</script>
     </div>
 </body>
 </html>`;

@@ -1,29 +1,11 @@
 // auth.js
-// 管理认证状态
+// 管理认证状态（token 仅存于 HttpOnly Cookie，本地只缓存非敏感资料）
 export const PortalAuth = {
-    // 升级 save 为异步函数，确保全站任何地方调用都能存入完整信息
-    async save(data, fetchFromGitHub = false) {
-        let user = data.user || {};
-
-        // 如果是从档案馆那种只有 token 的地方调用，或者强制要求更新
-        if (fetchFromGitHub && data.access_token) {
-            try {
-                const res = await fetch('https://api.github.com/user', {
-                    headers: { Authorization: `token ${data.access_token}` }
-                });
-                const userData = await res.json();
-                user = {
-                    login: userData.login,
-                    avatar: userData.avatar_url,
-                    avatar_url: userData.avatar_url
-                };
-            } catch (e) { console.error("Fetch user failed", e); }
-        }
-
+    // 缓存非敏感会话信息，绝不含 token
+    async save(user, isAdmin = false) {
         const authData = {
-            token: data.access_token,
             user: user,
-            isAdmin: data.isAdmin || user.isStaff || false,
+            isAdmin: isAdmin,
             timestamp: Date.now()
         };
         localStorage.setItem('gh_auth', JSON.stringify(authData));
@@ -46,8 +28,35 @@ export const PortalAuth = {
         }
     },
 
-    logout() {
+    // 向后端查询会话（后端读取 HttpOnly Cookie 校验），返回 { user, isAdmin }
+    async fetchSession(WORKER_URL) {
+        try {
+            const res = await fetch(`${WORKER_URL}/api/session`, { credentials: 'include' });
+            if (!res.ok) return null;
+            const data = await res.json();
+            if (!data.user) {
+                PortalAuth.clear();
+                return null;
+            }
+            await PortalAuth.save(data.user, data.isAdmin);
+            return data;
+        } catch (e) {
+            console.error("Session fetch failed", e);
+            return null;
+        }
+    },
+
+    // 退出登录：通知后端清除 Cookie 并清理本地缓存
+    async logout(WORKER_URL) {
+        try {
+            await fetch(`${WORKER_URL}/api/logout`, { method: 'POST', credentials: 'include' });
+        } catch (e) {
+            console.error("Logout failed", e);
+        }
+        PortalAuth.clear();
+    },
+
+    clear() {
         localStorage.removeItem('gh_auth');
-        window.location.reload();
     }
 };
