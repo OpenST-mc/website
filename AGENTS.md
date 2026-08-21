@@ -54,7 +54,7 @@ npm run preview          # 预览 Vite 构建产物
 - **缓存陷阱**：`/vendor/*` 的 404 响应同样会带上 `immutable` 缓存头，浏览器会把 404 缓存一年；改名/删除 vendor 文件后需提醒用户强刷（Ctrl+Shift+R）或更换文件名。
 - 管理员功能依赖 GitHub OAuth token 对 `OpenST-mc/website` 仓库的写入权限。
 - Worker 接口有 CSRF Origin 校验、内存限流、Content-Length 上限；上传仅接受图片预览与 zip；生产建议叠加 Cloudflare WAF 速率限制。
-- **Cloudflare WAF 注意**：api.openstmc.com 的 WAF 规则若采用「端点白名单 + Managed Challenge」模式，新增端点必须同步加白，否则 fetch 无法通过挑战（表现为 403 + 无 CORS 头）。当前全部 API 端点清单：`/api/session`、`/api/logout`、`/api/exchange-token`、`/api/submit-issue`、`/api/archive-upload`、`/api/admin/update-info`、`/api/admin/update-preview`、`/api/admin/replace-litematic`、`/api/admin/delete-archive`、`/api/wiki/submit-archive`、`/dl/*`、`/health`。
+- **Cloudflare WAF 注意**：api.openstmc.com 的 WAF 规则若采用「端点白名单 + Managed Challenge」模式，新增端点必须同步加白，否则 fetch 无法通过挑战（表现为 403 + 无 CORS 头）。前端已做降级：`PortalAuth.fetchSession` 在 `/api/session` 被拦截时自动改走 `/api/check-admin`（Worker 中它是会话查询别名，`?logout=1` 即登出），因此白名单只需保留 `check-admin` 即可维持登录功能。当前全部 API 端点清单：`/api/session`、`/api/logout`、`/api/check-admin`、`/api/exchange-token`、`/api/submit-issue`、`/api/archive-upload`、`/api/admin/update-info`、`/api/admin/update-preview`、`/api/admin/replace-litematic`、`/api/admin/delete-archive`、`/api/wiki/submit-archive`、`/dl/*`、`/health`。
 
 ## 安全约定 (强制)
 

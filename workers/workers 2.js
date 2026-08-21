@@ -98,7 +98,11 @@ export default {
                 const token = getAuthToken(request);
                 if (!token) {
                     return new Response(JSON.stringify({ user: null, isAdmin: false }), {
-                        headers: { ...getCORSHeaders(request), "Content-Type": "application/json" }
+                        headers: {
+                            ...getCORSHeaders(request),
+                            "Content-Type": "application/json",
+                            "Cache-Control": "no-store"
+                        }
                     });
                 }
 
@@ -117,6 +121,7 @@ export default {
                         headers: {
                             ...getCORSHeaders(request),
                             "Content-Type": "application/json",
+                            "Cache-Control": "no-store",
                             "Set-Cookie": clearAuthCookie()
                         }
                     });
@@ -132,7 +137,11 @@ export default {
                     },
                     isAdmin: repoData.permissions?.push === true
                 }), {
-                    headers: { ...getCORSHeaders(request), "Content-Type": "application/json" }
+                    headers: {
+                        ...getCORSHeaders(request),
+                        "Content-Type": "application/json",
+                        "Cache-Control": "no-store"
+                    }
                 });
             }
 
@@ -146,6 +155,69 @@ export default {
                         ...getCORSHeaders(request),
                         "Content-Type": "application/json",
                         "Set-Cookie": clearAuthCookie()
+                    }
+                });
+            }
+
+            // --- [2.2] 会话查询别名 (兼容 WAF 白名单路径；?logout=1 时登出) ---
+            if (url.pathname === '/api/check-admin') {
+                if (url.searchParams.get('logout') === '1') {
+                    return new Response(JSON.stringify({ user: null, isAdmin: false }), {
+                        headers: {
+                            ...getCORSHeaders(request),
+                            "Content-Type": "application/json",
+                            "Cache-Control": "no-store",
+                            "Set-Cookie": clearAuthCookie()
+                        }
+                    });
+                }
+
+                const token = getAuthToken(request);
+                if (!token) {
+                    return new Response(JSON.stringify({ user: null, isAdmin: false }), {
+                        headers: {
+                            ...getCORSHeaders(request),
+                            "Content-Type": "application/json",
+                            "Cache-Control": "no-store"
+                        }
+                    });
+                }
+
+                // 并发校验用户信息与仓库写权限
+                const [userRes, repoRes] = await Promise.all([
+                    fetch('https://api.github.com/user', {
+                        headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
+                    }),
+                    fetch(`https://api.github.com/repos/${GH_REPO}`, {
+                        headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
+                    })
+                ]);
+
+                if (!userRes.ok) {
+                    return new Response(JSON.stringify({ user: null, isAdmin: false }), {
+                        headers: {
+                            ...getCORSHeaders(request),
+                            "Content-Type": "application/json",
+                            "Cache-Control": "no-store",
+                            "Set-Cookie": clearAuthCookie()
+                        }
+                    });
+                }
+
+                const userData = await userRes.json();
+                const repoData = await repoRes.json();
+
+                return new Response(JSON.stringify({
+                    user: {
+                        login: userData.login,
+                        avatar_url: userData.avatar_url
+                    },
+                    isAdmin: repoData.permissions?.push === true
+                }), {
+                    headers: {
+                        ...getCORSHeaders(request),
+                        "Content-Type": "application/json",
+                        "Cache-Control": "no-store"
                     }
                 });
             }

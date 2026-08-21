@@ -29,29 +29,46 @@ export const PortalAuth = {
     },
 
     // 向后端查询会话（后端读取 HttpOnly Cookie 校验），返回 { user, isAdmin }
+    // 主路径 /api/session 被 CF WAF 挑战拦截时自动降级到 /api/check-admin
     async fetchSession(WORKER_URL) {
-        try {
-            const res = await fetch(`${WORKER_URL}/api/session`, { credentials: 'include' });
-            if (!res.ok) return null;
-            const data = await res.json();
-            if (!data.user) {
+        const endpoints = [
+            `${WORKER_URL}/api/session`,
+            `${WORKER_URL}/api/check-admin`
+        ];
+        for (const url of endpoints) {
+            try {
+                const res = await fetch(url, { credentials: 'include', cache: 'no-store' });
+                if (!res.ok) continue;
+                const data = await res.json();
+                if (data && data.user) {
+                    await PortalAuth.save(data.user, data.isAdmin);
+                    return data;
+                }
                 PortalAuth.clear();
                 return null;
+            } catch (e) {
+                console.error("Session fetch failed", e);
             }
-            await PortalAuth.save(data.user, data.isAdmin);
-            return data;
-        } catch (e) {
-            console.error("Session fetch failed", e);
-            return null;
         }
+        return null;
     },
 
-    // 退出登录：通知后端清除 Cookie 并清理本地缓存
+    // 退出登录：优先走 WAF 白名单路径清除 Cookie，失败再尝试标准端点
     async logout(WORKER_URL) {
         try {
-            await fetch(`${WORKER_URL}/api/logout`, { method: 'POST', credentials: 'include' });
+            await fetch(`${WORKER_URL}/api/check-admin?logout=1`, {
+                credentials: 'include',
+                cache: 'no-store'
+            });
         } catch (e) {
-            console.error("Logout failed", e);
+            try {
+                await fetch(`${WORKER_URL}/api/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            } catch (e2) {
+                console.error("Logout failed", e2);
+            }
         }
         PortalAuth.clear();
     },
