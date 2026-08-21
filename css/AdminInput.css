@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@source "../admin_tools";
+@source "../404.html";
+@source "../profile";
+
+@theme {
+    --color-brand: #40B5AD;
+}
+
+:root {
+    --brand: #40B5AD;
+}
+
+[v-cloak] { display: none !important; }
