@@ -24,7 +24,7 @@ npm run preview          # 预览 Vite 构建产物
 - **认证**: GitHub OAuth token 仅存 HttpOnly Cookie（`gh_token`，Worker 设置，7 天）；前端 `PortalAuth`（`auth/auth.js`）只缓存非敏感资料。OAuth 回调必须校验一次性 `state`（sessionStorage），scope 为 `public_repo`。
 - **后端**: CF Workers 部署于 `https://api.openstmc.com`，前端在 `archive/scripts/main.js`、`upload/upload.js`、`admin_tools/admin_edit.js` 中硬编码此地址。
   - 源码有两份：`workers/workers.js`（占位 token 的旧版）与 `workers/workers 2.js`（"Security Enhanced Edition"，从 `env.*` 读密钥、ASN 黑名单走 `env.BLACKLIST_ASNS`）。当前使用后者。
-- **Vercel**: `api/share.js` 社交分享卡重定向（`/share/:subid` → `/api/share?id=`，见 `vercel.json`）。
+- **Vercel**: `api/share.js` 社交分享卡重定向（`/share/:subid` → `/api/share?id=`，见 `vercel.json`）；`api/download.js` 下载计数 + 302 跳转、`api/stats.js` 查询下载量——两者依赖 Vercel KV（需在 Vercel 后台创建 KV 存储并设置 `KV_REST_API_URL` / `KV_REST_API_TOKEN` 环境变量；未配置时降级为「仅跳转不计数」/「返回 count: null」，前端自动隐藏计数显示）。
 
 ## 数据
 

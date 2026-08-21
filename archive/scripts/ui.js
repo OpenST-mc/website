@@ -185,6 +185,11 @@ export const ArchiveCard = {
 };
 export const DetailModal = {
     props: ['item', 'isAdmin'],
+    data() {
+        return {
+            downloadCount: null
+        };
+    },
     computed: {
         renderedDescription() {
             if (!this.item?.description) return '<p class="italic opacity-50 text-gray-600">作者没留下任何简介，一定是大佬吧！</p>';
@@ -192,9 +197,37 @@ export const DetailModal = {
             const rawHtml = marked.parse(this.item.description, { breaks: true, gfm: true });
             // DOMPurify 净化，防止存储型 XSS
             return DOMPurify.sanitize(rawHtml);
+        },
+        // 下载走计数端点，由 Vercel 函数统计后 302 跳转
+        downloadHref() {
+            const id = this.item?.sub_id || this.item?.id;
+            return id ? `/api/download?id=${encodeURIComponent(id)}` : '#';
+        }
+    },
+    watch: {
+        item: {
+            immediate: true,
+            handler() {
+                this.fetchDownloadCount();
+            }
         }
     },
     methods: {
+        // 拉取下载量（KV 未配置时返回 null，隐藏计数）
+        async fetchDownloadCount() {
+            this.downloadCount = null;
+            const id = this.item?.sub_id || this.item?.id;
+            if (!id) return;
+            try {
+                const res = await fetch(`/api/stats?id=${encodeURIComponent(id)}`);
+                const data = await res.json();
+                if (data && typeof data.count === 'number') {
+                    this.downloadCount = data.count;
+                }
+            } catch (e) {
+                // 统计失败静默处理，不影响下载
+            }
+        },
         handleMdClick(e) {
             // 点击 Markdown 里的图片也可以触发放大查看
             if (e.target.tagName === 'IMG') {
@@ -295,15 +328,18 @@ export const DetailModal = {
                             </label>
                         </div>
 
-                        <a :href="$parent.getDownloadLink(item)" class="bg-brand hover:brightness-110 text-black text-center py-4 rounded-2xl text-lg font-bold flex items-center justify-center gap-3 transition-all active:scale-[0.97] shadow-xl shadow-brand/20">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                                  stroke-width="2.5"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"/>
-                          </svg>
-                            下载文件
-                        </a>
+                        <div class="flex flex-col gap-2">
+                            <a :href="downloadHref" class="bg-brand hover:brightness-110 text-black text-center py-4 rounded-2xl text-lg font-bold flex items-center justify-center gap-3 transition-all active:scale-[0.97] shadow-xl shadow-brand/20">
+                              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                      stroke-width="2.5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                              </svg>
+                                下载文件
+                            </a>
+                            <span v-if="downloadCount !== null" class="text-center text-[10px] text-gray-500 font-mono">已下载 {{ downloadCount }} 次</span>
+                        </div>
                     </div>
                 </div>
             </div>
