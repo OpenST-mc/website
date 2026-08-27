@@ -56,6 +56,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/favicon.ico", "destination": "/images/favicon-2.png" },
     { "source": "/", "destination": "/pages/home/index.html" },
     { "source": "/index", "destination": "/pages/home/index.html" },
     { "source": "/js/:path*", "destination": "/packages/js/:path*" },

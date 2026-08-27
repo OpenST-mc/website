@@ -1,3 +1,20 @@
+// 全局 CSP 禁止内联脚本，跳转一律使用 meta refresh（CSP 不管辖）
+function redirectTo(res, url) {
+    const safeUrl = String(url)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    res.setHeader("Content-Type", "text/html");
+    res.setHeader('Cache-Control', 'no-store');
+    res.send(`<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="0;url=${safeUrl}">
+</head><body>
+<p>正在跳转…<a href="${safeUrl}">如未自动跳转请点此</a></p>
+</body></html>`);
+}
+
 export default async function handler(req, res) {
     const queryKeys = Object.keys(req.query);
     const subId = req.query.id || queryKeys.find(k => k.startsWith('sub-'));
@@ -6,7 +23,7 @@ export default async function handler(req, res) {
     const safeSubId = typeof subId === 'string' && /^sub-\d+$/.test(subId) ? subId : null;
 
     if (!safeSubId) {
-        return res.send('<script>location.replace("https://openstmc.com/archive")</script>');
+        return redirectTo(res, 'https://openstmc.com/archive');
     }
 
     try {
@@ -16,7 +33,7 @@ export default async function handler(req, res) {
         const item = data.find(i => i.sub_id === safeSubId);
 
         if (!item) {
-            return res.send('<script>location.replace("https://openstmc.com/archive")</script>');
+            return redirectTo(res, 'https://openstmc.com/archive');
         }
 
         // HTML 实体转义，防止属性/脚本注入
@@ -30,8 +47,7 @@ export default async function handler(req, res) {
         const title = `${escapeHtml(item.name)} - OpenST Archive`;
         const desc = escapeHtml(item.description.replace(/[#*`>!-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 150));
         const image = escapeHtml(`https://openstmc.com/${item.preview}`);
-        const finalUrl = `https://openstmc.com/archive?${safeSubId}`;
-        const finalUrlJson = JSON.stringify(finalUrl).replace(/</g, '\\u003c');
+        const finalUrl = escapeHtml(`https://openstmc.com/archive?${safeSubId}`);
 
         const html = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -62,7 +78,7 @@ export default async function handler(req, res) {
 <body style="background: #1a1a1a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
     <div style="text-align: center;">
         <p>查找稿件中...</p>
-        <script>location.replace(${finalUrlJson});</script>
+        <meta http-equiv="refresh" content="0;url=${finalUrl}">
     </div>
 </body>
 </html>`;
@@ -71,6 +87,6 @@ export default async function handler(req, res) {
         res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
         res.send(html);
     } catch (e) {
-        res.send('<script>location.replace("https://openstmc.com/archive")</script>');
+        return redirectTo(res, 'https://openstmc.com/archive');
     }
 }
