@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* 显式扫描范围：门户首页与使用本产物的页面 */
+@source "../pages/home";
+@source "../apps/health";
+@source "../packages/js";
+
 @theme {
     --color-st-cyan: #40B5AD;
     --color-rs-red: #ff4d00;

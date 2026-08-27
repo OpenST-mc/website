@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* 显式扫描范围：Archive SPA 及使用本产物值的页面/工具脚本 */
+@source "../apps/portal";
+@source "../apps/upload";
+@source "../apps/admin";
+@source "../apps/extra";
+@source "../packages/js";
+
 @theme {
     --color-brand: #40B5AD;
     --color-dark: #1f2223;

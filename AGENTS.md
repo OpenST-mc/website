@@ -16,9 +16,17 @@ npm run preview          # 预览 Vite 构建产物（本地参考用，Vercel �
 
 ## 稿件数据架构（2026-08 拆分）
 
-- **数据仓库**：`OpenST-mc/archive`（公开），目录结构 `<分类>/<稿件>/…`，含 82+ 稿件、独立 CI（重建索引/预览图 → 自提交 → 向 website 发 `repository_dispatch(archive-update)`）。分类映射规则见该库 README；id→路径定位表为 `_meta/index-by-id.json`。Secrets：`SITE_DISPATCH_TOKEN`（操作 website 用 PAT）。
-- **子模块接入**：website 以 `git submodule add … content` 挂载于 `content/`，站点直接静态服务 `/content/<分类>/<id>/…`（immutable 缓存）。
+- **数据仓库**：`OpenST-mc/archive`（公开），目录结构 `<一级分类>/<二级标签>/<稿件>/…`，两级体系严格物化站点 `apps/portal/scripts/config.js` 的 `TAG_CONFIG`（该库内 `scripts/config.snapshot.json` 为同步快照；config 键含 `/` 时目录名以 `-` 落盘，如 `逻辑/传输`→`逻辑-传输`）。全部二级目录常驻仓库，空目录以 `.gitkeep` 占位。无明确二级归属的稿件允许直接放在一级分类根下。含 82+ 稿件、独立 CI（递归重建索引/预览图 → 自提交 → 向 website 发 `repository_dispatch(archive-update)`）。id 全局唯一，id→路径定位表为 `_meta/index-by-id.json`（category 字段为相对父路径，可一段或两段）。Secrets：`SITE_DISPATCH_TOKEN`（操作 website 用 PAT）。
+- **新稿件添加流程**：在 archive 库对应 `<一级>/<二级>/` 下新建 `<全局唯一id>/{info.json,preview.*,存档}` → push → CI 自动重建并联动部署；管理员亦可通过 Worker admin API 直接写入现有稿件。
+- **子模块接入**：website 以 `git submodule add … content` 挂载于 `content/`，站点直接静态服务 `/content/<一级>[/<二级>]/<id>/…`（immutable 缓存）。
 - **自动同步**：`.github/workflows/sync-archive.yml` 接收 dispatch → `submodule update --remote` → 生成 `archive/data/database.json` + sitemap → 提交推送触发 Vercel 部署。`main.yml` 仅保留手动全量重建入口。
+- **数据库 category 字段**：值为稿件的相对父路径（如 `潜影盒处理/潜影盒打包机` 或单段 `其他杂物`），前端直链、api/download.js 与 Worker 定位逻辑均按 `[category, id, filename]` 拼接，层级数无关。
+
+## 本地开发与生产一致性
+
+- `npm run dev` 已内置与 `vercel.json rewrites` 镜像的中间件（vite.config.js `publicRewrites`）：本地访问 `/`、`/archive/*`、`/js/*` 等公开路径的行为与生产完全一致，**请勿**用物理路径（如 `/apps/portal/`）判断线上表现。
+- `npm run preview` 的 dist 为 vite 打包参考产物，与生产部署形态不同（生产为仓库根静态服务），勿以 dist 判断样式与路径。
+- Tailwind 三入口均使用显式 `@source` 声明扫描范围：PortalCSS←pages/home+health+packages/js；ArchiveCSS←apps/{portal,upload,admin,extra}+packages/js；AdminCSS←apps/admin+404+pages。新增页面必须同步加入对应入口的 @source。
 
 ## 目录结构
 
