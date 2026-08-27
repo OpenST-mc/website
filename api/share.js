@@ -19,8 +19,8 @@ export default async function handler(req, res) {
     const queryKeys = Object.keys(req.query);
     const subId = req.query.id || queryKeys.find(k => k.startsWith('sub-'));
 
-    // 校验 sub_id 格式，拒绝注入载荷
-    const safeSubId = typeof subId === 'string' && /^sub-\d+$/.test(subId) ? subId : null;
+    // 校验 sub_id 格式（含历史双段 sub-xxx-yyy），拒绝注入载荷
+    const safeSubId = typeof subId === 'string' && /^sub-\d+(-\d+)?$/.test(subId) ? subId : null;
 
     if (!safeSubId) {
         return redirectTo(res, 'https://openstmc.com/archive');
