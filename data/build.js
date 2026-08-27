@@ -119,6 +119,13 @@ async function build() {
         await fs.mkdir(dataDir, { recursive: true });
         await fs.writeFile(OUTPUT_FILE, JSON.stringify(database, null, 4));
 
+        // 根级 index.html 与 pages/home 保持同步（Vercel cleanUrls 下根 rewrite 不生效，
+        // 需物理文件承接 "/" 访问）
+        await fs.copyFile(
+            path.join(root, 'pages/home/index.html'),
+            path.join(root, 'index.html')
+        );
+
         console.log(`\n构建成功！共发现 ${database.length} 个稿件。`);
         console.timeEnd('构建耗时');
 

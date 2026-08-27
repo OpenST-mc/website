@@ -238,7 +238,7 @@ const AppOptions = {
         get3DPreviewLink(item) {
             if (!item) return '';
             const fileUrl = this.getDownloadLink(item);
-            const viewerPath = 'Extra-Function/litematic-preview/index.html';
+            const viewerPath = '/Extra-Function/litematic-preview/index.html';
 
             return `${viewerPath}#${fileUrl}`;
         },
@@ -269,7 +269,7 @@ const AppOptions = {
             try {
                 const [dataRes, dictRes] = await Promise.all([
                     fetch('archive/data/database.json'),
-                    fetch('./Traditional-Simplefild/STCharacters.txt')
+                    fetch('/Traditional-Simplefild/STCharacters.txt')
                 ]);
 
                 // 解析字典
