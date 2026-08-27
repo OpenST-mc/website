@@ -46,7 +46,7 @@ export default async function handler(req, res) {
 
         const title = `${escapeHtml(item.name)} - OpenST Archive`;
         const desc = escapeHtml(item.description.replace(/[#*`>!-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 150));
-        const image = escapeHtml(`https://openstmc.com/${item.preview}`);
+        const image = escapeHtml(`https://openstmc.com/${String(item.preview || '').replace(/^\//, '')}`);
         const finalUrl = escapeHtml(`https://openstmc.com/archive?${safeSubId}`);
 
         const html = `<!DOCTYPE html>
