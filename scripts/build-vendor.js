@@ -41,7 +41,7 @@ async function build() {
   }
 
   await esbuild.build({
-    entryPoints: [path.join(root, 'js/insights-src.js')],
+    entryPoints: [path.join(root, 'packages/js/insights-src.js')],
     bundle: true,
     minify: true,
     format: 'iife',

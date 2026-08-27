@@ -34,6 +34,8 @@ export default {
         const CLIENT_ID = env.CLIENT_ID;
         const CLIENT_SECRET = env.CLIENT_SECRET;
         const GH_REPO = env.GH_REPO || 'OpenST-mc/website';
+        // 稿件数据仓库（2026-08 拆分后独立于网站库）
+        const ARCHIVE_REPO = env.ARCHIVE_REPO || 'OpenST-mc/archive';
 
         const TG_API_BASE = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
@@ -211,7 +213,13 @@ export default {
                     return new Response("Invalid folder", { status: 400, headers: getCORSHeaders(request) });
                 }
 
-                const infoUrl = `https://api.github.com/repos/${GH_REPO}/contents/archive/${folder}/info.json`;
+                // 经定位表解析稿件在稿件库中的真实路径
+                const prefix = await resolveItemPrefix(token, ARCHIVE_REPO, folder);
+                if (!prefix) {
+                    return new Response("Archive not found", { status: 404, headers: getCORSHeaders(request) });
+                }
+
+                const infoUrl = `https://api.github.com/repos/${ARCHIVE_REPO}/contents/${encodeURIComponent(prefix)}/info.json`;
                 const fileRes = await fetch(infoUrl, {
                     headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
                 });
@@ -269,10 +277,16 @@ export default {
                 const arrayBuffer = await file.arrayBuffer();
                 const base64Image = btoa(Array.from(new Uint8Array(arrayBuffer), b => String.fromCharCode(b)).join(''));
 
-                const safeFolder = encodeURIComponent(folder);
+                // 经定位表解析稿件在稿件库中的真实路径
+                const prefix = await resolveItemPrefix(token, ARCHIVE_REPO, folder);
+                if (!prefix) {
+                    return new Response("Archive not found", { status: 404, headers: getCORSHeaders(request) });
+                }
+
+                const safeFolder = encodeURIComponent(prefix);
                 const forcedName = `preview.${file.name.split('.').pop() || 'png'}`;
-                const imgPath = `archive/${safeFolder}/${forcedName}`;
-                const ghUrl = `https://api.github.com/repos/${GH_REPO}/contents/${imgPath}`;
+                const imgPath = `${safeFolder}/${forcedName}`;
+                const ghUrl = `https://api.github.com/repos/${ARCHIVE_REPO}/contents/${imgPath}`;
 
                 const getRes = await fetch(ghUrl, {
                     headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
@@ -299,7 +313,7 @@ export default {
                 });
 
                 if (putRes.ok) {
-                    const infoUrl = `https://api.github.com/repos/${GH_REPO}/contents/archive/${safeFolder}/info.json`;
+                    const infoUrl = `https://api.github.com/repos/${ARCHIVE_REPO}/contents/${safeFolder}/info.json`;
                     const infoRes = await fetch(infoUrl, {
                         headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
                     });
@@ -328,13 +342,13 @@ export default {
                         const cleanupList = [oldPreview, 'preview.webp'].filter(n => n && n !== forcedName);
                         // 并发清理旧预览图，缩短串行等待
                         await Promise.all(cleanupList.map(async (target) => {
-                            const delPath = `archive/${safeFolder}/${target}`;
-                            const check = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${delPath}`, {
+                            const delPath = `${safeFolder}/${target}`;
+                            const check = await fetch(`https://api.github.com/repos/${ARCHIVE_REPO}/contents/${delPath}`, {
                                 headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
                             });
                             if (check.ok) {
                                 const delData = await check.json();
-                                await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${delPath}`, {
+                                await fetch(`https://api.github.com/repos/${ARCHIVE_REPO}/contents/${delPath}`, {
                                     method: 'DELETE',
                                     headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' },
                                     body: JSON.stringify({ message: `🗑️ Cleanup: ${target}`, sha: delData.sha, branch: "main" })
@@ -372,8 +386,14 @@ export default {
                     return new Response("Invalid folder", { status: 400, headers: getCORSHeaders(request) });
                 }
 
-                const safeFolder = encodeURIComponent(folder);
-                const infoUrl = `https://api.github.com/repos/${GH_REPO}/contents/archive/${safeFolder}/info.json`;
+                // 经定位表解析稿件在稿件库中的真实路径
+                const prefix = await resolveItemPrefix(token, ARCHIVE_REPO, folder);
+                if (!prefix) {
+                    return new Response("Archive not found", { status: 404, headers: getCORSHeaders(request) });
+                }
+
+                const safeFolder = encodeURIComponent(prefix);
+                const infoUrl = `https://api.github.com/repos/${ARCHIVE_REPO}/contents/${safeFolder}/info.json`;
                 const infoRes = await fetch(infoUrl, {
                     headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
                 });
@@ -392,7 +412,7 @@ export default {
                 const arrayBuffer = await newFile.arrayBuffer();
                 const base64File = btoa(Array.from(new Uint8Array(arrayBuffer), b => String.fromCharCode(b)).join(''));
 
-                const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/archive/${safeFolder}/${encodeURIComponent(newFileName)}`, {
+                const putRes = await fetch(`https://api.github.com/repos/${ARCHIVE_REPO}/contents/${safeFolder}/${encodeURIComponent(newFileName)}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `token ${token}`,
@@ -412,7 +432,7 @@ export default {
 
                         const tasks = [];
 
-                        const oldFileUrl = `https://api.github.com/repos/${GH_REPO}/contents/archive/${safeFolder}/${encodeURIComponent(oldFileName)}`;
+                        const oldFileUrl = `https://api.github.com/repos/${ARCHIVE_REPO}/contents/${safeFolder}/${encodeURIComponent(oldFileName)}`;
                         tasks.push((async () => {
                             const oldFileCheck = await fetch(oldFileUrl, {
                                 headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
@@ -469,72 +489,64 @@ export default {
                     return new Response("Invalid folder", { status: 400, headers: getCORSHeaders(request) });
                 }
 
-                const branchRes = await fetch(`https://api.github.com/repos/${GH_REPO}/branches/main`, {
+                // 经定位表解析稿件在稿件库中的真实路径
+                const prefix = await resolveItemPrefix(token, ARCHIVE_REPO, folder);
+                if (!prefix) {
+                    return new Response("Archive not found", { status: 404, headers: getCORSHeaders(request) });
+                }
+
+                // 稿件库分支头
+                const branchRes = await fetch(`https://api.github.com/repos/${ARCHIVE_REPO}/branches/main`, {
                     headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
                 });
                 const branchData = await branchRes.json();
+                if (!branchRes.ok || !branchData.commit) {
+                    return new Response("Archive repo unavailable", { status: 502, headers: getCORSHeaders(request) });
+                }
                 const baseTreeSha = branchData.commit.commit.tree.sha;
 
-                const rootTreeRes = await fetch(`https://api.github.com/repos/${GH_REPO}/git/trees/${baseTreeSha}`, {
-                    headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
-                });
-                const rootTree = await rootTreeRes.json();
-                const archiveEntry = rootTree.tree.find(item => item.path === 'archive');
-
-                if (!archiveEntry) {
-                    return new Response("Archive path not found", { status: 404, headers: getCORSHeaders(request) });
-                }
-
-                const archiveTreeRes = await fetch(`https://api.github.com/repos/${GH_REPO}/git/trees/${archiveEntry.sha}`, {
-                    headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' }
-                });
-                const archiveTree = await archiveTreeRes.json();
-
-                const newArchiveTree = archiveTree.tree
-                    .filter(item => item.path !== folder)
-                    .map(item => ({
-                        path: item.path,
-                        mode: item.mode,
-                        type: item.type,
-                        sha: item.sha
-                    }));
-
-                const createTreeRes = await fetch(`https://api.github.com/repos/${GH_REPO}/git/trees`, {
+                // 基于 base_tree 的最小变更树：将整个稿件目录置空即删除（支持目录级）
+                const delTreeRes = await fetch(`https://api.github.com/repos/${ARCHIVE_REPO}/git/trees`, {
                     method: 'POST',
-                    headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' },
-                    body: JSON.stringify({ tree: newArchiveTree })
-                });
-                const newArchiveTreeData = await createTreeRes.json();
-
-                const finalTreeRes = await fetch(`https://api.github.com/repos/${GH_REPO}/git/trees`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' },
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'User-Agent': 'OpenST-Portal',
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
                         base_tree: baseTreeSha,
                         tree: [{
-                            path: 'archive',
+                            path: prefix,
                             mode: '040000',
                             type: 'tree',
-                            sha: newArchiveTreeData.sha
+                            sha: null
                         }]
                     })
                 });
-                const finalTreeData = await finalTreeRes.json();
+                const delTreeData = await delTreeRes.json();
 
-                const commitRes = await fetch(`https://api.github.com/repos/${GH_REPO}/git/commits`, {
+                const commitRes = await fetch(`https://api.github.com/repos/${ARCHIVE_REPO}/git/commits`, {
                     method: 'POST',
-                    headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' },
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'User-Agent': 'OpenST-Portal',
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
                         message: `🗑️ Permanent Delete Folder: ${folder}`,
-                        tree: finalTreeData.sha,
+                        tree: delTreeData.sha,
                         parents: [branchData.commit.sha]
                     })
                 });
                 const newCommitData = await commitRes.json();
 
-                const updateRefRes = await fetch(`https://api.github.com/repos/${GH_REPO}/git/refs/heads/main`, {
+                const updateRefRes = await fetch(`https://api.github.com/repos/${ARCHIVE_REPO}/git/refs/heads/main`, {
                     method: 'PATCH',
-                    headers: { 'Authorization': `token ${token}`, 'User-Agent': 'OpenST-Portal' },
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'User-Agent': 'OpenST-Portal',
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({ sha: newCommitData.sha })
                 });
 
@@ -903,6 +915,36 @@ async function resolveSession(token, ghRepo) {
 
     await writeSessionCache(tokenHash, payload);
     return payload;
+}
+
+// 稿件定位表缓存（稿件库 _meta/index-by-id.json，10 分钟）
+const ITEM_INDEX_URL = 'https://api.openstmc.com/__archive_item_index';
+
+async function fetchItemIndex(archiveRepo) {
+    try {
+        const cached = await caches.default.match(ITEM_INDEX_URL);
+        if (cached) return await cached.json();
+    } catch (e) { /* 缓存读失败则回源 */ }
+
+    const res = await fetch(`https://raw.githubusercontent.com/${archiveRepo}/main/_meta/index-by-id.json`);
+    if (!res.ok) return null;
+    const index = await res.json();
+    try {
+        await caches.default.put(ITEM_INDEX_URL, new Response(JSON.stringify(index), {
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': `public, max-age=${SESSION_CACHE_TTL}`
+            }
+        }));
+    } catch (e) { /* 缓存写失败不影响业务 */ }
+    return index;
+}
+
+// 由稿件 id 解析真实相对路径前缀（<分类>/<id>），找不到返回 null
+async function resolveItemPrefix(token, archiveRepo, folder) {
+    const index = await fetchItemIndex(archiveRepo);
+    const entry = index && index[folder];
+    return entry ? `${entry.category}/${folder}` : null;
 }
 
 // CSRF 校验：浏览器请求必须携带合法 Origin（非浏览器请求无 Origin，放行）

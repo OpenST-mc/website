@@ -1,0 +1,47 @@
+name: Sync Archive Submodule
+# 接收稿件库的 repository_dispatch，拉取子模块最新提交并重建数据库与站点地图
+on:
+  repository_dispatch:
+    types: [archive-update]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update Submodule Pointer
+        run: |
+          git submodule update --remote content
+          CHANGED=$(git diff --quiet content && echo no || echo yes)
+          echo "POINTER_CHANGED=$CHANGED" >> "$GITHUB_ENV"
+
+      - name: Install Dependencies
+        if: env.POINTER_CHANGED == 'yes'
+        run: npm install --no-audit --no-fund
+
+      - name: Rebuild Database & Sitemap
+        if: env.POINTER_CHANGED == 'yes'
+        run: |
+          node data/build.js
+          node data/sitemap.js
+
+      - name: Commit and Push
+        if: env.POINTER_CHANGED == 'yes'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: 同步稿件库指针并重建数据库 [skip ci]"
+          file_pattern: 'content archive/data/database.json sitemap.xml robots.txt'

@@ -3,7 +3,7 @@
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/archive/(.*).(litematic|webp|png|jpg)",
+      "source": "/content/(.*).(litematic|webp|png|jpg)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -56,6 +56,19 @@
     }
   ],
   "rewrites": [
+    { "source": "/", "destination": "/pages/home/index.html" },
+    { "source": "/index", "destination": "/pages/home/index.html" },
+    { "source": "/js/:path*", "destination": "/packages/js/:path*" },
+    { "source": "/fonts/:path*", "destination": "/assets/fonts/:path*" },
+    { "source": "/images/:path*", "destination": "/assets/images/:path*" },
+    { "source": "/Traditional-Simplefild/:path*", "destination": "/assets/s2t/:path*" },
+    { "source": "/archive/:path*", "destination": "/apps/portal/:path*" },
+    { "source": "/upload/:path*", "destination": "/apps/upload/:path*" },
+    { "source": "/auth/:path*", "destination": "/apps/auth/:path*" },
+    { "source": "/admin_tools/:path*", "destination": "/apps/admin/:path*" },
+    { "source": "/health/:path*", "destination": "/apps/health/:path*" },
+    { "source": "/profile/april/december/:path*", "destination": "/apps/credits/:path*" },
+    { "source": "/Extra-Function/:path*", "destination": "/apps/extra/:path*" },
     {
       "source": "/share/:subid",
       "destination": "/api/share?id=:subid"

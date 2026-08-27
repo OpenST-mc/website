@@ -6,8 +6,8 @@ import { Redis } from '@upstash/redis';
 import crypto from 'node:crypto';
 
 const DB_URL = 'https://openstmc.com/archive/data/database.json';
-const RAW_BASE = 'https://raw.githubusercontent.com/OpenST-mc/website/main';
-const PROXY_BASE = 'https://cdn.openstmc.com/https:/raw.githubusercontent.com/OpenST-mc/website/main';
+const RAW_BASE = 'https://raw.githubusercontent.com/OpenST-mc/archive/main';
+const PROXY_BASE = 'https://cdn.openstmc.com/https:/raw.githubusercontent.com/OpenST-mc/archive/main';
 
 let redisClient = null;
 
@@ -55,10 +55,12 @@ export default async function handler(req, res) {
         return res.end(JSON.stringify({ error: 'Archive not found' }));
     }
 
-    const safeFolder = String(item.id).split('/').map(encodeURIComponent).join('/');
-    const safeFile = String(item.filename).split('/').map(encodeURIComponent).join('/');
-    const target = `${PROXY_BASE}/archive/archive/${safeFolder}/${safeFile}`;
-    const rawTarget = `${RAW_BASE}/archive/archive/${safeFolder}/${safeFile}`;
+    // 新库结构: content/<分类>/<id>/<文件>；下载直链指向 OpenST-mc/archive 仓库
+    const repoPath = [item.category, item.id, item.filename]
+        .map(part => String(part).split('/').map(encodeURIComponent).join('/'))
+        .join('/');
+    const target = `${PROXY_BASE}/${repoPath}`;
+    const rawTarget = `${RAW_BASE}/${repoPath}`;
 
     // 计数（Redis 未配置时静默跳过，不影响下载）
     const redis = getRedis();

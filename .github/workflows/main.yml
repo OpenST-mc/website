@@ -1,22 +1,20 @@
-name: Auto Rebuild Database | Sitemap | Robots.txt
+name: Manual Rebuild Database | Sitemap
+# 稿件数据已拆分至 OpenST-mc/archive，本工作流仅作手动全量重建入口；
+# 日常更新由 sync-archive.yml 接收稿件库 dispatch 自动完成
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '../../archive/archive/**'
-      - '../../data/build.js'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    # 授予 Action 写入仓库的权限
-    permissions:
-      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -34,5 +32,5 @@ jobs:
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: 自动更新数据库及预览图 [skip ci]"
-          file_pattern: 'data/database.json archive/**/*.webp sitemap.xml robots.txt'
+          commit_message: "chore: 手动重建数据库及站点地图 [skip ci]"
+          file_pattern: 'archive/data/database.json sitemap.xml robots.txt'

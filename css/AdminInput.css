@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
-@source "../admin_tools";
+@source "../apps/admin";
 @source "../404.html";
-@source "../profile";
+@source "../pages";
 
 @theme {
     --color-brand: #40B5AD;
