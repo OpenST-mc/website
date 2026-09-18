@@ -130,13 +130,16 @@ const UploadApp = {
                 // --- 执行取消勾选 ---
                 this.form.tags.splice(index, 1);
 
-                // 如果取消的是父级，则该父级下的所有子级都要取消
-                if (parentKey && this.config["编码存储科技"][tag]) {
-                    const subTags = this.config["编码存储科技"][tag];
-                    subTags.forEach(sub => {
-                        const subIdx = this.form.tags.indexOf(sub);
-                        if (subIdx > -1) this.form.tags.splice(subIdx, 1);
-                    });
+                // 如果取消的是父级（任一嵌套分类下的二级），则该父级下的所有子级都要取消
+                for (const mainKey of Object.keys(this.config)) {
+                    const mainConfig = this.config[mainKey];
+                    if (mainConfig && !Array.isArray(mainConfig) && Array.isArray(mainConfig[tag])) {
+                        mainConfig[tag].forEach(sub => {
+                            const subIdx = this.form.tags.indexOf(sub);
+                            if (subIdx > -1) this.form.tags.splice(subIdx, 1);
+                        });
+                        break;
+                    }
                 }
             } else {
                 // --- 执行勾选 ---
