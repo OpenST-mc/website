@@ -124,7 +124,7 @@ update-preview / replace-litematic / delete-archive）、`/api/wiki/submit-archi
 
 ## Quality Gates
 
-可重复的检查必须由机器守，不靠人 nhớ。門只會變嚴，不會放寬。
+可重复的检查必须由机器守，不靠人眼。门只会变严，不会放宽。
 
 - 风格与静态检查是强制的：格式必须机器统一，不靠 reviewer 肉眼；未定义引用、悬空绑定视为构建失败同级缺陷。
 - 门的定义：`lint` / `test` / `check:paths` 全绿。新增门只加命令，不加叙述；门只增不减。
