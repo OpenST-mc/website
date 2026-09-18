@@ -21,9 +21,7 @@ const isSafeSubId = (v) => typeof v === 'string' && SUB_ID_RE.test(v);
 //     .map(part => String(part).split('/').map(encodeURIComponent).join('/'))
 //     .join('/')
 const buildRepoPath = (category, id, filename) =>
-  [category, id, filename]
-    .map((part) => String(part).split('/').map(encodeURIComponent).join('/'))
-    .join('/');
+  [category, id, filename].map((part) => String(part).split('/').map(encodeURIComponent).join('/')).join('/');
 
 const PROXY_BASE = 'https://cdn.openstmc.com/https:/raw.githubusercontent.com/OpenST-mc/archive/main';
 const RAW_BASE = 'https://raw.githubusercontent.com/OpenST-mc/archive/main';
@@ -62,14 +60,14 @@ describe('repoPath builder (api/download.js)', () => {
   it('joins [category, id, filename] with / and encodes each segment', () => {
     assert.equal(
       buildRepoPath('潜影盒处理/潜影盒打包机', 'abc123', 'file.litematic'),
-      `${encodeURIComponent('潜影盒处理')}/${encodeURIComponent('潜影盒打包机')}/abc123/file.litematic`,
+      `${encodeURIComponent('潜影盒处理')}/${encodeURIComponent('潜影盒打包机')}/abc123/file.litematic`
     );
   });
 
   it('encodes 中文 and spaces but preserves / separators', () => {
     assert.equal(
       buildRepoPath('编码存储科技', 'id 1', '我的 存档.litematic'),
-      `${encodeURIComponent('编码存储科技')}/id%201/${encodeURIComponent('我的 存档.litematic')}`,
+      `${encodeURIComponent('编码存储科技')}/id%201/${encodeURIComponent('我的 存档.litematic')}`
     );
   });
 

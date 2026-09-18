@@ -38,8 +38,8 @@ const browserGlobals = {
   prompt: 'readonly',
   AbortController: 'readonly',
   IntersectionObserver: 'readonly',
-  ResizeObserver: 'readonly'
-}
+  ResizeObserver: 'readonly',
+};
 
 // Legacy classic-script sharing (vendor libs + cross-file functions loaded
 // via plain <script> tags, no modules). Grandfathered: no new entries.
@@ -64,8 +64,8 @@ const vendorGlobals = {
   readLitematicFromNBTData: 'readonly',
   structuresFromLitematic: 'readonly',
   iterateRegionBlocks: 'readonly',
-  getMaterialList: 'readonly'
-}
+  getMaterialList: 'readonly',
+};
 
 const nodeGlobals = {
   process: 'readonly',
@@ -89,8 +89,8 @@ const nodeGlobals = {
   FormData: 'readonly',
   Blob: 'readonly',
   File: 'readonly',
-  crypto: 'readonly'
-}
+  crypto: 'readonly',
+};
 
 const workerGlobals = {
   Response: 'readonly',
@@ -104,24 +104,24 @@ const workerGlobals = {
   caches: 'readonly',
   clients: 'readonly',
   addEventListener: 'readonly',
-  removeEventListener: 'readonly'
-}
+  removeEventListener: 'readonly',
+};
 
 export default [
   {
-    ignores: ['vendor/', 'dist/', 'node_modules/', 'css/*Output.css', '**/*.min.js', 'resource/assets.js']
+    ignores: ['vendor/', 'dist/', 'node_modules/', 'css/*Output.css', '**/*.min.js', 'resource/assets.js'],
   },
   {
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: { ...browserGlobals, ...nodeGlobals, ...workerGlobals, ...vendorGlobals }
+      globals: { ...browserGlobals, ...nodeGlobals, ...workerGlobals, ...vendorGlobals },
     },
     rules: {
       'no-undef': 'error',
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-empty': 'warn',
-      eqeqeq: ['warn', 'smart']
-    }
-  }
-]
+      eqeqeq: ['warn', 'smart'],
+    },
+  },
+];

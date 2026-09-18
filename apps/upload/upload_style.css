@@ -1,90 +1,150 @@
 /* 防止 Vue 挂载前闪烁源码 */
-[v-cloak] { display: none; }
+[v-cloak] {
+  display: none;
+}
 
 /* --- OpenST 品牌色系统 (#40B5AD) --- */
-.text-brand { color: #40B5AD; }
-.bg-brand { background-color: #40B5AD; }
-.border-brand { border-color: #40B5AD; }
+.text-brand {
+  color: #40b5ad;
+}
+.bg-brand {
+  background-color: #40b5ad;
+}
+.border-brand {
+  border-color: #40b5ad;
+}
 
 /* --- Markdown 全功能美化 --- */
-.markdown-body { line-height: 1.6; }
+.markdown-body {
+  line-height: 1.6;
+}
 
 /* 标题层级 */
-.markdown-body h1 { font-size: 1.5rem; color: #fff; border-bottom: 2px solid #40B5AD; padding-bottom: 0.3rem; margin: 1.5rem 0 1rem; }
-.markdown-body h2 { font-size: 1.25rem; border-left: 4px solid #40B5AD; padding-left: 0.75rem; margin: 1.2rem 0 0.8rem; }
-.markdown-body h3 { font-size: 1.1rem; color: #40B5AD; margin: 1rem 0 0.5rem; font-weight: bold; }
+.markdown-body h1 {
+  font-size: 1.5rem;
+  color: #fff;
+  border-bottom: 2px solid #40b5ad;
+  padding-bottom: 0.3rem;
+  margin: 1.5rem 0 1rem;
+}
+.markdown-body h2 {
+  font-size: 1.25rem;
+  border-left: 4px solid #40b5ad;
+  padding-left: 0.75rem;
+  margin: 1.2rem 0 0.8rem;
+}
+.markdown-body h3 {
+  font-size: 1.1rem;
+  color: #40b5ad;
+  margin: 1rem 0 0.5rem;
+  font-weight: bold;
+}
 
 /* 列表与任务 */
-.markdown-body ul { list-style-type: disc; padding-left: 1.5rem; margin: 1rem 0; }
-.markdown-body ol { list-style-type: decimal; padding-left: 1.5rem; margin: 1rem 0; }
-.markdown-body input[type="checkbox"] {
-    accent-color: #40B5AD;
-    width: 1rem; height: 1rem;
-    vertical-align: middle;
-    margin-right: 4px;
+.markdown-body ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.markdown-body ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.markdown-body input[type='checkbox'] {
+  accent-color: #40b5ad;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: middle;
+  margin-right: 4px;
 }
 
 /* 文本效果 */
-.markdown-body strong { color: #fff; font-weight: bold; }
-.markdown-body del { color: #555; text-decoration: line-through; } /* 横线/删除线 */
-.markdown-body blockquote { border-left: 4px solid #2a6a65; padding-left: 1rem; color: #888; background: rgba(64,181,173,0.05); padding: 8px 16px; border-radius: 0 8px 8px 0; }
+.markdown-body strong {
+  color: #fff;
+  font-weight: bold;
+}
+.markdown-body del {
+  color: #555;
+  text-decoration: line-through;
+} /* 横线/删除线 */
+.markdown-body blockquote {
+  border-left: 4px solid #2a6a65;
+  padding-left: 1rem;
+  color: #888;
+  background: rgba(64, 181, 173, 0.05);
+  padding: 8px 16px;
+  border-radius: 0 8px 8px 0;
+}
 
 /* 超链接与行内代码 */
-.markdown-body a { color: #40B5AD; text-decoration: underline; text-underline-offset: 4px; }
-.markdown-body a:hover { filter: brightness(1.2); }
-.markdown-body code { background: rgba(64,181,173,0.15); color: #40B5AD; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; }
+.markdown-body a {
+  color: #40b5ad;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.markdown-body a:hover {
+  filter: brightness(1.2);
+}
+.markdown-body code {
+  background: rgba(64, 181, 173, 0.15);
+  color: #40b5ad;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
 
 /* 1. 针对所有滚动条的通用定义 */
 ::-webkit-scrollbar {
-    width: 6px;  /* 纵向滚动条宽度 */
-    height: 6px; /* 横向滚动条高度 */
+  width: 6px; /* 纵向滚动条宽度 */
+  height: 6px; /* 横向滚动条高度 */
 }
 
 /* 2. 滚动条轨道 (背景) */
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02); /* 几乎透明的深色背景 */
-    border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02); /* 几乎透明的深色背景 */
+  border-radius: 10px;
 }
 
 /* 3. 滚动条滑块 (滑块本身) */
 ::-webkit-scrollbar-thumb {
-    background: rgba(64, 181, 173, 0.2); /* 品牌色 #40B5AD 的低透明度版 */
-    border-radius: 10px;
-    transition: background 0.3s ease;
+  background: rgba(64, 181, 173, 0.2); /* 品牌色 #40B5AD 的低透明度版 */
+  border-radius: 10px;
+  transition: background 0.3s ease;
 }
 
 /* 4. 鼠标悬停在滑块上时，颜色变亮 */
 ::-webkit-scrollbar-thumb:hover {
-    background: #40B5AD; /* 变回完全的品牌色 */
-    box-shadow: 0 0 8px rgba(64, 181, 173, 0.4); /* 增加一点点发光感 */
+  background: #40b5ad; /* 变回完全的品牌色 */
+  box-shadow: 0 0 8px rgba(64, 181, 173, 0.4); /* 增加一点点发光感 */
 }
 
 /* 5. 针对特定的预览容器添加平滑滚动 */
 /* 给简介容器加固 */
 .markdown-body {
-    /* 1. 遇到超长单词或 URL 强制换行，不许超出边界 */
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
+  /* 1. 遇到超长单词或 URL 强制换行，不许超出边界 */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 
-    /* 2. 避免图片或代码块太大撑开容器 */
-    max-width: 100%;
+  /* 2. 避免图片或代码块太大撑开容器 */
+  max-width: 100%;
 }
 
 /* 针对代码块，给它一个横向滚动条，而不是让它撑开整个页面 */
 .markdown-body pre {
-    overflow-x: auto;
-    max-width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 0.75rem;
+  overflow-x: auto;
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 0.75rem;
 }
 
 .markdown-body img {
-    border-radius: 0.5rem;
-    cursor: zoom-in;
-    transition: transform 0.2s;
+  border-radius: 0.5rem;
+  cursor: zoom-in;
+  transition: transform 0.2s;
 }
 .markdown-body img:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }

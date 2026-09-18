@@ -1,9 +1,13 @@
 vendor/
 dist/
 node_modules/
+package-lock.json
 css/*Output.css
 *.min.js
-resource/assets.js
+**/resource/assets.js
+# Legacy malformed HTML (stray closing div); browsers tolerate, parsers do not.
+# Excluded from format gate until markup is fixed with visual verification.
+apps/extra/litematic-preview/index.html
 apps/portal/data/database.json
 archive/data/database.json
 **/database.json

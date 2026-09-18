@@ -8,8 +8,12 @@ const ROOT = path.resolve(import.meta.dirname, '..');
 const fails = [];
 const passes = [];
 
-function pubOf(src) { return src.replace(/\/:path\*$/, '/'); }
-function physOf(dst) { return dst.replace(/\/:path\*$/, '/').replace(/^\//, ''); }
+function pubOf(src) {
+  return src.replace(/\/:path\*$/, '/');
+}
+function physOf(dst) {
+  return dst.replace(/\/:path\*$/, '/').replace(/^\//, '');
+}
 
 function loadVercel() {
   const raw = fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8');
@@ -27,7 +31,10 @@ function loadVercel() {
 function loadAliases() {
   const text = fs.readFileSync(path.join(ROOT, 'vite.config.js'), 'utf8');
   const block = text.match(/PUBLIC_ALIASES\s*=\s*\{([\s\S]*?)\}/);
-  if (!block) { fails.push('FAIL vite PUBLIC_ALIASES block not found (vite.config.js:1)'); return new Map(); }
+  if (!block) {
+    fails.push('FAIL vite PUBLIC_ALIASES block not found (vite.config.js:1)');
+    return new Map();
+  }
   const map = new Map();
   const re = /['"]([^'"]+)['"]\s*:\s*['"]([^'"]+)['"]/g;
   let m;
@@ -40,7 +47,8 @@ function checkMaps(vercel, aliases) {
   const aKeys = [...aliases.keys()].sort();
   for (const k of vKeys) {
     if (!aliases.has(k)) fails.push(`FAIL alias missing in vite PUBLIC_ALIASES: ${k} (vercel -> /${vercel.get(k)})`);
-    else if (aliases.get(k) !== vercel.get(k)) fails.push(`FAIL alias target drift: ${k} vercel=/${vercel.get(k)} vite=${aliases.get(k)}`);
+    else if (aliases.get(k) !== vercel.get(k))
+      fails.push(`FAIL alias target drift: ${k} vercel=/${vercel.get(k)} vite=${aliases.get(k)}`);
     else passes.push(`PASS alias ${k} <-> ${vercel.get(k)}`);
   }
   for (const k of aKeys) {
@@ -55,7 +63,11 @@ const STALE_RE = /(?<![\w/])data\/database\.json/g;
 
 function walk(dir, out) {
   let ents = [];
-  try { ents = fs.readdirSync(dir, { withFileTypes: true }); } catch { return out; }
+  try {
+    ents = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
   ents.sort((a, b) => a.name.localeCompare(b.name));
   for (const e of ents) {
     const p = path.join(dir, e.name);
@@ -74,7 +86,11 @@ function grepSources() {
   for (const f of files) {
     const rel = path.relative(ROOT, f).replace(/\\/g, '/');
     let lines = [];
-    try { lines = fs.readFileSync(f, 'utf8').split('\n'); } catch { continue; }
+    try {
+      lines = fs.readFileSync(f, 'utf8').split('\n');
+    } catch {
+      continue;
+    }
     lines.forEach((line, i) => {
       if (PHYS_RE.test(line)) fails.push(`FAIL physical path ref ${rel}:${i + 1}: ${line.trim().slice(0, 120)}`);
       PHYS_RE.lastIndex = 0;
@@ -86,8 +102,18 @@ function grepSources() {
 
 (function main() {
   let vercel, aliases;
-  try { vercel = loadVercel(); } catch (e) { fails.push(`FAIL vercel.json unreadable: ${e.message}`); vercel = new Map(); }
-  try { aliases = loadAliases(); } catch (e) { fails.push(`FAIL vite.config.js unreadable: ${e.message}`); aliases = new Map(); }
+  try {
+    vercel = loadVercel();
+  } catch (e) {
+    fails.push(`FAIL vercel.json unreadable: ${e.message}`);
+    vercel = new Map();
+  }
+  try {
+    aliases = loadAliases();
+  } catch (e) {
+    fails.push(`FAIL vite.config.js unreadable: ${e.message}`);
+    aliases = new Map();
+  }
   checkMaps(vercel, aliases);
   grepSources();
   for (const p of passes) console.log(p);

@@ -1,15 +1,17 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @source "../apps/admin";
 @source "../404.html";
 @source "../pages";
 
 @theme {
-    --color-brand: #40B5AD;
+  --color-brand: #40b5ad;
 }
 
 :root {
-    --brand: #40B5AD;
+  --brand: #40b5ad;
 }
 
-[v-cloak] { display: none !important; }
+[v-cloak] {
+  display: none !important;
+}

@@ -32,5 +32,5 @@ jobs:
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: 手动重建数据库及站点地图 [skip ci]"
+          commit_message: 'chore: 手动重建数据库及站点地图 [skip ci]'
           file_pattern: 'archive/data/database.json sitemap.xml robots.txt'

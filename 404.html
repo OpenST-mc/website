@@ -1,83 +1,101 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
-    <link rel="icon" href="/images/favicon.png" sizes="any">
-    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png">
-    <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
+    <link rel="icon" href="/images/favicon.png" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png" />
+    <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any" />
     <script src="/vendor/insights.bundle.js" defer></script>
     <script src="/js/404.js" defer></script>
     <title>OpenST | 定位失败</title>
-    <link rel="stylesheet" href="/css/AdminOutput.css">
+    <link rel="stylesheet" href="/css/AdminOutput.css" />
     <style>
-        :root { --brand: #40B5AD; }
-        body {
-            background-color: #0a0a0a;
-            background-image:
-                    radial-gradient(circle at 50% 50%, rgba(64, 181, 173, 0.05) 0%, transparent 80%),
-                    linear-gradient(rgba(64, 181, 173, 0.02) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(64, 181, 173, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
-            color: #fff;
-            overflow: hidden;
+      :root {
+        --brand: #40b5ad;
+      }
+      body {
+        background-color: #0a0a0a;
+        background-image:
+          radial-gradient(circle at 50% 50%, rgba(64, 181, 173, 0.05) 0%, transparent 80%),
+          linear-gradient(rgba(64, 181, 173, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(64, 181, 173, 0.02) 1px, transparent 1px);
+        background-size:
+          100% 100%,
+          30px 30px,
+          30px 30px;
+        color: #fff;
+        overflow: hidden;
+      }
+      .scan-line {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--brand), transparent);
+        position: absolute;
+        top: -2px;
+        animation: scan 3s linear infinite;
+        opacity: 0.3;
+      }
+      @keyframes scan {
+        0% {
+          top: 0%;
         }
-        .scan-line {
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--brand), transparent);
-            position: absolute;
-            top: -2px;
-            animation: scan 3s linear infinite;
-            opacity: 0.3;
+        100% {
+          top: 100%;
         }
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
-        }
-        .brand-shadow { text-shadow: 0 0 20px rgba(64, 181, 173, 0.5); }
-        [v-cloak] { display: none; }
+      }
+      .brand-shadow {
+        text-shadow: 0 0 20px rgba(64, 181, 173, 0.5);
+      }
+      [v-cloak] {
+        display: none;
+      }
     </style>
-</head>
-<body class="h-screen flex items-center justify-center font-sans">
-<div class="scan-line"></div>
+  </head>
+  <body class="h-screen flex items-center justify-center font-sans">
+    <div class="scan-line"></div>
 
-<div id="app" class="relative z-10 text-center px-6">
-    <div id="searching" class="space-y-6">
+    <div id="app" class="relative z-10 text-center px-6">
+      <div id="searching" class="space-y-6">
         <div class="relative w-24 h-24 mx-auto">
-            <div class="absolute inset-0 border-4 border-[--brand]/10 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-t-[--brand] rounded-full animate-spin"></div>
+          <div class="absolute inset-0 border-4 border-[--brand]/10 rounded-full"></div>
+          <div class="absolute inset-0 border-4 border-t-[--brand] rounded-full animate-spin"></div>
         </div>
         <div class="space-y-2">
-            <h2 class="text-2xl font-black tracking-[0.3em] text-[--brand] brand-shadow uppercase">Analyzing...</h2>
-            <p id="target-path" class="text-white/30 font-mono text-sm tracking-widest"></p>
+          <h2 class="text-2xl font-black tracking-[0.3em] text-[--brand] brand-shadow uppercase">Analyzing...</h2>
+          <p id="target-path" class="text-white/30 font-mono text-sm tracking-widest"></p>
         </div>
-    </div>
+      </div>
 
-    <div id="error-box" class="hidden space-y-8 max-w-lg animate-in fade-in zoom-in duration-500">
+      <div id="error-box" class="hidden space-y-8 max-w-lg animate-in fade-in zoom-in duration-500">
         <div class="space-y-4">
-            <h1 class="text-9xl font-black text-white/5 tracking-tighter relative">
-                404
-                <span class="absolute inset-0 flex items-center justify-center text-3xl tracking-widest text-[--brand] brand-shadow">LOST IN VOID</span>
-            </h1>
-            <div class="h-px w-24 bg-[--brand]/30 mx-auto"></div>
-            <p class="text-white/50 leading-relaxed text-sm">
-                页面 <span id="error-id" class="text-[--brand] font-mono"></span> 可能是无效的。
-            </p>
+          <h1 class="text-9xl font-black text-white/5 tracking-tighter relative">
+            404
+            <span
+              class="absolute inset-0 flex items-center justify-center text-3xl tracking-widest text-[--brand] brand-shadow"
+              >LOST IN VOID</span
+            >
+          </h1>
+          <div class="h-px w-24 bg-[--brand]/30 mx-auto"></div>
+          <p class="text-white/50 leading-relaxed text-sm">
+            页面 <span id="error-id" class="text-[--brand] font-mono"></span> 可能是无效的。
+          </p>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="https://openstmc.com/" class="px-10 py-4 rounded-2xl bg-[--brand] text-black font-extrabold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[#40B5AD]/20">
-                返回主页面
-            </a>
+          <a
+            href="https://openstmc.com/"
+            class="px-10 py-4 rounded-2xl bg-[--brand] text-black font-extrabold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[#40B5AD]/20"
+          >
+            返回主页面
+          </a>
         </div>
+      </div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>

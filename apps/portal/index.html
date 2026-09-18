@@ -1,174 +1,217 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="referrer" content="no-referrer">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="referrer" content="no-referrer" />
 
-    <meta name="description" content="OpenST 档案馆：归档、转换并在线预览 Minecraft 优秀储电作品。提供精密机器存档下载与 WebGL 投影预览。">
-    <meta property="og:description" content="OpenST：归档、转换并在线预览 Minecraft 优秀储电作品。支持 WebGL 投影预览。">
-    <meta itemprop="description" content="OpenST档案馆提供精密机器存档下载与 WebGL 投影预览。">
+    <meta
+      name="description"
+      content="OpenST 档案馆：归档、转换并在线预览 Minecraft 优秀储电作品。提供精密机器存档下载与 WebGL 投影预览。"
+    />
+    <meta
+      property="og:description"
+      content="OpenST：归档、转换并在线预览 Minecraft 优秀储电作品。支持 WebGL 投影预览。"
+    />
+    <meta itemprop="description" content="OpenST档案馆提供精密机器存档下载与 WebGL 投影预览。" />
 
-    <meta name="title" content="OpenST Archive">
-    <meta property="og:title" content="OpenST Archive">
-    <meta itemprop="name" content="OpenST Archive">
+    <meta name="title" content="OpenST Archive" />
+    <meta property="og:title" content="OpenST Archive" />
+    <meta itemprop="name" content="OpenST Archive" />
 
-    <meta property="og:image" content="https://openstmc.com/images/favicon-1.png">
-    <meta itemprop="image" content="https://openstmc.com/images/favicon-1.png">
-    <meta name="twitter:image" content="https://openstmc.com/images/favicon-1.png">
-    <meta property="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://openstmc.com/images/favicon-1.png" />
+    <meta itemprop="image" content="https://openstmc.com/images/favicon-1.png" />
+    <meta name="twitter:image" content="https://openstmc.com/images/favicon-1.png" />
+    <meta property="twitter:card" content="summary_large_image" />
 
-    <link rel="icon" href="../images/favicon.png" sizes="any">
-    <link rel="icon" type="image/png" sizes="48x48" href="../images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="64x64" href="../images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="../images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="../images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="196x196" href="../images/favicon-2.png">
-    <link rel="apple-touch-icon" href="../images/favicon.png" sizes="any">
+    <link rel="icon" href="../images/favicon.png" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="../images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="../images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="../images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="../images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="196x196" href="../images/favicon-2.png" />
+    <link rel="apple-touch-icon" href="../images/favicon.png" sizes="any" />
     <title>OpenST Archive</title>
-    <link rel="stylesheet" href="../css/ArchiveOutput.css">
+    <link rel="stylesheet" href="../css/ArchiveOutput.css" />
     <script src="/vendor/marked.min.js" defer></script>
     <script src="/vendor/purify.min.js" defer></script>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css" />
     <script src="/vendor/insights.bundle.js" defer></script>
-</head>
-<body class="bg-dark text-white overflow-hidden font-sans">
-<div id="app" v-cloak class="flex flex-col h-screen h-[100dvh] overflow-hidden" @click="handleImageZoom">
-    <div v-cloak>
-        <section style="display:none" aria-hidden="true">
-            <h1>OpenST 档案馆 - Minecraft 存储科技投影下载</h1>
-            <p>汇集 1.16/1.21+ 版本最前沿的存储技术，包括全物品仓库、编码单片、自动打包机等。</p>
-            <nav>
-                <span>分类：非编码存储, 潜影盒处理, 编码科技, 生产合成</span>
-            </nav>
+  </head>
+  <body class="bg-dark text-white overflow-hidden font-sans">
+    <div id="app" v-cloak class="flex flex-col h-screen h-[100dvh] overflow-hidden" @click="handleImageZoom">
+      <div v-cloak>
+        <section style="display: none" aria-hidden="true">
+          <h1>OpenST 档案馆 - Minecraft 存储科技投影下载</h1>
+          <p>汇集 1.16/1.21+ 版本最前沿的存储技术，包括全物品仓库、编码单片、自动打包机等。</p>
+          <nav>
+            <span>分类：非编码存储, 潜影盒处理, 编码科技, 生产合成</span>
+          </nav>
         </section>
+      </div>
 
-    </div>
+      <nav-bar
+        v-model:proxy="useProxy"
+        :user="user"
+        :is-admin="isAdmin"
+        @login="handleLogin"
+        @logout="handleLogout"
+        @open-menu="$refs.sidebar.isOpen = true"
+      >
+      </nav-bar>
 
-    <nav-bar
-            v-model:proxy="useProxy"
-            :user="user"
-            :is-admin="isAdmin"
-            @login="handleLogin"
-            @logout="handleLogout"
-            @open-menu="$refs.sidebar.isOpen = true">
-    </nav-bar>
-
-    <div class="flex flex-1 overflow-hidden relative">
-        <side-bar ref="sidebar"
-                  :categories="categories"
-                  :groups="dynamicTagGroups"
-                  :selected="selectedTags"
-                  v-model:search="searchQuery"
-                  @reset="resetFilters"
-                  :show-only-favs="showOnlyFavs"
-                  @update:show-only-favs="showOnlyFavs = $event">
+      <div class="flex flex-1 overflow-hidden relative">
+        <side-bar
+          ref="sidebar"
+          :categories="categories"
+          :groups="dynamicTagGroups"
+          :selected="selectedTags"
+          v-model:search="searchQuery"
+          @reset="resetFilters"
+          :show-only-favs="showOnlyFavs"
+          @update:show-only-favs="showOnlyFavs = $event"
+        >
         </side-bar>
 
         <main class="flex-1 p-6 pb-[20vh] overflow-y-auto bg-dark custom-scrollbar" id="main-content">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 content-start">
-                <a href="../upload/index.html" class="flex flex-col h-full min-h-[320px] items-center justify-center p-6 rounded-[20px] bg-panel/30 border-2 border-dashed border-white/10 hover:border-brand/50 hover:bg-brand/5 transition-all group lg:col-span-2 xl:col-span-1">
-                    <div class="flex flex-col lg:flex-row xl:flex-col items-center gap-4">
-                        <div class="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">🚀</div>
-                        <div class="text-center lg:text-left xl:text-center">
-                            <h3 class="text-lg font-bold text-white tracking-tight">贡献你的机器</h3>
-                            <p class="text-xs text-gray-500 mt-2 leading-relaxed">欢迎分享你的作品<br>点击前往投递系统</p>
-                        </div>
-                    </div>
-                </a>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 content-start">
+            <a
+              href="../upload/index.html"
+              class="flex flex-col h-full min-h-[320px] items-center justify-center p-6 rounded-[20px] bg-panel/30 border-2 border-dashed border-white/10 hover:border-brand/50 hover:bg-brand/5 transition-all group lg:col-span-2 xl:col-span-1"
+            >
+              <div class="flex flex-col lg:flex-row xl:flex-col items-center gap-4">
+                <div
+                  class="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"
+                >
+                  🚀
+                </div>
+                <div class="text-center lg:text-left xl:text-center">
+                  <h3 class="text-lg font-bold text-white tracking-tight">贡献你的机器</h3>
+                  <p class="text-xs text-gray-500 mt-2 leading-relaxed">欢迎分享你的作品<br />点击前往投递系统</p>
+                </div>
+              </div>
+            </a>
 
-                <archive-card
-                        v-for="item in pagedList"
-                        :key="item.id"
-                        :is-admin="isAdmin"
-                        :is-fav="favorites.includes(item.id)"
-                        :item="{ ...item, preview: getSafePath(item.preview) }"
-                        @open="detailItem = $event"
-                        @edit="openEdit"
-                        @toggle-fav="toggleFavorite(item.id)">
-                </archive-card>
+            <archive-card
+              v-for="item in pagedList"
+              :key="item.id"
+              :is-admin="isAdmin"
+              :is-fav="favorites.includes(item.id)"
+              :item="{ ...item, preview: getSafePath(item.preview) }"
+              @open="detailItem = $event"
+              @edit="openEdit"
+              @toggle-fav="toggleFavorite(item.id)"
+            >
+            </archive-card>
+          </div>
+
+          <div v-if="fullFilteredList.length > 0" class="mt-16 mb-32 flex flex-col items-center gap-8">
+            <div class="flex items-center gap-4 group">
+              <div
+                class="h-px w-12 bg-gradient-to-r from-transparent to-white/10 transition-all group-hover:w-16 group-hover:to-brand/30"
+              ></div>
+              <div class="flex flex-col items-center gap-1">
+                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">Discovery</span>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="text-2xl font-black text-white leading-none tracking-tighter"
+                    >{{ fullFilteredList.length }}</span
+                  >
+                  <span class="text-[10px] text-brand font-bold uppercase tracking-wider">Archives Found</span>
+                </div>
+              </div>
+              <div
+                class="h-px w-12 bg-gradient-to-l from-transparent to-white/10 transition-all group-hover:w-16 group-hover:to-brand/30"
+              ></div>
             </div>
 
-            <div v-if="fullFilteredList.length > 0" class="mt-16 mb-32 flex flex-col items-center gap-8">
+            <div v-if="totalPages > 1" class="flex flex-col items-center gap-3">
+              <div class="flex items-center gap-3">
+                <button
+                  @click="setPage(currentPage - 1)"
+                  :disabled="currentPage === 1"
+                  class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:bg-brand hover:text-black hover:scale-110 active:scale-95 disabled:opacity-0 transition-all duration-300"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 19l-7-7 7-7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
 
-                <div class="flex items-center gap-4 group">
-                    <div class="h-px w-12 bg-gradient-to-r from-transparent to-white/10 transition-all group-hover:w-16 group-hover:to-brand/30"></div>
-                    <div class="flex flex-col items-center gap-1">
-                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">Discovery</span>
-                        <div class="flex items-baseline gap-1.5">
-                            <span class="text-2xl font-black text-white leading-none tracking-tighter">{{ fullFilteredList.length }}</span>
-                            <span class="text-[10px] text-brand font-bold uppercase tracking-wider">Archives Found</span>
-                        </div>
-                    </div>
-                    <div class="h-px w-12 bg-gradient-to-l from-transparent to-white/10 transition-all group-hover:w-16 group-hover:to-brand/30"></div>
+                <div
+                  class="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-2xl shadow-inner group focus-within:border-brand/30 transition-all"
+                >
+                  <input
+                    type="number"
+                    :value="currentPage"
+                    @keyup.enter="setPage($event.target.value)"
+                    @blur="setPage($event.target.value)"
+                    class="w-8 bg-transparent text-center text-lg font-black text-brand outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <span class="text-white/10 font-light text-xl">/</span>
+                  <span class="text-gray-500 text-sm font-bold tracking-tighter">{{ totalPages }}</span>
                 </div>
 
-                <div v-if="totalPages > 1" class="flex flex-col items-center gap-3">
-                    <div class="flex items-center gap-3">
-                        <button @click="setPage(currentPage - 1)" :disabled="currentPage === 1"
-                                class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:bg-brand hover:text-black hover:scale-110 active:scale-95 disabled:opacity-0 transition-all duration-300">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-
-                        <div class="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-2xl shadow-inner group focus-within:border-brand/30 transition-all">
-                            <input type="number" :value="currentPage" @keyup.enter="setPage($event.target.value)" @blur="setPage($event.target.value)"
-                                   class="w-8 bg-transparent text-center text-lg font-black text-brand outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-                            <span class="text-white/10 font-light text-xl">/</span>
-                            <span class="text-gray-500 text-sm font-bold tracking-tighter">{{ totalPages }}</span>
-                        </div>
-
-                        <button @click="setPage(currentPage + 1)" :disabled="currentPage === totalPages"
-                                class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:bg-brand hover:text-black hover:scale-110 active:scale-95 disabled:opacity-0 transition-all duration-300">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                    </div>
-                    <span class="text-[9px] text-gray-700 font-bold uppercase tracking-[0.4em] ml-1">Navigate System</span>
-                </div>
+                <button
+                  @click="setPage(currentPage + 1)"
+                  :disabled="currentPage === totalPages"
+                  class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:bg-brand hover:text-black hover:scale-110 active:scale-95 disabled:opacity-0 transition-all duration-300"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </div>
+              <span class="text-[9px] text-gray-700 font-bold uppercase tracking-[0.4em] ml-1">Navigate System</span>
             </div>
+          </div>
 
-            <div v-if="fullFilteredList.length === 0" class="py-20 text-center text-gray-500 italic text-sm">没有找到符合条件的机器...</div>
+          <div v-if="fullFilteredList.length === 0" class="py-20 text-center text-gray-500 italic text-sm">
+            没有找到符合条件的机器...
+          </div>
         </main>
+      </div>
+
+      <detail-modal v-if="detailItem" :item="detailItem" :is-admin="isAdmin" @close="closeDetail" @edit="openEdit">
+      </detail-modal>
+
+      <transition name="fade">
+        <div
+          v-if="zoomImage"
+          class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl cursor-zoom-out"
+          @click.stop="closeZoom"
+        >
+          <button class="absolute top-6 right-6 text-white/50 hover:text-brand transition-colors p-2">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" />
+            </svg>
+          </button>
+          <div class="relative max-w-[95vw] max-h-[85vh] flex flex-col items-center select-none" @click.stop>
+            <img
+              :src="zoomImage.url"
+              class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl border border-white/5 animate-zoom"
+            />
+            <div class="mt-6 px-4 py-1.5 bg-brand/10 border border-brand/20 rounded-full backdrop-blur-md">
+              <span class="text-brand font-mono text-xs">{{ zoomImage.name }}</span>
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
 
-    <detail-modal
-            v-if="detailItem"
-            :item="detailItem"
-            :is-admin="isAdmin"
-            @close="closeDetail"
-            @edit="openEdit">
-    </detail-modal>
-
-    <transition name="fade">
-        <div v-if="zoomImage" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl cursor-zoom-out" @click.stop="closeZoom">
-            <button class="absolute top-6 right-6 text-white/50 hover:text-brand transition-colors p-2">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5"/></svg>
-            </button>
-            <div class="relative max-w-[95vw] max-h-[85vh] flex flex-col items-center select-none" @click.stop>
-                <img :src="zoomImage.url" class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl border border-white/5 animate-zoom">
-                <div class="mt-6 px-4 py-1.5 bg-brand/10 border border-brand/20 rounded-full backdrop-blur-md">
-                    <span class="text-brand font-mono text-xs">{{ zoomImage.name }}</span>
-                </div>
-            </div>
-        </div>
-    </transition>
-
-</div>
-
-<script src="/vendor/vue.global.prod.js"></script>
-<!--<script src="scripts/mock.js"></script>-->
-<script type="module" src="/archive/scripts/main.js"></script>
-<script type="application/ld+json">
-    {
+    <script src="/vendor/vue.global.prod.js"></script>
+    <!--<script src="scripts/mock.js"></script>-->
+    <script type="module" src="/archive/scripts/main.js"></script>
+    <script type="application/ld+json">
+      {
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "OpenST Archive",
         "url": "https://openstmc.com",
         "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://openstmc.com/archive?search={search_term_string}",
-            "query-input": "required name=search_term_string"
+          "@type": "SearchAction",
+          "target": "https://openstmc.com/archive?search={search_term_string}",
+          "query-input": "required name=search_term_string"
         }
-    }
-</script>
-</body>
+      }
+    </script>
+  </body>
 </html>

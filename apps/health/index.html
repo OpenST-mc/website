@@ -1,106 +1,139 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
     <title>系统状态 | OpenST Portal</title>
-    <link rel="stylesheet" href="../css/output.css">
-    <link rel="icon" href="../images/favicon.png">
-    <link rel="apple-touch-icon" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/output.css" />
+    <link rel="icon" href="../images/favicon.png" />
+    <link rel="apple-touch-icon" href="../images/favicon.png" />
     <script src="/js/health.js" defer></script>
     <style>
-        @keyframes pulse-custom {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(0.95); }
+      @keyframes pulse-custom {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
         }
+        50% {
+          opacity: 0.7;
+          transform: scale(0.95);
+        }
+      }
     </style>
-</head>
-<body class="bg-black text-gray-200 min-h-screen font-sans bg-grid">
-
-<div class="max-w-3xl mx-auto px-6 py-12">
-    <header class="flex justify-between items-center mb-12 backdrop-blur-sm bg-black/40 p-4 rounded-xl border border-white/5">
+  </head>
+  <body class="bg-black text-gray-200 min-h-screen font-sans bg-grid">
+    <div class="max-w-3xl mx-auto px-6 py-12">
+      <header
+        class="flex justify-between items-center mb-12 backdrop-blur-sm bg-black/40 p-4 rounded-xl border border-white/5"
+      >
         <div>
-            <h1 class="text-2xl font-bold text-white tracking-tight">OpenST System Status</h1>
-            <p class="text-gray-500 text-sm mt-1">站点状态</p>
+          <h1 class="text-2xl font-bold text-white tracking-tight">OpenST System Status</h1>
+          <p class="text-gray-500 text-sm mt-1">站点状态</p>
         </div>
         <div id="global-badge" class="px-3 py-1 rounded-full text-xs font-medium bg-gray-800 text-gray-400">
-            正在初始化...
+          正在初始化...
         </div>
-    </header>
+      </header>
 
-    <div id="main-status" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-10 mb-8 text-center shadow-2xl transition-all duration-500">
+      <div
+        id="main-status"
+        class="bg-zinc-900 border border-zinc-800 rounded-2xl p-10 mb-8 text-center shadow-2xl transition-all duration-500"
+      >
         <div class="inline-block p-4 rounded-full bg-zinc-800 mb-4">
-            <div id="main-dot" class="w-4 h-4 rounded-full bg-gray-600 transition-colors duration-500"></div>
+          <div id="main-dot" class="w-4 h-4 rounded-full bg-gray-600 transition-colors duration-500"></div>
         </div>
         <h2 id="main-text" class="text-xl font-semibold text-white">正在读取边缘数据...</h2>
         <p id="main-desc" class="text-gray-500 text-sm mt-2">正在通过独立节点拨测全球服务可用性</p>
-    </div>
+      </div>
 
-    <div class="grid gap-4">
-        <div class="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div id="portal-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></div>
-                <div>
-                    <div class="text-white font-medium text-sm">Portal 主站</div>
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest">Vercel Edge Network</div>
-                </div>
+      <div class="grid gap-4">
+        <div
+          class="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl flex items-center justify-between"
+        >
+          <div class="flex items-center gap-4">
+            <div id="portal-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></div>
+            <div>
+              <div class="text-white font-medium text-sm">Portal 主站</div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-widest">Vercel Edge Network</div>
             </div>
-            <div id="portal-ping" class="text-sm font-mono text-gray-400">-- ms</div>
+          </div>
+          <div id="portal-ping" class="text-sm font-mono text-gray-400">-- ms</div>
         </div>
 
         <div class="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-4">
-                    <div id="api-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></div>
-                    <div>
-                        <div class="text-white font-medium text-sm">API/后端</div>
-                        <div class="text-[10px] text-gray-500 uppercase tracking-widest">Cloudflare Workers</div>
-                    </div>
-                </div>
-                <div id="api-ping" class="text-sm font-mono text-gray-400">-- ms</div>
-            </div>
-            <div class="flex gap-2">
-                <span id="api-node" class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">NODE: --</span>
-                <span id="api-upstream" class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">UPSTREAM: --</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl">
-        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-4">
-                <div id="cdn-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></div>
-                <div>
-                    <div class="text-white font-medium text-sm">下载服务（CDN）</div>
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest">cdn.linvin.net (EdgeOne)</div>
-                </div>
+              <div id="api-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></div>
+              <div>
+                <div class="text-white font-medium text-sm">API/后端</div>
+                <div class="text-[10px] text-gray-500 uppercase tracking-widest">Cloudflare Workers</div>
+              </div>
             </div>
-            <div id="cdn-ping" class="text-sm font-mono text-gray-400">-- ms</div>
+            <div id="api-ping" class="text-sm font-mono text-gray-400">-- ms</div>
+          </div>
+          <div class="flex gap-2">
+            <span
+              id="api-node"
+              class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter"
+              >NODE: --</span
+            >
+            <span
+              id="api-upstream"
+              class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter"
+              >UPSTREAM: --</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-4">
+            <div id="cdn-dot" class="w-2.5 h-2.5 rounded-full bg-gray-600"></div>
+            <div>
+              <div class="text-white font-medium text-sm">下载服务（CDN）</div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-widest">cdn.linvin.net (EdgeOne)</div>
+            </div>
+          </div>
+          <div id="cdn-ping" class="text-sm font-mono text-gray-400">-- ms</div>
         </div>
         <div class="flex gap-2">
-            <span id="cdn-node" class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">NODE: ANYCAST</span>
-            <span id="cdn-status" class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">CACHE: FETCHING</span>
+          <span
+            id="cdn-node"
+            class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter"
+            >NODE: ANYCAST</span
+          >
+          <span
+            id="cdn-status"
+            class="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter"
+            >CACHE: FETCHING</span
+          >
         </div>
+      </div>
+
+      <footer
+        class="mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6"
+      >
+        <div class="text-xs text-gray-600 font-mono">&copy; 2026 OPENST &bull; AUTO_REFRESH: 30S</div>
+        <div class="flex gap-3">
+          <button
+            id="btn-copy-debug"
+            class="text-[11px] bg-zinc-800 text-gray-300 px-4 py-2 rounded-lg hover:bg-zinc-700 transition"
+          >
+            复制诊断信息
+          </button>
+          <button
+            id="btn-refresh"
+            class="text-[11px] bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-200 transition font-bold"
+          >
+            手动刷新
+          </button>
+        </div>
+      </footer>
     </div>
 
-
-    <footer class="mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div class="text-xs text-gray-600 font-mono">
-            &copy; 2026 OPENST &bull; AUTO_REFRESH: 30S
-        </div>
-        <div class="flex gap-3">
-            <button id="btn-copy-debug" class="text-[11px] bg-zinc-800 text-gray-300 px-4 py-2 rounded-lg hover:bg-zinc-700 transition">
-                复制诊断信息
-            </button>
-            <button id="btn-refresh" class="text-[11px] bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-200 transition font-bold">
-                手动刷新
-            </button>
-        </div>
-    </footer>
-</div>
-
-<div class="h-24 w-full bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
-
-</body>
+    <div class="h-24 w-full bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
+  </body>
 </html>

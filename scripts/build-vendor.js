@@ -19,12 +19,12 @@ const copies = [
   { from: 'node_modules/@fortawesome/fontawesome-free/css/all.min.css', to: 'font-awesome.css' },
   { from: 'node_modules/material-icons/iconfont/material-icons.css', to: 'material-icons.css' },
   { from: 'node_modules/material-icons/iconfont/material-icons.woff2', to: 'material-icons.woff2' },
-  { from: 'node_modules/material-icons/iconfont/material-icons.woff', to: 'material-icons.woff' }
+  { from: 'node_modules/material-icons/iconfont/material-icons.woff', to: 'material-icons.woff' },
 ];
 
 const dirCopies = [
   // font-awesome css 内 url 为 ../webfonts/，需放在 /webfonts/ 根目录
-  { from: 'node_modules/@fortawesome/fontawesome-free/webfonts', to: 'webfonts' }
+  { from: 'node_modules/@fortawesome/fontawesome-free/webfonts', to: 'webfonts' },
 ];
 
 async function build() {
@@ -45,7 +45,7 @@ async function build() {
     bundle: true,
     minify: true,
     format: 'iife',
-    outfile: path.join(outDir, 'insights.bundle.js')
+    outfile: path.join(outDir, 'insights.bundle.js'),
   });
   console.log('已打包: insights.bundle.js');
 
@@ -54,7 +54,7 @@ async function build() {
     bundle: true,
     minify: true,
     format: 'iife',
-    outfile: path.join(outDir, 'marked.min.js')
+    outfile: path.join(outDir, 'marked.min.js'),
   });
   console.log('已压缩: marked.min.js');
 }

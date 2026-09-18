@@ -30,18 +30,18 @@ npm run preview          # 预览 Vite 构建产物（本地参考用，Vercel �
 
 ## 目录结构
 
-| 路径 | 说明 |
-|---|---|
-| `pages/home/index.html` | 门户首页（原根 index.html），404.html 特意保留在根级以配合平台兜底 |
-| `apps/portal/` | Archive SPA（index.html + scripts/ + data/database.json 构建产物） |
-| `apps/upload/` | 投稿页；`apps/auth/` 回调页；`apps/admin/`（原 admin_tools）；`apps/health/`；`apps/credits/` |
-| `apps/extra/litematic-*` | 投影转换 / WebGL 3D 预览工具 |
-| `packages/js/` | 各页面外部脚本（portal/404/auth-callback/credits/health/insights-src） |
-| `assets/` | fonts、images、s2t 简繁词典（原 fonts/images/Traditional-Simplefild） |
-| `css/` | Tailwind v4 三入口与产物（@source 扫描 apps/admin 等） |
-| `api/` | Vercel Functions：share（社交卡重定向）、download/stats（Upstash Redis 计数） |
-| `workers/workers 2.js` | CF Workers 后端唯一源码版（Security Enhanced Edition） |
-| `scripts/` `data/` | 构建/生成脚本（不再被部署 URL 直接暴露源码路径的历史包袱） |
+| 路径                     | 说明                                                                                          |
+| ------------------------ | --------------------------------------------------------------------------------------------- |
+| `pages/home/index.html`  | 门户首页（原根 index.html），404.html 特意保留在根级以配合平台兜底                            |
+| `apps/portal/`           | Archive SPA（index.html + scripts/ + data/database.json 构建产物）                            |
+| `apps/upload/`           | 投稿页；`apps/auth/` 回调页；`apps/admin/`（原 admin_tools）；`apps/health/`；`apps/credits/` |
+| `apps/extra/litematic-*` | 投影转换 / WebGL 3D 预览工具                                                                  |
+| `packages/js/`           | 各页面外部脚本（portal/404/auth-callback/credits/health/insights-src）                        |
+| `assets/`                | fonts、images、s2t 简繁词典（原 fonts/images/Traditional-Simplefild）                         |
+| `css/`                   | Tailwind v4 三入口与产物（@source 扫描 apps/admin 等）                                        |
+| `api/`                   | Vercel Functions：share（社交卡重定向）、download/stats（Upstash Redis 计数）                 |
+| `workers/workers 2.js`   | CF Workers 后端唯一源码版（Security Enhanced Edition）                                        |
+| `scripts/` `data/`       | 构建/生成脚本（不再被部署 URL 直接暴露源码路径的历史包袱）                                    |
 
 ## 公开 URL 兼容
 

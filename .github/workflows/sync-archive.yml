@@ -43,5 +43,5 @@ jobs:
         if: env.POINTER_CHANGED == 'yes'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: 同步稿件库指针并重建数据库 [skip ci]"
+          commit_message: 'chore: 同步稿件库指针并重建数据库 [skip ci]'
           file_pattern: 'content archive/data/database.json sitemap.xml robots.txt'

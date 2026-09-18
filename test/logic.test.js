@@ -6,11 +6,7 @@
 // Parent-expansion behaviour is covered indirectly via getFilteredList tests below.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import {
-  getFilteredList,
-  calculateDynamicTags,
-  getSafePath,
-} from '../apps/portal/scripts/logic.js';
+import { getFilteredList, calculateDynamicTags, getSafePath } from '../apps/portal/scripts/logic.js';
 import { TAG_CONFIG, CATEGORIES } from '../apps/portal/scripts/config.js';
 
 const emptySelected = () => ({});
@@ -66,7 +62,7 @@ describe('getSafePath', () => {
   it('encodes 中文 per segment but keeps / separators', () => {
     assert.equal(
       getSafePath('中文分类/空 格/文件.litematic'),
-      `${encodeURIComponent('中文分类')}/${encodeURIComponent('空 格')}/${encodeURIComponent('文件.litematic')}`,
+      `${encodeURIComponent('中文分类')}/${encodeURIComponent('空 格')}/${encodeURIComponent('文件.litematic')}`
     );
   });
 
@@ -89,30 +85,22 @@ describe('getFilteredList', () => {
   });
 
   it('ANDs across categories (must match every selected category)', () => {
-    const out = getFilteredList(
-      DATA,
-      '',
-      { '生产/合成': ['合成站'], '版本': ['1.21.x'] },
-    );
+    const out = getFilteredList(DATA, '', { '生产/合成': ['合成站'], 版本: ['1.21.x'] });
     assert.deepEqual(out, [itemC]);
 
-    const miss = getFilteredList(
-      DATA,
-      '',
-      { '生产/合成': ['合成站'], '版本': ['1.20.x'] },
-    );
+    const miss = getFilteredList(DATA, '', { '生产/合成': ['合成站'], 版本: ['1.20.x'] });
     assert.deepEqual(miss, []);
   });
 
   it('enforces parent+child for sub-category leaves (parent expansion)', () => {
     // Selecting leaf "常规编码单片" requires the item to carry BOTH
     // the leaf and its parent "编码全物品单片".
-    const out = getFilteredList(DATA, '', { '编码存储科技': ['常规编码单片'] });
+    const out = getFilteredList(DATA, '', { 编码存储科技: ['常规编码单片'] });
     assert.deepEqual(out, [itemA]); // itemLeafOnly (leaf without parent) excluded
   });
 
   it('matches parent-category keys directly', () => {
-    const out = getFilteredList(DATA, '', { '编码存储科技': ['编码全物品单片'] });
+    const out = getFilteredList(DATA, '', { 编码存储科技: ['编码全物品单片'] });
     assert.deepEqual(out, [itemA, itemB]);
   });
 
