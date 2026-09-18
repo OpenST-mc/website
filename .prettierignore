@@ -1,0 +1,9 @@
+vendor/
+dist/
+node_modules/
+css/*Output.css
+*.min.js
+resource/assets.js
+apps/portal/data/database.json
+archive/data/database.json
+**/database.json
