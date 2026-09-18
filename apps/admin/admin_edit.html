@@ -131,7 +131,7 @@
                                 <span class="text-[9px] text-white/30 uppercase font-mono">Litematic File</span>
                             </div>
                         </div>
-                        <input type="file" id="file-replace" class="hidden" accept=".litematic" @change="handleLitematicChange">
+                        <input type="file" id="file-replace" class="hidden" accept=".litematic,.zip,.rar" @change="handleFileChange">
                         <label for="file-replace" :class="isUploadingLitematic ? 'opacity-0' : 'cursor-pointer hover:bg-[--brand] hover:text-black'"
                                class="px-4 py-2 bg-[--brand]/10 text-[--brand] rounded-xl text-[11px] font-bold transition-all border border-[--brand]/20 shrink-0">
                             替换文件

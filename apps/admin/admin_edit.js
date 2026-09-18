@@ -35,8 +35,8 @@ createApp({
             if (!this.editForm.preview) return '';
             if (this.editForm.preview.startsWith('data:image')) return this.editForm.preview;
             const rawPath = decodeURIComponent(this.editForm.preview);
-            const safePath = rawPath.split('/').map(s => encodeURIComponent(s)).join('/');
-            return `https://cdn.jsdmirror.com/gh/OpenST-mc/website@main/${safePath}`;
+            const safePath = rawPath.split('/').map(s => encodeURIComponent(s)).join('/').replace(/^\/+/, '');
+            return `https://cdn.jsdelivr.net/gh/OpenST-mc/archive@main/${safePath}`;
         }
     },
     async mounted() {
@@ -46,12 +46,14 @@ createApp({
             const res = await fetch('/archive/data/database.json');
             const database = await res.json();
             const item = database.find(i => i.id === folder);
-            if (item) this.editForm = JSON.parse(JSON.stringify(item));
-            if (!this.editForm.folder) {
-                this.editForm.folder = item.folder || item.id || folderName;
+            if (item) {
+                this.editForm = JSON.parse(JSON.stringify(item));
+                if (!this.editForm.folder) {
+                    this.editForm.folder = item.folder || item.id || folder;
+                }
                 console.log("✅ 加载成功，当前操作目录:", this.editForm.folder);
             } else {
-                console.warn("⚠️ 在数据库中未找到该稿件:", folderName);
+                console.warn("⚠️ 在数据库中未找到该稿件:", folder);
             }
         } catch (e) { console.error("Load failed", e); }
     },
@@ -105,11 +107,11 @@ createApp({
             }
             if (!confirm(`确定要替换资源文件为: ${file.name}?`)) return;
 
-            this.isUploadingFile = true;
+            this.isUploadingLitematic = true;
             try {
                 const formData = new FormData();
                 formData.append('file', file);
-                formData.append('folder', this.editForm.id); // 这里的 id 就是文件夹名
+                formData.append('folder', this.editForm.folder || this.editForm.id);
 
                 const res = await fetch(`${this.WORKER_URL}/api/admin/replace-litematic`, {
                     method: 'POST',
@@ -128,7 +130,7 @@ createApp({
                 console.error(e);
                 alert("❌ 网络错误，请检查控制台");
             } finally {
-                this.isUploadingFile = false;
+                this.isUploadingLitematic = false;
             }
         },
 
@@ -150,7 +152,7 @@ createApp({
                 });
                 if (res.ok) {
                     alert("🗑️ 稿件已彻底删除");
-                    window.location.href = '../archive.html';
+                    window.location.href = '/archive/';
                 } else alert("❌ 删除失败");
             } catch (e) { alert("❌ 请求错误"); }
         },
@@ -186,10 +188,10 @@ createApp({
                 });
                 if (res.status === 401) {
                     alert("❌ 认证失效，请先登录");
-                    window.location.href = '../archive/index.html';
+                    window.location.href = '/archive/';
                 } else if (res.ok) {
                     alert("✅ 信息修改成功！");
-                    window.location.href = '../archive.html';
+                    window.location.href = '/archive/';
                 } else alert("❌ 提交失败");
             } catch (e) { alert("❌ 网络错误"); }
             finally { this.isSaving = false; }
