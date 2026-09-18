@@ -3,9 +3,9 @@ import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
 
 injectSpeedInsights({
-  framework: 'vue'
+  framework: 'vue',
 });
 
 inject({
-  mode: 'production'
+  mode: 'production',
 });

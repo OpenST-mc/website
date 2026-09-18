@@ -7,198 +7,202 @@ const WORKER_URL = 'https://api.openstmc.com';
 const CLIENT_ID = 'Ov23liTildfj3XAkvbr8';
 
 console.log(
-    "%c如果你并非网页开发人员，请勿在控制台内输入任何人传给你的脚本！\n%c在控制台输入脚本可能会让攻击者盗取你的 GitHub 访问令牌（Token），从而控制你的仓库或篡改数据。",
-    "color: #333; font-size: 16px; font-weight: bold;",
-    "color: red; font-size: 14px;"
+  '%c如果你并非网页开发人员，请勿在控制台内输入任何人传给你的脚本！\n%c在控制台输入脚本可能会让攻击者盗取你的 GitHub 访问令牌（Token），从而控制你的仓库或篡改数据。',
+  'color: #333; font-size: 16px; font-weight: bold;',
+  'color: red; font-size: 14px;'
 );
 
 const UploadApp = {
-    data() {
-        return {
-            config: TAG_CONFIG,
-            step: 1,
-            loggedIn: false,
-            user: null,
-            form: {
-                name: '',
-                author: '',
-                contact: '',
-                desc: `### 🚀 机器概览（示例）\n- **核心功能**: \n- **适用版本**: Java 1.20.x\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n2. 说明2\n\n> 提示：本机器支持横向堆叠。`,
-                tags: [],
-                previewFile: null,
-                litematicFile: null
-            },
-            githubIssueUrl: ''
+  data() {
+    return {
+      config: TAG_CONFIG,
+      step: 1,
+      loggedIn: false,
+      user: null,
+      form: {
+        name: '',
+        author: '',
+        contact: '',
+        desc: `### 🚀 机器概览（示例）\n- **核心功能**: \n- **适用版本**: Java 1.20.x\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n2. 说明2\n\n> 提示：本机器支持横向堆叠。`,
+        tags: [],
+        previewFile: null,
+        litematicFile: null,
+      },
+      githubIssueUrl: '',
+    };
+  },
+
+  async mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code) {
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+
+      // 校验 OAuth state，防止登录 CSRF
+      const state = urlParams.get('state');
+      const savedState = sessionStorage.getItem('oauth_state');
+      sessionStorage.removeItem('oauth_state');
+
+      if (state && savedState && state === savedState) {
+        try {
+          await fetch(`${WORKER_URL}/api/exchange-token?code=${code}`, { credentials: 'include' });
+        } catch (e) {
+          console.error('Auth Error:', e);
         }
+      }
+    }
+
+    // 从后端会话恢复登录状态
+    const session = await PortalAuth.fetchSession(WORKER_URL);
+    if (session) {
+      this.loggedIn = true;
+      this.user = session.user;
+    }
+  },
+
+  computed: {
+    previewHtml() {
+      if (!this.form.desc) return '<span class="text-gray-600 italic">在此输入简介...</span>';
+      const rawHtml = typeof marked !== 'undefined' ? marked.parse(this.form.desc) : 'Markdown 插件加载中...';
+      // DOMPurify 净化，防止 XSS
+      return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml;
     },
-
-    async mounted() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-
-        if (code) {
-            const cleanUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, cleanUrl);
-
-            // 校验 OAuth state，防止登录 CSRF
-            const state = urlParams.get('state');
-            const savedState = sessionStorage.getItem('oauth_state');
-            sessionStorage.removeItem('oauth_state');
-
-            if (state && savedState && state === savedState) {
-                try {
-                    await fetch(`${WORKER_URL}/api/exchange-token?code=${code}`, { credentials: 'include' });
-                } catch (e) {
-                    console.error("Auth Error:", e);
-                }
-            }
-        }
-
-        // 从后端会话恢复登录状态
-        const session = await PortalAuth.fetchSession(WORKER_URL);
-        if (session) {
-            this.loggedIn = true;
-            this.user = session.user;
-        }
+    flatConfig() {
+      const res = {};
+      for (let k in this.config) {
+        res[k] = Array.isArray(this.config[k]) ? this.config[k] : Object.values(this.config[k]).flat();
+      }
+      return res;
     },
+    isReady() {
+      return this.form.name && this.form.previewFile && this.form.litematicFile;
+    },
+    processedConfig() {
+      return Object.entries(this.config).map(([mainCat, subConfig]) => {
+        // 如果原本就是简单数组，直接归为 flattened
+        if (Array.isArray(subConfig)) {
+          return { mainCat, nested: [], flattened: subConfig };
+        }
 
-    computed: {
-        previewHtml() {
-            if (!this.form.desc) return '<span class="text-gray-600 italic">在此输入简介...</span>';
-            const rawHtml = typeof marked !== 'undefined' ? marked.parse(this.form.desc) : 'Markdown 插件加载中...';
-            // DOMPurify 净化，防止 XSS
-            return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml;
-        },
-        flatConfig() {
-            const res = {};
-            for (let k in this.config) {
-                res[k] = Array.isArray(this.config[k]) ? this.config[k] : Object.values(this.config[k]).flat();
-            }
-            return res;
-        },
-        isReady() {
-            return this.form.name && this.form.previewFile && this.form.litematicFile;
-        },
-        processedConfig() {
-            return Object.entries(this.config).map(([mainCat, subConfig]) => {
-                // 如果原本就是简单数组，直接归为 flattened
-                if (Array.isArray(subConfig)) {
-                    return { mainCat, nested: [], flattened: subConfig };
-                }
+        const nested = [];
+        const flattened = [];
 
-                const nested = [];
-                const flattened = [];
+        Object.entries(subConfig).forEach(([subCat, tags]) => {
+          if (tags && tags.length > 0) {
+            // 有三级标签：保持嵌套结构
+            nested.push({ subCat, tags });
+          } else {
+            // 无三级标签：退化为普通按钮
+            flattened.push(subCat);
+          }
+        });
 
-                Object.entries(subConfig).forEach(([subCat, tags]) => {
-                    if (tags && tags.length > 0) {
-                        // 有三级标签：保持嵌套结构
-                        nested.push({ subCat, tags });
-                    } else {
-                        // 无三级标签：退化为普通按钮
-                        flattened.push(subCat);
-                    }
-                });
+        return { mainCat, nested, flattened };
+      });
+    },
+  },
 
-                return { mainCat, nested, flattened };
+  methods: {
+    async logout() {
+      await PortalAuth.logout(WORKER_URL);
+      this.loggedIn = false;
+      this.user = null;
+    },
+    loginWithGitHub() {
+      const CLIENT_ID = 'Ov23liTildfj3XAkvbr8';
+      const redirect_uri = window.location.origin + window.location.pathname; // 指向 index.html
+      // 生成一次性 state，防止登录 CSRF
+      const state = crypto.randomUUID();
+      sessionStorage.setItem('oauth_state', state);
+
+      window.location.href =
+        `https://github.com/login/oauth/authorize` +
+        `?client_id=${CLIENT_ID}` +
+        `&scope=public_repo` +
+        `&redirect_uri=${encodeURIComponent(redirect_uri)}` +
+        `&state=${state}`;
+    },
+    toggleTag(tag, parentKey = null) {
+      const index = this.form.tags.indexOf(tag);
+
+      if (index > -1) {
+        // --- 执行取消勾选 ---
+        this.form.tags.splice(index, 1);
+
+        // 如果取消的是父级（任一嵌套分类下的二级），则该父级下的所有子级都要取消
+        for (const mainKey of Object.keys(this.config)) {
+          const mainConfig = this.config[mainKey];
+          if (mainConfig && !Array.isArray(mainConfig) && Array.isArray(mainConfig[tag])) {
+            mainConfig[tag].forEach((sub) => {
+              const subIdx = this.form.tags.indexOf(sub);
+              if (subIdx > -1) this.form.tags.splice(subIdx, 1);
             });
+            break;
+          }
         }
+      } else {
+        // --- 执行勾选 ---
+        this.form.tags.push(tag);
+
+        // 如果勾选的是子级，自动带上父级（如果父级还没被勾选）
+        if (parentKey) {
+          if (!this.form.tags.includes(parentKey)) {
+            this.form.tags.push(parentKey);
+          }
+        }
+      }
     },
+    async handleUpload() {
+      if (!this.loggedIn || this.step === 2) return;
 
-    methods: {
-        async logout() {
-            await PortalAuth.logout(WORKER_URL);
-            this.loggedIn = false;
-            this.user = null;
-        },
-        loginWithGitHub() {
-            const CLIENT_ID = 'Ov23liTildfj3XAkvbr8'
-            const redirect_uri = window.location.origin + window.location.pathname; // 指向 index.html
-            // 生成一次性 state，防止登录 CSRF
-            const state = crypto.randomUUID();
-            sessionStorage.setItem('oauth_state', state);
+      this.step = 2; // 进入上传中状态
+      try {
+        const zip = new JSZip();
 
-            window.location.href = `https://github.com/login/oauth/authorize` +
-                `?client_id=${CLIENT_ID}` +
-                `&scope=public_repo` +
-                `&redirect_uri=${encodeURIComponent(redirect_uri)}` +
-                `&state=${state}`;
-        },
-        toggleTag(tag, parentKey = null) {
-            const index = this.form.tags.indexOf(tag);
+        // 1. 清洗文件夹名称 (确保 info.json 的格式完全符合示例)
+        const safeFolderName = this.form.name.replace(/[#\\/:*?"<>|]/g, '_');
+        const folder = zip.folder(safeFolderName);
+        const previewExt = this.form.previewFile.name.split('.').pop().toLowerCase();
+        const previewFileName = `preview.${previewExt}`;
+        const now = new Date();
+        const originalFileName = this.form.litematicFile.name;
+        const infoJson = {
+          id: `sub-${now.getTime()}`,
+          name: this.form.name,
+          author: this.form.author || '匿名',
+          tags: this.form.tags,
+          description: this.form.desc,
+          folder: safeFolderName,
+          preview: previewFileName,
+          filename: originalFileName,
+          submitDate: now.toISOString(),
+        };
 
-            if (index > -1) {
-                // --- 执行取消勾选 ---
-                this.form.tags.splice(index, 1);
+        folder.file('info.json', JSON.stringify(infoJson, null, 4));
+        folder.file(previewFileName, this.form.previewFile);
+        folder.file(originalFileName, this.form.litematicFile);
 
-                // 如果取消的是父级，则该父级下的所有子级都要取消
-                if (parentKey && this.config["编码存储科技"][tag]) {
-                    const subTags = this.config["编码存储科技"][tag];
-                    subTags.forEach(sub => {
-                        const subIdx = this.form.tags.indexOf(sub);
-                        if (subIdx > -1) this.form.tags.splice(subIdx, 1);
-                    });
-                }
-            } else {
-                // --- 执行勾选 ---
-                this.form.tags.push(tag);
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
 
-                // 如果勾选的是子级，自动带上父级（如果父级还没被勾选）
-                if (parentKey) {
-                    if (!this.form.tags.includes(parentKey)) {
-                        this.form.tags.push(parentKey);
-                    }
-                }
-            }
-        },
-        async handleUpload() {
-            if (!this.loggedIn || this.step === 2) return;
+        // 3. Worker 中继上传
+        const fd = new FormData();
+        fd.append('name', this.form.name);
+        fd.append('zip', zipBlob, `submission_${safeFolderName}.zip`);
+        fd.append('preview', this.form.previewFile);
 
-            this.step = 2; // 进入上传中状态
-            try {
-                const zip = new JSZip();
+        const workerRes = await fetch(`${WORKER_URL}/api/archive-upload`, {
+          method: 'POST',
+          body: fd,
+        });
+        if (!workerRes.ok) throw new Error('Worker 文件中继失败');
 
-                // 1. 清洗文件夹名称 (确保 info.json 的格式完全符合示例)
-                const safeFolderName = this.form.name.replace(/[#\\/:*?"<>|]/g, '_');
-                const folder = zip.folder(safeFolderName);
-                const previewExt = this.form.previewFile.name.split('.').pop().toLowerCase();
-                const previewFileName = `preview.${previewExt}`;
-                const now = new Date();
-                const originalFileName = this.form.litematicFile.name;
-                const infoJson = {
-                    "id": `sub-${now.getTime()}`,
-                    "name": this.form.name,
-                    "author": this.form.author || '匿名',
-                    "tags": this.form.tags,
-                    "description": this.form.desc,
-                    "folder": safeFolderName,
-                    "preview": previewFileName,
-                    "filename": originalFileName,
-                    "submitDate": now.toISOString()
-                };
+        const { downloadUrl, filePath } = await workerRes.json();
+        const domesticDownloadUrl = downloadUrl || `${WORKER_URL}/dl/${filePath}`;
 
-                folder.file("info.json", JSON.stringify(infoJson, null, 4));
-                folder.file(previewFileName, this.form.previewFile);
-                folder.file(originalFileName, this.form.litematicFile);
-
-                const zipBlob = await zip.generateAsync({ type: "blob" });
-
-                // 3. Worker 中继上传
-                const fd = new FormData();
-                fd.append('name', this.form.name);
-                fd.append('zip', zipBlob, `submission_${safeFolderName}.zip`);
-                fd.append('preview', this.form.previewFile);
-
-                const workerRes = await fetch(`${WORKER_URL}/api/archive-upload`, {
-                    method: 'POST',
-                    body: fd
-                });
-                if (!workerRes.ok) throw new Error('Worker 文件中继失败');
-
-                const { downloadUrl, filePath } = await workerRes.json();
-                const domesticDownloadUrl = downloadUrl || `${WORKER_URL}/dl/${filePath}`;
-
-                // 4. GitHub Issue 内容
-                const issueBody = `## 🚀 机器投递: ${this.form.name}
+        // 4. GitHub Issue 内容
+        const issueBody = `## 🚀 机器投递: ${this.form.name}
 
 > [!IMPORTANT]
 > **存档审核直连下载 (国内加速)**: [📥 点击下载投稿全量包](${domesticDownloadUrl})
@@ -217,33 +221,33 @@ ${this.form.desc}
 
 _Generated by OpenST Portal 4.0_`;
 
-                // 通过 Worker 代理创建 Issue，token 仅在 Cookie 中传递
-                const ghRes = await fetch(`${WORKER_URL}/api/submit-issue`, {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title: `[档案馆] ${this.form.name} @${this.form.author}`,
-                        labels: ['档案馆'],
-                        body: issueBody
-                    })
-                });
+        // 通过 Worker 代理创建 Issue，token 仅在 Cookie 中传递
+        const ghRes = await fetch(`${WORKER_URL}/api/submit-issue`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: `[档案馆] ${this.form.name} @${this.form.author}`,
+            labels: ['档案馆'],
+            body: issueBody,
+          }),
+        });
 
-                if (!ghRes.ok) throw new Error('GitHub 提交失败');
-                const ghData = await ghRes.json();
-                this.githubIssueUrl = ghData.html_url;
-                console.log("=== 状态切换检查 ===");
-                console.log("1. GitHub 返回的 Issue 地址:", this.githubIssueUrl);
-                this.step = 3; // 进入成功状态
-                console.log("2. 当前 Vue 实例的 step 已经变更为:", this.step);
-            } catch (e) {
-                console.error(e);
-                alert("投递失败: " + e.message);
-                this.step = 1; // 报错则回退，允许重试
-            }
-        }
+        if (!ghRes.ok) throw new Error('GitHub 提交失败');
+        const ghData = await ghRes.json();
+        this.githubIssueUrl = ghData.html_url;
+        console.log('=== 状态切换检查 ===');
+        console.log('1. GitHub 返回的 Issue 地址:', this.githubIssueUrl);
+        this.step = 3; // 进入成功状态
+        console.log('2. 当前 Vue 实例的 step 已经变更为:', this.step);
+      } catch (e) {
+        console.error(e);
+        alert('投递失败: ' + e.message);
+        this.step = 1; // 报错则回退，允许重试
+      }
     },
-    template: `
+  },
+  template: `
       <div class="min-h-screen bg-[#121212] py-12 px-4 flex justify-center items-start font-sans text-gray-200">
         <div
             class="bg-[#1a1a1a] w-full max-w-4xl rounded-[2rem] border border-white/10 shadow-2xl flex flex-col overflow-hidden">

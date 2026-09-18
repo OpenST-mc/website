@@ -1,135 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
     <title>OpenST | Litematica Converter</title>
-    <link rel="stylesheet" href="../../css/ArchiveOutput.css">
-    <link rel="icon" href="/images/favicon.png" sizes="any">
-    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon-2.png">
-    <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png">
-    <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any">
+    <link rel="stylesheet" href="../../css/ArchiveOutput.css" />
+    <link rel="icon" href="/images/favicon.png" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/images/favicon-2.png" />
+    <link rel="icon" type="image/png" sizes="196x196" href="/images/favicon-2.png" />
+    <link rel="apple-touch-icon" href="/images/favicon.png" sizes="any" />
     <script src="/vendor/insights.bundle.js" defer></script>
     <style>
-        :root { --brand-color: #40B5AD; }
-        body {
-            background: #0c0c0c;
-            color: #d1d1d6;
-            font-family: -apple-system, "SF Pro Display", "PingFang SC", sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-        .soft-bg {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at center, #151515 0%, #0c0c0c 100%);
-            z-index: 0;
-        }
-        /* 复用门户卡片样式 */
-        .portal-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.6s cubic-bezier(0.15, 0.8, 0.2, 1);
-            position: relative;
-        }
-        .portal-card:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(64, 181, 173, 0.4);
-            transform: translateY(-2px);
-        }
-        /* 自定义输入框样式 */
-        .custom-input {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #f5f5f7;
-            transition: all 0.3s;
-        }
-        .custom-input:focus {
-            border-color: var(--brand-color);
-            outline: none;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .breath-light {
-            width: 4px; height: 4px;
-            background: var(--brand-color);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--brand-color);
-            opacity: 0.4;
-        }
-        select option {
-            background-color: #1a1a1a; /* 匹配 body 背景 */
-            color: #d1d1d6;
-        }
+      :root {
+        --brand-color: #40b5ad;
+      }
+      body {
+        background: #0c0c0c;
+        color: #d1d1d6;
+        font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .soft-bg {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, #151515 0%, #0c0c0c 100%);
+        z-index: 0;
+      }
+      /* 复用门户卡片样式 */
+      .portal-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.6s cubic-bezier(0.15, 0.8, 0.2, 1);
+        position: relative;
+      }
+      .portal-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(64, 181, 173, 0.4);
+        transform: translateY(-2px);
+      }
+      /* 自定义输入框样式 */
+      .custom-input {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #f5f5f7;
+        transition: all 0.3s;
+      }
+      .custom-input:focus {
+        border-color: var(--brand-color);
+        outline: none;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .breath-light {
+        width: 4px;
+        height: 4px;
+        background: var(--brand-color);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--brand-color);
+        opacity: 0.4;
+      }
+      select option {
+        background-color: #1a1a1a; /* 匹配 body 背景 */
+        color: #d1d1d6;
+      }
     </style>
-</head>
-<body class="min-h-screen flex items-center justify-center p-8 relative overflow-hidden">
-<div class="soft-bg"></div>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-8 relative overflow-hidden">
+    <div class="soft-bg"></div>
 
-<div class="relative z-10 w-full max-w-2xl">
-    <header class="mb-16 flex items-center gap-6">
+    <div class="relative z-10 w-full max-w-2xl">
+      <header class="mb-16 flex items-center gap-6">
         <h1 class="text-2xl font-bold tracking-tight text-[#f5f5f7]">Litematica Converter</h1>
         <div class="h-px flex-1 bg-white/5"></div>
         <div class="flex items-center gap-2 text-[10px] text-gray-600 tracking-widest uppercase">
-            <div class="breath-light"></div>
-            Converter Active
+          <div class="breath-light"></div>
+          Converter Active
         </div>
-    </header>
+      </header>
 
-    <main class="portal-card rounded-[2.5rem] p-10 md:p-16">
+      <main class="portal-card rounded-[2.5rem] p-10 md:p-16">
         <form id="uploadForm" class="space-y-8">
-            <div class="space-y-3">
-                <label class="text-sm font-medium text-gray-400 ml-1">投影文件 (.litematic)</label>
-                <input type="file" id="file" accept=".litematic" required
-                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#40B5AD]/10 file:text-[#40B5AD] hover:file:bg-[#40B5AD]/20 transition-all cursor-pointer custom-input p-4 rounded-2xl">
+          <div class="space-y-3">
+            <label class="text-sm font-medium text-gray-400 ml-1">投影文件 (.litematic)</label>
+            <input
+              type="file"
+              id="file"
+              accept=".litematic"
+              required
+              class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#40B5AD]/10 file:text-[#40B5AD] hover:file:bg-[#40B5AD]/20 transition-all cursor-pointer custom-input p-4 rounded-2xl"
+            />
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-sm font-medium text-gray-400 ml-1">目标游戏版本</label>
+
+            <div class="relative group">
+              <select
+                id="targetVersion"
+                class="w-full bg-white/5 border border-white/10 text-[#f5f5f7] p-4 pr-12 rounded-2xl appearance-none cursor-pointer focus:outline-none focus:border-[#40B5AD]/50 transition-all hover:bg-white/[0.08] text-sm font-medium"
+              >
+                <option value="3953">Minecraft 1.21 (3953)</option>
+                <option value="3463">Minecraft 1.20 (3463)</option>
+                <option value="3105">Minecraft 1.19 (3105)</option>
+                <option value="2860">Minecraft 1.18 (2860)</option>
+                <option value="2724">Minecraft 1.17 (2724)</option>
+                <option value="2586">Minecraft 1.16 (2586)</option>
+                <option value="2230">1.15</option>
+                <option value="1952">1.14</option>
+                <option value="1631">1.13</option>
+                <option value="1343">1.12</option>
+              </select>
+
+              <div
+                class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity"
+              >
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 4L6 8L10 4" />
+                </svg>
+              </div>
             </div>
 
-            <div class="space-y-3">
-                <label class="text-sm font-medium text-gray-400 ml-1">目标游戏版本</label>
+            <p class="text-[11px] text-gray-600 ml-1 tracking-wide uppercase italic" style="color: red">
+              注：转换到低版本时可能导致部分数据丢失！
+            </p>
+          </div>
 
-                <div class="relative group">
-                    <select id="targetVersion"
-                            class="w-full bg-white/5 border border-white/10 text-[#f5f5f7] p-4 pr-12 rounded-2xl
-                       appearance-none cursor-pointer focus:outline-none focus:border-[#40B5AD]/50
-                       transition-all hover:bg-white/[0.08] text-sm font-medium">
-                        <option value="3953">Minecraft 1.21 (3953)</option>
-                        <option value="3463">Minecraft 1.20 (3463)</option>
-                        <option value="3105">Minecraft 1.19 (3105)</option>
-                        <option value="2860">Minecraft 1.18 (2860)</option>
-                        <option value="2724">Minecraft 1.17 (2724)</option>
-                        <option value="2586">Minecraft 1.16 (2586)</option>
-                        <option value="2230">1.15</option>
-                        <option value="1952">1.14</option>
-                        <option value="1631">1.13</option>
-                        <option value="1343">1.12</option>
-                    </select>
-
-                    <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity">
-                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 4L6 8L10 4"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <p class="text-[11px] text-gray-600 ml-1 tracking-wide uppercase italic" style="color: red;">
-                    注：转换到低版本时可能导致部分数据丢失！
-                </p>
-            </div>
-
-            <button type="submit"
-                    class="w-full py-4 bg-[#40B5AD] hover:bg-[#47D1C8] text-black font-bold rounded-2xl transition-all active:scale-[0.98] shadow-lg shadow-[#40B5AD]/20">
-                开始转换
-            </button>
+          <button
+            type="submit"
+            class="w-full py-4 bg-[#40B5AD] hover:bg-[#47D1C8] text-black font-bold rounded-2xl transition-all active:scale-[0.98] shadow-lg shadow-[#40B5AD]/20"
+          >
+            开始转换
+          </button>
         </form>
-    </main>
+      </main>
 
-    <footer class="mt-16 text-[9px] text-gray-800 tracking-[0.4em] uppercase text-center font-medium">
+      <footer class="mt-16 text-[9px] text-gray-800 tracking-[0.4em] uppercase text-center font-medium">
         <span>Universal Converter</span>
-    </footer>
-</div>
+      </footer>
+    </div>
 
-<script src="/vendor/pako.min.js"></script>
-<script src="/Extra-Function/litematic-converter/index.js"></script>
-</body>
+    <script src="/vendor/pako.min.js"></script>
+    <script src="/Extra-Function/litematic-converter/index.js"></script>
+  </body>
 </html>

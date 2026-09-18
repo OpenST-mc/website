@@ -1,4 +1,4 @@
-class Litematic { }
+class Litematic {}
 
 class LitematicRegion {
   constructor(width, height, depth) {
@@ -9,13 +9,11 @@ class LitematicRegion {
 }
 
 function readLitematicFromNBTData(nbtdata) {
-
   var litematic = new Litematic();
   litematic.regions = [];
 
   var regions = nbtdata.value.Regions.value;
   for (var regionName in regions) {
-
     var region = regions[regionName].value;
 
     var blockPalette = __stripNBTTyping(region.BlockStatePalette);
@@ -40,7 +38,7 @@ function readLitematicFromNBTData(nbtdata) {
       litematicRegion.position = [
         region.Position.value.x.value,
         region.Position.value.y.value,
-        region.Position.value.z.value
+        region.Position.value.z.value,
       ];
     } else {
       litematicRegion.position = [0, 0, 0];
@@ -60,7 +58,7 @@ function iterateRegionBlocks(region, y_min, y_max, callback) {
   var h = region.height;
   var d = region.depth;
 
-  var effectiveMax = (y_max === -1 || typeof y_max === 'undefined') ? h : Math.min(y_max, h);
+  var effectiveMax = y_max === -1 || typeof y_max === 'undefined' ? h : Math.min(y_max, h);
   if (y_min >= h) return;
 
   var mask = (1 << nbits) - 1;
@@ -76,7 +74,7 @@ function iterateRegionBlocks(region, y_min, y_max, callback) {
         var start_offset = linearIdx * nbits;
         var start_arr_index = start_offset >>> 5;
         var end_arr_index = ((linearIdx + 1) * nbits - 1) >>> 5;
-        var start_bit_offset = start_offset & 0x1F;
+        var start_bit_offset = start_offset & 0x1f;
 
         var half_ind = start_arr_index >>> 1;
         var blockStart, blockEnd;
@@ -111,16 +109,16 @@ function iterateRegionBlocks(region, y_min, y_max, callback) {
 // Hacky function needed to convert NBT to pure JSON
 // use at your own risk
 function __stripNBTTyping(nbtData) {
-  if (nbtData.hasOwnProperty("type")) {
-    switch(nbtData.type) {
-      case "compound":
-        var newDict = {}
+  if (nbtData.hasOwnProperty('type')) {
+    switch (nbtData.type) {
+      case 'compound':
+        var newDict = {};
         for (const [k, v] of Object.entries(nbtData.value)) {
           newDict[k] = __stripNBTTyping(v);
         }
         return newDict;
         break;
-      case "list":
+      case 'list':
         var newList = [];
         for (const [k, v] of Object.entries(nbtData.value.value)) {
           newList[k] = __stripNBTTyping(v);
@@ -129,11 +127,11 @@ function __stripNBTTyping(nbtData) {
         break;
       default:
         return nbtData.value;
-    } 
+    }
   } else {
-    switch(nbtData.constructor) {
+    switch (nbtData.constructor) {
       case Object:
-        var newDict = {}
+        var newDict = {};
         for (const [k, v] of Object.entries(nbtData)) {
           newDict[k] = __stripNBTTyping(v);
         }
@@ -145,7 +143,6 @@ function __stripNBTTyping(nbtData) {
   }
 }
 
-
 function getMaterialList(litematic) {
   var blockCounts = {};
 
@@ -153,12 +150,12 @@ function getMaterialList(litematic) {
     var region = litematic.regions[ri];
     var blockPalette = region.blockPalette;
 
-    iterateRegionBlocks(region, 0, -1, function(x, y, z, blockID) {
+    iterateRegionBlocks(region, 0, -1, function (x, y, z, blockID) {
       if (blockID < blockPalette.length) {
         var blockName = blockPalette[blockID].Name;
         blockCounts[blockName] = (blockCounts[blockName] || 0) + 1;
       } else {
-        blockCounts["unknown"] = (blockCounts["unknown"] || 0) + 1;
+        blockCounts['unknown'] = (blockCounts['unknown'] || 0) + 1;
       }
     });
   }

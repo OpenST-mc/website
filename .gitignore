@@ -38,7 +38,4 @@ __screenshots__/
 # Vite
 *.timestamp-*-*.mjs
 
-AGENTS.md
-/test/
-
 temp-opencode/

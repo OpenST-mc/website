@@ -13,79 +13,80 @@ let redisClient = null;
 
 // 懒加载 Redis 客户端，环境变量缺失时返回 null
 function getRedis() {
-    const url = process.env.UPSTASH_REDIS_REST_URL;
-    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-    if (!url || !token) return null;
-    if (!redisClient) {
-        redisClient = new Redis({ url, token });
-    }
-    return redisClient;
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  if (!redisClient) {
+    redisClient = new Redis({ url, token });
+  }
+  return redisClient;
 }
 
 function badRequest(res, message) {
-    res.statusCode = 400;
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.end(JSON.stringify({ error: message }));
+  res.statusCode = 400;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.end(JSON.stringify({ error: message }));
 }
 
 // 稿件 ID 校验：仅允许安全字符，防止路径/键注入
 function sanitizeId(id) {
-    return typeof id === 'string' && id.length > 0 && id.length <= 200 &&
-        !/[\\/]/.test(id) && !/[\u0000-\u001f]/.test(id) ? id : null;
+  return typeof id === 'string' && id.length > 0 && id.length <= 200 && !/[\\/]/.test(id) && !/[\u0000-\u001f]/.test(id)
+    ? id
+    : null;
 }
 
 export default async function handler(req, res) {
-    const rawId = req.query.id;
-    const id = sanitizeId(rawId);
-    if (!id) return badRequest(res, 'Invalid id');
+  const rawId = req.query.id;
+  const id = sanitizeId(rawId);
+  if (!id) return badRequest(res, 'Invalid id');
 
-    let database;
+  let database;
+  try {
+    database = await fetch(DB_URL).then((r) => r.json());
+  } catch (e) {
+    res.statusCode = 502;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    return res.end(JSON.stringify({ error: 'Database unavailable' }));
+  }
+
+  const item = database.find((i) => i.sub_id === id || i.id === id);
+  if (!item || !item.filename) {
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    return res.end(JSON.stringify({ error: 'Archive not found' }));
+  }
+
+  // 新库结构: content/<分类>/<id>/<文件>；下载直链指向 OpenST-mc/archive 仓库
+  const repoPath = [item.category, item.id, item.filename]
+    .map((part) => String(part).split('/').map(encodeURIComponent).join('/'))
+    .join('/');
+  const target = `${PROXY_BASE}/${repoPath}`;
+  const rawTarget = `${RAW_BASE}/${repoPath}`;
+
+  // 计数（Redis 未配置时静默跳过，不影响下载）
+  const redis = getRedis();
+  if (redis) {
     try {
-        database = await fetch(DB_URL).then(r => r.json());
+      const counterKey = `dl:${String(item.sub_id || item.id).replace(/[^a-zA-Z0-9\-_.]/g, '_')}`;
+      const forwarded = req.headers['x-forwarded-for'] || '';
+      const ip = String(forwarded).split(',')[0].trim() || 'unknown';
+      const ipHash = crypto.createHash('sha256').update(ip).digest('hex').slice(0, 24);
+
+      // 同一 IP 24 小时内对同一稿件只计一次
+      const dedupKey = `dl:ip:${counterKey}:${ipHash}`;
+      const fresh = await redis.set(dedupKey, '1', { nx: true, ex: 86400 });
+      if (fresh) {
+        await redis.incr(counterKey);
+        await redis.incr('dl:total');
+      }
     } catch (e) {
-        res.statusCode = 502;
-        res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        return res.end(JSON.stringify({ error: 'Database unavailable' }));
+      console.error('Redis 计数失败:', e.message);
     }
+  }
 
-    const item = database.find(i => i.sub_id === id || i.id === id);
-    if (!item || !item.filename) {
-        res.statusCode = 404;
-        res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        return res.end(JSON.stringify({ error: 'Archive not found' }));
-    }
-
-    // 新库结构: content/<分类>/<id>/<文件>；下载直链指向 OpenST-mc/archive 仓库
-    const repoPath = [item.category, item.id, item.filename]
-        .map(part => String(part).split('/').map(encodeURIComponent).join('/'))
-        .join('/');
-    const target = `${PROXY_BASE}/${repoPath}`;
-    const rawTarget = `${RAW_BASE}/${repoPath}`;
-
-    // 计数（Redis 未配置时静默跳过，不影响下载）
-    const redis = getRedis();
-    if (redis) {
-        try {
-            const counterKey = `dl:${String(item.sub_id || item.id).replace(/[^a-zA-Z0-9\-_.]/g, '_')}`;
-            const forwarded = req.headers['x-forwarded-for'] || '';
-            const ip = String(forwarded).split(',')[0].trim() || 'unknown';
-            const ipHash = crypto.createHash('sha256').update(ip).digest('hex').slice(0, 24);
-
-            // 同一 IP 24 小时内对同一稿件只计一次
-            const dedupKey = `dl:ip:${counterKey}:${ipHash}`;
-            const fresh = await redis.set(dedupKey, '1', { nx: true, ex: 86400 });
-            if (fresh) {
-                await redis.incr(counterKey);
-                await redis.incr('dl:total');
-            }
-        } catch (e) {
-            console.error('Redis 计数失败:', e.message);
-        }
-    }
-
-    // 目标地址可选 ?raw=1 走 GitHub 直链（前端默认走 CDN 代理）
-    res.statusCode = 302;
-    res.setHeader('Location', req.query.raw ? rawTarget : target);
-    res.setHeader('Cache-Control', 'no-store');
-    res.end();
+  // 目标地址可选 ?raw=1 走 GitHub 直链（前端默认走 CDN 代理）
+  res.statusCode = 302;
+  res.setHeader('Location', req.query.raw ? rawTarget : target);
+  res.setHeader('Cache-Control', 'no-store');
+  res.end();
 }

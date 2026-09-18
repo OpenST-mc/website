@@ -11,6 +11,10 @@
     "build:PortalCSS": "tailwindcss -i ./css/input.css -o ./css/output.css --minify",
     "build:AdminCSS": "tailwindcss -i ./css/AdminInput.css -o ./css/AdminOutput.css --minify",
     "build:vendor": "node scripts/build-vendor.js",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "test": "node --test \"test/**/*.test.js\"",
+    "check:paths": "node scripts/check-paths.js",
     "build": "node data/build.js && npm run build:sitemap && npm run build:ArchiveCSS && npm run build:PortalCSS && npm run build:AdminCSS && npm run build:vendor && vite build"
   },
   "dependencies": {
@@ -27,11 +31,14 @@
     "@vitejs/plugin-vue": "^6.0.3",
     "deepslate": "^0.10.1",
     "dompurify": "^3.4.14",
+    "esbuild": "0.27.7",
+    "eslint": "^9.34.0",
     "gl-matrix": "^3.4.3",
     "jszip": "^3.10.1",
     "marked": "^18.0.10",
     "material-icons": "^1.13.14",
     "pako": "^3.0.1",
+    "prettier": "^3.6.2",
     "tailwindcss": "^4.2.4",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.5"

@@ -1,13 +1,13 @@
 // 全局 CSP 禁止内联脚本，跳转一律使用 meta refresh（CSP 不管辖）
 function redirectTo(res, url) {
-    const safeUrl = String(url)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    res.setHeader("Content-Type", "text/html");
-    res.setHeader('Cache-Control', 'no-store');
-    res.send(`<!DOCTYPE html>
+  const safeUrl = String(url)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 'no-store');
+  res.send(`<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta http-equiv="refresh" content="0;url=${safeUrl}">
 </head><body>
@@ -16,40 +16,46 @@ function redirectTo(res, url) {
 }
 
 export default async function handler(req, res) {
-    const queryKeys = Object.keys(req.query);
-    const subId = req.query.id || queryKeys.find(k => k.startsWith('sub-'));
+  const queryKeys = Object.keys(req.query);
+  const subId = req.query.id || queryKeys.find((k) => k.startsWith('sub-'));
 
-    // 校验 sub_id 格式（含历史双段 sub-xxx-yyy），拒绝注入载荷
-    const safeSubId = typeof subId === 'string' && /^sub-\d+(-\d+)?$/.test(subId) ? subId : null;
+  // 校验 sub_id 格式（含历史双段 sub-xxx-yyy），拒绝注入载荷
+  const safeSubId = typeof subId === 'string' && /^sub-\d+(-\d+)?$/.test(subId) ? subId : null;
 
-    if (!safeSubId) {
-        return redirectTo(res, 'https://openstmc.com/archive');
+  if (!safeSubId) {
+    return redirectTo(res, 'https://openstmc.com/archive');
+  }
+
+  try {
+    const data = await fetch('https://openstmc.com/archive/data/database.json').then((r) => r.json());
+
+    const item = data.find((i) => i.sub_id === safeSubId);
+
+    if (!item) {
+      return redirectTo(res, 'https://openstmc.com/archive');
     }
 
-    try {
-        const data = await fetch('https://openstmc.com/archive/data/database.json')
-            .then(r => r.json());
+    // HTML 实体转义，防止属性/脚本注入
+    const escapeHtml = (s) =>
+      String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 
-        const item = data.find(i => i.sub_id === safeSubId);
+    const title = `${escapeHtml(item.name)} - OpenST Archive`;
+    const desc = escapeHtml(
+      item.description
+        .replace(/[#*`>!-]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 150)
+    );
+    const image = escapeHtml(`https://openstmc.com/${String(item.preview || '').replace(/^\//, '')}`);
+    const finalUrl = escapeHtml(`https://openstmc.com/archive?${safeSubId}`);
 
-        if (!item) {
-            return redirectTo(res, 'https://openstmc.com/archive');
-        }
-
-        // HTML 实体转义，防止属性/脚本注入
-        const escapeHtml = (s) => String(s ?? '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-
-        const title = `${escapeHtml(item.name)} - OpenST Archive`;
-        const desc = escapeHtml(item.description.replace(/[#*`>!-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 150));
-        const image = escapeHtml(`https://openstmc.com/${String(item.preview || '').replace(/^\//, '')}`);
-        const finalUrl = escapeHtml(`https://openstmc.com/archive?${safeSubId}`);
-
-        const html = `<!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8">
@@ -83,10 +89,10 @@ export default async function handler(req, res) {
 </body>
 </html>`;
 
-        res.setHeader("Content-Type", "text/html");
-        res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
-        res.send(html);
-    } catch (e) {
-        return redirectTo(res, 'https://openstmc.com/archive');
-    }
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
+    res.send(html);
+  } catch (e) {
+    return redirectTo(res, 'https://openstmc.com/archive');
+  }
 }

@@ -1,9 +1,9 @@
 // ui.js
 
 export const NavBar = {
-    // 增加 user 和 isAdmin 两个 props
-    props: ['proxy', 'user', 'isAdmin'],
-    template: `
+  // 增加 user 和 isAdmin 两个 props
+  props: ['proxy', 'user', 'isAdmin'],
+  template: `
     <nav class="h-16 bg-black/20 border-b border-white/5 flex items-center justify-between px-6 shrink-0 shadow-sm">
         <div class="flex items-center gap-4">
             <button @click="$emit('open-menu')" class="md:hidden p-2 -ml-2 text-gray-400 hover:text-brand transition-colors">
@@ -33,28 +33,28 @@ export const NavBar = {
                 </button>
             </div>
         </div>
-    </nav>`
+    </nav>`,
 };
 
 export const SideBar = {
-    props: ['groups', 'selected', 'search', 'categories', 'showOnlyFavs', 'favorites'],
-    data() {
-        return {
-            isOpen: false,
-            expandedGroups: {}
-        }
+  props: ['groups', 'selected', 'search', 'categories', 'showOnlyFavs', 'favorites'],
+  data() {
+    return {
+      isOpen: false,
+      expandedGroups: {},
+    };
+  },
+  methods: {
+    handleSubCatClick(cat, subCat, hasSubTags) {
+      if (hasSubTags) {
+        // 如果有子标签，切换展开状态并触发筛
+        this.expandedGroups[subCat] = !this.expandedGroups[subCat];
+      }
+      // 无论是否有子标签，都触发筛选信号
+      this.$parent.toggleTag(cat, subCat);
     },
-    methods: {
-        handleSubCatClick(cat, subCat, hasSubTags) {
-            if (hasSubTags) {
-                // 如果有子标签，切换展开状态并触发筛
-                this.expandedGroups[subCat] = !this.expandedGroups[subCat];
-            }
-            // 无论是否有子标签，都触发筛选信号
-            this.$parent.toggleTag(cat, subCat);
-        }
-    },
-    template: `
+  },
+  template: `
     <div class="shrink-0 flex text-[16px]">
         <div v-if="isOpen" @click="isOpen = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden"></div>
         <aside :class="isOpen ? 'translate-x-0' : '-translate-x-full'"
@@ -137,12 +137,12 @@ export const SideBar = {
                 </div>
             </div>
         </aside>
-    </div>`
+    </div>`,
 };
 
 export const ArchiveCard = {
-    props: ['item', 'isAdmin', 'isFav'],
-    template: `
+  props: ['item', 'isAdmin', 'isFav'],
+  template: `
     <div class="group bg-panel rounded-[20px] overflow-hidden border border-white/5 hover:border-brand/40 active:scale-[0.98] transition-all duration-300 shadow-lg flex flex-col h-full relative">
         
         <button @click.stop="$emit('toggle-fav', item.id)" 
@@ -181,71 +181,72 @@ export const ArchiveCard = {
                 </span>
             </div>
         </div>
-    </div>`
+    </div>`,
 };
 export const DetailModal = {
-    props: ['item', 'isAdmin'],
-    data() {
-        return {
-            downloadCount: null
-        };
+  props: ['item', 'isAdmin'],
+  data() {
+    return {
+      downloadCount: null,
+    };
+  },
+  computed: {
+    renderedDescription() {
+      if (!this.item?.description)
+        return '<p class="italic opacity-50 text-gray-600">作者没留下任何简介，一定是大佬吧！</p>';
+      // 使用 marked 解析 Markdown，支持换行和 GitHub 风格
+      const rawHtml = marked.parse(this.item.description, { breaks: true, gfm: true });
+      // DOMPurify 净化，防止存储型 XSS
+      return DOMPurify.sanitize(rawHtml);
     },
-    computed: {
-        renderedDescription() {
-            if (!this.item?.description) return '<p class="italic opacity-50 text-gray-600">作者没留下任何简介，一定是大佬吧！</p>';
-            // 使用 marked 解析 Markdown，支持换行和 GitHub 风格
-            const rawHtml = marked.parse(this.item.description, { breaks: true, gfm: true });
-            // DOMPurify 净化，防止存储型 XSS
-            return DOMPurify.sanitize(rawHtml);
-        },
-        // 下载走计数端点，由 Vercel 函数统计后 302 跳转
-        downloadHref() {
-            const id = this.item?.sub_id || this.item?.id;
-            return id ? `/api/download?id=${encodeURIComponent(id)}` : '#';
+    // 下载走计数端点，由 Vercel 函数统计后 302 跳转
+    downloadHref() {
+      const id = this.item?.sub_id || this.item?.id;
+      return id ? `/api/download?id=${encodeURIComponent(id)}` : '#';
+    },
+  },
+  watch: {
+    item: {
+      immediate: true,
+      handler() {
+        this.fetchDownloadCount();
+      },
+    },
+  },
+  methods: {
+    // 拉取下载量（KV 未配置时返回 null，隐藏计数）
+    async fetchDownloadCount() {
+      this.downloadCount = null;
+      const id = this.item?.sub_id || this.item?.id;
+      if (!id) return;
+      try {
+        const res = await fetch(`/api/stats?id=${encodeURIComponent(id)}`);
+        const data = await res.json();
+        if (data && typeof data.count === 'number') {
+          this.downloadCount = data.count;
         }
+      } catch (e) {
+        // 统计失败静默处理，不影响下载
+      }
     },
-    watch: {
-        item: {
-            immediate: true,
-            handler() {
-                this.fetchDownloadCount();
-            }
+    handleMdClick(e) {
+      // 点击 Markdown 里的图片也可以触发放大查看
+      if (e.target.tagName === 'IMG') {
+        this.$root.handleImageZoom(e);
+      }
+    },
+    copyPermalink(subId) {
+      if (!subId) return;
+      const url = `https://openstmc.com/api/share?${subId}`;
+      navigator.clipboard.writeText(url).then(() => {
+        // 调用 main.js 中的提示方法（如弹窗通知）
+        if (this.$root.handleCopyID) {
+          this.$root.handleCopyID(subId);
         }
+      });
     },
-    methods: {
-        // 拉取下载量（KV 未配置时返回 null，隐藏计数）
-        async fetchDownloadCount() {
-            this.downloadCount = null;
-            const id = this.item?.sub_id || this.item?.id;
-            if (!id) return;
-            try {
-                const res = await fetch(`/api/stats?id=${encodeURIComponent(id)}`);
-                const data = await res.json();
-                if (data && typeof data.count === 'number') {
-                    this.downloadCount = data.count;
-                }
-            } catch (e) {
-                // 统计失败静默处理，不影响下载
-            }
-        },
-        handleMdClick(e) {
-            // 点击 Markdown 里的图片也可以触发放大查看
-            if (e.target.tagName === 'IMG') {
-                this.$root.handleImageZoom(e);
-            }
-        },
-        copyPermalink(subId) {
-            if (!subId) return;
-            const url = `https://openstmc.com/api/share?${subId}`;
-            navigator.clipboard.writeText(url).then(() => {
-                // 调用 main.js 中的提示方法（如弹窗通知）
-                if (this.$root.handleCopyID) {
-                    this.$root.handleCopyID(subId);
-                }
-            });
-        }
-    },
-    template: `
+  },
+  template: `
     <div class="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 detail-modal-container">
         <div class="absolute inset-0 bg-black/95 backdrop-blur-md" @click="$emit('close')"></div>
         
@@ -344,5 +345,5 @@ export const DetailModal = {
                 </div>
             </div>
         </div>
-    </div>`
+    </div>`,
 };
