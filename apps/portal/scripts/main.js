@@ -151,20 +151,18 @@ const AppOptions = {
             return path.split('/').map(segment => encodeURIComponent(segment)).join('/');
         },
 
-        // 下载链接生成（稿件数据在 OpenST-mc/archive 仓库 content/<分类>/<id>/）
+        // 下载走计数端点，由 Vercel 函数统计后 302 跳转（与 DetailModal.downloadHref 一致）
         getDownloadLink(item) {
             if (!item) return '';
-            const path = `content/${item.category}/${item.id}/${item.filename}`;
-            const raw = `https://raw.githubusercontent.com/OpenST-mc/archive/main/${path}`;
-            const finalRaw = raw.replace('https://', 'https:/');
-            return this.useProxy ? `https://cdn.openstmc.com/${finalRaw}` : raw;
+            const id = item.sub_id || item.id;
+            return id ? `/api/download?id=${encodeURIComponent(id)}` : '';
         },
 
         // 编辑跳转逻辑
         openEdit(item) {
             if (!item || !item.id) return;
             const folder = encodeURIComponent(item.id.trim());
-            window.location.href = `../../admin_tools/admin_edit.html?folder=${folder}`;
+            window.location.href = `/admin_tools/admin_edit.html?folder=${folder}`;
         },
 
         // 详情页控制

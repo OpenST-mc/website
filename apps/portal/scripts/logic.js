@@ -111,28 +111,57 @@ export function getFilteredList(data, search, selected, normalizeFn) {
     });
 }
 
-// 动态标签统计计算
+// 动态标签统计计算：按当前过滤后数据收窄可见标签；数据为空时回退到全量并集
 export function calculateDynamicTags(data, categories, selected) {
+    const buildFullUnion = () => {
+        const full = {};
+        categories.forEach(cat => {
+            const config = TAG_CONFIG[cat];
+            const tagSet = new Set();
+            if (!config) {
+                full[cat] = tagSet;
+                return;
+            }
+            if (Array.isArray(config)) {
+                config.forEach(tag => tagSet.add(tag));
+            } else {
+                Object.keys(config).forEach(subCat => {
+                    tagSet.add(subCat);
+                    const subTags = config[subCat];
+                    if (Array.isArray(subTags)) {
+                        subTags.forEach(t => tagSet.add(t));
+                    }
+                });
+            }
+            full[cat] = tagSet;
+        });
+        return full;
+    };
+
+    const fullGroups = buildFullUnion();
+
+    // 数据为空时回退到全量并集，保持侧边栏可用
+    if (!data || data.length === 0) {
+        return fullGroups;
+    }
+
+    // 从过滤后数据中收集实际出现的标签
+    const visibleTags = new Set();
+    data.forEach(item => {
+        (item.tags || []).forEach(t => visibleTags.add(t));
+    });
+
     const groups = {};
     categories.forEach(cat => {
-        const config = TAG_CONFIG[cat];
-        const tagSet = new Set();
-        if (!config) {
-            groups[cat] = tagSet;
-            return;
-        }
-        if (Array.isArray(config)) {
-            config.forEach(tag => tagSet.add(tag));
-        } else {
-            Object.keys(config).forEach(subCat => {
-                tagSet.add(subCat);
-                const subTags = config[subCat];
-                if (Array.isArray(subTags)) {
-                    subTags.forEach(t => tagSet.add(t));
-                }
-            });
-        }
-        groups[cat] = tagSet;
+        const selectedForCat = (selected && selected[cat]) || [];
+        const narrowed = new Set();
+        fullGroups[cat].forEach(tag => {
+            // 保留已选标签，避免选中态在收窄后消失；其余只保留数据中实际出现的
+            if (selectedForCat.includes(tag) || visibleTags.has(tag)) {
+                narrowed.add(tag);
+            }
+        });
+        groups[cat] = narrowed;
     });
     return groups;
 }

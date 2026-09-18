@@ -13,7 +13,7 @@ async function handleRouting() {
     if (path && path.startsWith('sub-')) {
         try {
             // 1. 尝试获取数据库
-            const res = await fetch('/data/database.json');
+            const res = await fetch('/archive/data/database.json');
             const database = await res.json();
 
             // 2. 检查 ID 是否真的存在

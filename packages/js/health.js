@@ -1,7 +1,7 @@
 // 系统状态页脚本：拨测主站 / API / CDN 可用性
 const PORTAL_URL = 'https://openst.qzz.io/archive/不要动这是占位符！.txt';
 const API_HEALTH_URL = 'https://openstsubmission.linvin.net/health';
-const CDN_HEALTH_URL = 'https://cdn.linvin.net/gh/OpenST-mc/website@main/README.md';
+const CDN_HEALTH_URL = 'https://cdn.linvin.net/gh/OpenST-mc/archive@main/README.md';
 
 let lastData = { portal: null, api: null, cdn: null};
 
