@@ -86,3 +86,78 @@ update-preview / replace-litematic / delete-archive）、`/api/wiki/submit-archi
 3. website sync 工作流 bump 子模块指针、重建 database.json/sitemap 并部署
 
 本地临时辅助脚本目录 `temp-opencode/`（已 gitignore），勿提交正式内容。
+
+## Tech Stack
+
+- Node `^20.19.0 || >=22.12.0`（以 `engines` 为准）；`vite ^7`，`vue ^3.5` 全局构建，不引入 Router/CLI；`tailwindcss ^4`；构建期 `sharp`、`esbuild`（精确钉版）；计数 `Upstash Redis`；埋点仅 Vercel 官方二件。
+- 第三方库自托管于 `vendor/`（已提交），禁止外链 CDN。禁止新建 `public/`（Vercel 为仓库根服务，不消费它）。
+
+## Principles
+
+适用于整个项目与未来所有改动。只限制方向，不规定具体做法。
+
+### Routing / Paths
+
+- 公开 URL 的唯一来源是 `vercel.json rewrites`；`vite.config.js` 的别名表必须与之保持一致，不一致视为缺陷。
+- 跨目录引用只用根绝对公开路径；禁止用物理路径推断线上行为，本地以 `npm run dev` 为准，不以 `dist/` 为准。
+
+### Coupling
+
+- 组件之间禁止跨层直接读写（`$parent` / `$root` 这类穿透只能收敛，不能新增）。
+- App 之间禁止隐式耦合：共享的只有 `TAG_CONFIG` 与 `PortalAuth`，其余状态各 App 自持。
+- 重型行为（3D、GSAP、解析器）必须隔离在所属页面内，不得进入共享入口。
+
+### Data
+
+- 数据库只认一个来源：`archive/data/database.json`（生成物，含 `category`）。禁止新增第二份 DB 或旁路索引；确需新字段，在现有生成脚本上加。
+- 生成物（database、sitemap、CSS 产物、vendor）不得手工改；改源码后重跑对应构建并连产物一起提交。
+
+### Frontend / Security
+
+- Vue 保持全局直引形态；全站无内联 `<script>` 与事件属性（CSP）；OAuth token 只存 HttpOnly Cookie，前端只缓存非敏感资料。
+- 新增 Worker 端点必须同步处理 WAF 白名单，否则生产只会拿到无 CORS 头的 403。
+
+### Maintainability
+
+- 最终产物必须让没写过的人看懂：内容与表现分离、魔法值收敛为 token、生产代码不留实验实现。
+- 目标不是 code 最少，而是不必要的复杂度最少。
+
+## Quality Gates
+
+可重复的检查必须由机器守，不靠人 nhớ。門只會變嚴，不會放寬。
+
+- 风格与静态检查是强制的：格式必须机器统一，不靠 reviewer 肉眼；未定义引用、悬空绑定视为构建失败同级缺陷。
+- 门的定义：`lint` / `test` / `check:paths` 全绿。新增门只加命令，不加叙述；门只增不减。
+- 构建必须从干净安装可重现：新增构建期工具必须显式声明并钉版，不依赖传递运气。
+- 生成物永远由源码加声明命令重算，不接受手改生成物后直接发版。
+- 解析器、编解码、金额计数这类不可逆逻辑，改动必须附真实输入的往返验证，不接受只看 diff 即合併。
+
+## Performance
+
+预算只收紧，不放松。新东西必须证明配得上它的重量。
+
+- 每个面向用户的页面都有重量预算；新增依赖必须证明装得下，或替换掉更重的旧依赖。
+- 默认页面保持最轻：重型运行时隔离且懒加载，CSS 与原生能力优先于 JS，能不引就不引。
+- 运行时只消费优化后的生成形态（图片、模型、打包产物）；原始素材永不直服，不开新的未优化二进制通道。
+
+## Convergence
+
+存量耦合只收敛，不新增；重复只删除，不解释。
+
+- 跨层直读的存量只允许减少，其总额趋向零；任何改动不得增加跨层边数。
+- 路由、数据、映射三者各自只允许一个真相来源；出现第二个即视为缺陷，无论大小。
+- 样式与主题收敛到既有入口，不开新的全局样式通道；分叉的链接与 CDN 指向收敛到公开路径。
+
+## AI-assisted Development
+
+AI 可实现或修改代码，但必须沿用既有体系。
+
+AI must NOT：发明新的路由/目录映射、引入 CDN 或 `public/`、另建 DB 或映射表、压制类型/构建错误、为合并不相关的改动、重写能跑的代码只为换写法；不得新增未经重量证明的依赖，不得绕过既有检查门，不得手改生成物。
+
+做视觉或结构变更时，保留：路由表、路径方案、数据流向、CSP、构建顺序。需求模糊时，选与现状一致的最简实现。
+
+## Gotchas
+
+- `npm run preview` 的 `dist` 与生产形态不同，勿以它判断问题。
+- Tailwind 新增页面必须进对应入口的 `@source`，否则类名静默丢失。
+- 构建顺序即 `npm run build` 定义，不得调换或跳段发版。
