@@ -40,6 +40,17 @@ export default {
     const TG_API_BASE = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
     try {
+      // --- [0] 方案 B（ADR-005）：Vercel 已认证代理的服务签名（仅 admin 端点）---
+      let proxyToken = null;
+      if (url.pathname.startsWith('/api/admin/')) {
+        const proxy = await verifyWorkerProxy(request, env);
+        const hasSig = request.headers.get('x-openst-proxy-sig');
+        if (proxy) proxyToken = proxy.token;
+        else if (hasSig) {
+          return new Response('Invalid proxy signature', { status: 403, headers: getCORSHeaders(request) });
+        }
+      }
+
       // --- [1] OAuth 令牌交换 (token 仅写入 HttpOnly Cookie，绝不回传前端) ---
       if (url.pathname === '/api/exchange-token') {
         const csrf = checkCSRF(request);
@@ -197,13 +208,15 @@ export default {
 
       // --- [3] 管理员修改数据 (修改 info.json) ---
       if (url.pathname === '/api/admin/update-info' && request.method === 'POST') {
-        const csrf = checkCSRF(request);
-        if (csrf) return csrf;
-        if (isRateLimited(request, 'admin')) {
-          return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
+        if (!proxyToken) {
+          const csrf = checkCSRF(request);
+          if (csrf) return csrf;
+          if (isRateLimited(request, 'admin')) {
+            return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
+          }
         }
 
-        const token = getAuthToken(request);
+        const token = proxyToken || getAuthToken(request);
         if (!token) {
           return new Response('Missing Token', { status: 401, headers: getCORSHeaders(request) });
         }
@@ -255,13 +268,15 @@ export default {
 
       // --- [3.1] 更换预览图 ---
       if (url.pathname === '/api/admin/update-preview' && request.method === 'POST') {
-        const csrf = checkCSRF(request);
-        if (csrf) return csrf;
-        if (isRateLimited(request, 'admin')) {
-          return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
+        if (!proxyToken) {
+          const csrf = checkCSRF(request);
+          if (csrf) return csrf;
+          if (isRateLimited(request, 'admin')) {
+            return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
+          }
         }
 
-        const token = getAuthToken(request);
+        const token = proxyToken || getAuthToken(request);
         if (!token) {
           return new Response('Missing Token', { status: 401, headers: getCORSHeaders(request) });
         }
@@ -369,13 +384,15 @@ export default {
 
       // --- [3.3] 管理员专项替换资源文件 ---
       if (url.pathname === '/api/admin/replace-litematic' && request.method === 'POST') {
-        const csrf = checkCSRF(request);
-        if (csrf) return csrf;
-        if (isRateLimited(request, 'admin')) {
-          return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
+        if (!proxyToken) {
+          const csrf = checkCSRF(request);
+          if (csrf) return csrf;
+          if (isRateLimited(request, 'admin')) {
+            return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
+          }
         }
 
-        const token = getAuthToken(request);
+        const token = proxyToken || getAuthToken(request);
         if (!token) {
           return new Response('Missing Token', { status: 401, headers: getCORSHeaders(request) });
         }
@@ -486,13 +503,15 @@ export default {
 
       // --- [3.4] 彻底删除稿件文件夹 ---
       if (url.pathname === '/api/admin/delete-archive' && request.method === 'POST') {
-        const csrf = checkCSRF(request);
-        if (csrf) return csrf;
-        if (isRateLimited(request, 'admin')) {
-          return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
+        if (!proxyToken) {
+          const csrf = checkCSRF(request);
+          if (csrf) return csrf;
+          if (isRateLimited(request, 'admin')) {
+            return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
+          }
         }
 
-        const token = getAuthToken(request);
+        const token = proxyToken || getAuthToken(request);
         if (!token) {
           return new Response('Missing Token', { status: 401, headers: getCORSHeaders(request) });
         }
@@ -1035,4 +1054,54 @@ function isSafeFolder(folder) {
     folder !== '.' &&
     folder !== '..'
   );
+}
+
+// --- 方案 B（ADR-005）代理签名校验：与 web 端 src/lib/proxy-sign.ts 对称 ---
+const PROXY_MAX_SKEW_SEC = 300;
+
+async function sha256HexBytes(buffer) {
+  const digest = await crypto.subtle.digest('SHA-256', buffer);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function hmacHex(secret, message) {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
+  return Array.from(new Uint8Array(signature))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function timingSafeEqualHex(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+// 校验 Vercel 代理签名（时间戳 + 请求体哈希 + GitHub token）；有效返回 { token }，否则 null。
+async function verifyWorkerProxy(request, env) {
+  const secret = env.WORKER_PROXY_SECRET;
+  if (!secret) return null;
+  const sig = request.headers.get('x-openst-proxy-sig');
+  const ts = request.headers.get('x-openst-proxy-ts');
+  const ghToken = request.headers.get('x-openst-proxy-gh-token');
+  if (!sig || !ts || !ghToken) return null;
+
+  const tsNum = Number(ts);
+  if (!Number.isFinite(tsNum)) return null;
+  if (Math.abs(Math.floor(Date.now() / 1000) - tsNum) > PROXY_MAX_SKEW_SEC) return null;
+
+  const bodyHash = await sha256HexBytes(await request.clone().arrayBuffer());
+  const expected = await hmacHex(secret, `${ts}\n${bodyHash}\n${ghToken}`);
+  if (!timingSafeEqualHex(expected, sig)) return null;
+  return { token: ghToken };
 }

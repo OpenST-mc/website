@@ -32,15 +32,14 @@
 - **影响**：任何新路由不得新增对外 URL；`profile/april/december` 等特殊路径用 `+route.ts` 显式声明。
 
 ## ADR-005 · 认证改用 Auth.js `@auth/core`（Vercel API）
-- **状态**：Accepted（信任模型方案待 T3.1 定稿）
+- **状态**：Accepted（信任模型已定稿：**方案 B**）
 - **背景**：需求要求认证改用外部库（Auth.js），承载在 Vercel API；现有为自研 `apps/auth/auth.js` + CF Worker。
 - **决策**：
   1. `api/auth/[...auth].ts` 使用 `@auth/core` 的 `Auth()`，GitHub Provider + JWT 会话 Cookie。
   2. 前端用薄客户端 `getSession/signIn/signOut` 与 `useSession`。
   3. 管理员判定（GitHub 组织/团队或允许名单）写入会话。
-  4. **信任模型**（择一，T3.1 定稿）：
-     - **A（推荐先做）**：CF Worker 用 `jose` + 共享 `AUTH_SECRET` 校验 Auth.js JWT。
-     - **B**：Vercel 新增已认证 admin 代理端点，转发 Worker 并附服务签名。
+  4. **信任模型（T3.1 定稿：方案 B）**：**Vercel 新增已认证 admin 代理端点**，在 Vercel 侧用 Auth.js 会话判定管理员后，以服务签名（共享密钥，如 HMAC/`jose`）转发到 CF Worker；Worker 校验服务签名而非直接验 JWT。
+     - 方案 A（未采纳）：CF Worker 用 `jose` + 共享 `AUTH_SECRET` 直接校验 Auth.js JWT。
 - **影响**：删除 `PortalAuth`/`gh_auth`；用户可见信任根唯一在 Auth.js；需 Vercel env（`AUTH_SECRET`、GitHub OAuth）。
 - **风险链接**：R4/R5。
 
