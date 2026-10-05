@@ -13,6 +13,7 @@ const ROUTES: Array<{ route: string; file: string }> = [
   { route: '/profile/april/december', file: 'profile/april/december/index.html' },
   { route: '/admin_tools', file: 'admin_tools/index.html' },
   { route: '/admin_tools/admin_edit', file: 'admin_tools/admin_edit/index.html' },
+  { route: '/upload', file: 'upload/index.html' },
 ];
 
 // 迁移期仍需存在的静态资产（M7 退役 Vue 后移除 vue 项）。

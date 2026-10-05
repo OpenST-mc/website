@@ -42,7 +42,7 @@ export default {
     try {
       // --- [0] 方案 B（ADR-005）：Vercel 已认证代理的服务签名（仅 admin 端点）---
       let proxyToken = null;
-      if (url.pathname.startsWith('/api/admin/')) {
+      if (url.pathname.startsWith('/api/admin/') || url.pathname === '/api/submit-issue') {
         const proxy = await verifyWorkerProxy(request, env);
         const hasSig = request.headers.get('x-openst-proxy-sig');
         if (proxy) proxyToken = proxy.token;
@@ -691,7 +691,7 @@ export default {
           return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
         }
 
-        const token = getAuthToken(request);
+        const token = proxyToken || getAuthToken(request);
         if (!token) {
           return new Response('Unauthorized', { status: 401, headers: getCORSHeaders(request) });
         }

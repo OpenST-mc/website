@@ -31,6 +31,17 @@ export function updateInfo(folder: string, newInfo: unknown): Promise<AdminResul
   return post('/api/admin/update-info', JSON.stringify({ folder, newInfo }), true);
 }
 
+export interface SubmitIssuePayload {
+  title: string;
+  labels: string[];
+  body: string;
+}
+
+/** 任意已登录用户：经同源 /api/submit-issue 代理创建投稿 Issue。 */
+export function submitIssue(payload: SubmitIssuePayload): Promise<AdminResult> {
+  return post('/api/submit-issue', JSON.stringify(payload), true);
+}
+
 export function deleteArchive(folder: string): Promise<AdminResult> {
   return post('/api/admin/delete-archive', JSON.stringify({ folder }), true);
 }

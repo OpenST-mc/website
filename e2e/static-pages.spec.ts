@@ -32,3 +32,9 @@ test('admin editor gates on session when unauthenticated', async ({ page }) => {
   await expect(page).toHaveTitle('OpenST 稿件编辑器 (for staff)');
   await expect(page.getByText('需要管理员权限')).toBeVisible();
 });
+
+test('upload page gates on GitHub login when unauthenticated', async ({ page }) => {
+  await page.goto('/upload');
+  await expect(page).toHaveTitle('投递新机器 - OpenST');
+  await expect(page.getByText('身份验证')).toBeVisible();
+});

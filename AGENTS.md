@@ -71,7 +71,7 @@ npm run preview          # 预览 Vite 构建产物（本地参考用，Vercel �
 | `packages/js/`           | 各页面外部脚本（portal/404/auth-callback/credits/health/insights-src）                        |
 | `assets/`                | fonts、images、s2t 简繁词典（原 fonts/images/Traditional-Simplefild）                         |
 | `css/`                   | Tailwind v4 三入口与产物（@source 扫描 apps/admin 等）                                        |
-| `api/`                   | Vercel Functions：share（社交卡重定向）、download/stats（Upstash Redis 计数）                 |
+| `api/`                   | Vercel Functions：share、download/stats；`auth/*`（Auth.js）、`admin/*` 与 `submit-issue`（方案 B 已认证代理 → CF Worker） |
 | `workers/workers 2.js`   | CF Workers 后端唯一源码版（Security Enhanced Edition）                                        |
 | `scripts/` `data/`       | 构建/生成脚本（不再被部署 URL 直接暴露源码路径的历史包袱）                                    |
 
@@ -110,6 +110,8 @@ api.openstmc.com 采用「端点白名单 + Managed Challenge」，新增 API �
 否则 fetch 得到 403 且无 CORS 头。现役端点：`/api/session`、`/api/logout`、`/api/check-admin`、
 `/api/exchange-token`、`/api/submit-issue`、`/api/archive-upload`、`/api/admin/*`（update-info /
 update-preview / replace-litematic / delete-archive）、`/api/wiki/submit-archive`、`/dl/*`、`/health`。
+Vercel 侧同源端点 `/api/auth/*`、`/api/admin/*`、`/api/submit-issue` 走服务签名转发（ADR-005 方案 B），
+不经浏览器直连 Worker，无需额外 WAF 白名单。
 
 ## 数据流水线
 
