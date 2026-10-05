@@ -12,13 +12,14 @@
     "build:AdminCSS": "tailwindcss -i ./css/AdminInput.css -o ./css/AdminOutput.css --minify",
     "build:vendor": "node scripts/build-vendor.js",
     "build:static": "node scripts/build-static.ts",
+    "check:build": "node scripts/check-build.ts",
     "lint": "eslint .",
     "check:types": "tsc --noEmit",
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check:paths": "node scripts/check-paths.js",
-    "build": "node data/build.js && npm run build:sitemap && npm run build:ArchiveCSS && npm run build:PortalCSS && npm run build:AdminCSS && npm run build:vendor && vite build && npm run build:static"
+    "build": "node data/build.js && npm run build:sitemap && npm run build:ArchiveCSS && npm run build:PortalCSS && npm run build:AdminCSS && npm run build:vendor && vite build && npm run build:static && npm run check:build"
   },
   "dependencies": {
     "@auth/core": "0.41.3",
