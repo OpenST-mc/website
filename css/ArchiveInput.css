@@ -6,6 +6,7 @@
 @source "../apps/admin";
 @source "../apps/extra";
 @source "../packages/js";
+@source "../src";
 
 @theme {
   --color-brand: #40b5ad;
@@ -15,8 +16,4 @@
 
 :root {
   --brand: #40b5ad;
-}
-
-[v-cloak] {
-  display: none !important;
 }

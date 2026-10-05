@@ -3,6 +3,7 @@
 @source "../apps/admin";
 @source "../404.html";
 @source "../pages";
+@source "../src";
 
 @theme {
   --color-brand: #40b5ad;
@@ -10,8 +11,4 @@
 
 :root {
   --brand: #40b5ad;
-}
-
-[v-cloak] {
-  display: none !important;
 }

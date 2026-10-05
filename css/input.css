@@ -4,6 +4,7 @@
 @source "../pages/home";
 @source "../apps/health";
 @source "../packages/js";
+@source "../src";
 
 @theme {
   --color-st-cyan: #40b5ad;
@@ -138,8 +139,4 @@
     background-size: 40px 40px;
     background-attachment: fixed;
   }
-}
-
-[v-cloak] {
-  display: none !important;
 }
