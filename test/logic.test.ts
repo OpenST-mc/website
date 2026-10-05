@@ -1,21 +1,21 @@
-// Thin unit tests for apps/portal/scripts/logic.js + config.js.
-// Run: node --test test/   (zero new deps: node:test + node:assert/strict only)
+// Thin unit tests for src/lib/logic.ts + config.ts.
+// Run: node --test test/   (Node 24 strips the TS types natively)
 // No network, no DOM, small inline fixtures.
 //
-// NOTE: getExpandedTags is NOT exported from logic.js (internal helper).
+// NOTE: getExpandedTags is NOT exported from logic.ts (internal helper).
 // Parent-expansion behaviour is covered indirectly via getFilteredList tests below.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getFilteredList, calculateDynamicTags, getSafePath } from '../apps/portal/scripts/logic.js';
-import { TAG_CONFIG, CATEGORIES } from '../apps/portal/scripts/config.js';
+import { getFilteredList, calculateDynamicTags, getSafePath, type ArchiveItem, type SelectedTags } from '../src/lib/logic.ts';
+import { TAG_CONFIG, CATEGORIES } from '../src/lib/config.ts';
 
-const emptySelected = () => ({});
+const emptySelected = (): SelectedTags => ({});
 
 // Real hierarchy from TAG_CONFIG:
 //   "编码存储科技" (object): { "编码全物品单片": ["常规编码单片", ...], ... }
 //   "生产/合成" (flat array): ["合成站", "合成器相关"]
 //   "版本" (flat array): ["1.21.x", ...]
-const itemA = {
+const itemA: ArchiveItem = {
   sub_id: 'sub-12',
   id: 'aaa',
   name: '高速编码单片',
@@ -23,7 +23,7 @@ const itemA = {
   description: 'A fast encoder slice',
   tags: ['编码全物品单片', '常规编码单片'],
 };
-const itemB = {
+const itemB: ArchiveItem = {
   sub_id: 'sub-34',
   id: 'bbb',
   name: '矩阵编码单片',
@@ -31,7 +31,7 @@ const itemB = {
   description: 'Matrix variant',
   tags: ['编码全物品单片', '矩阵编码单片'],
 };
-const itemLeafOnly = {
+const itemLeafOnly: ArchiveItem = {
   sub_id: 'sub-56',
   id: 'ccc',
   name: '孤儿叶子',
@@ -39,7 +39,7 @@ const itemLeafOnly = {
   description: 'Has leaf tag without its parent',
   tags: ['常规编码单片'],
 };
-const itemC = {
+const itemC: ArchiveItem = {
   sub_id: 'sub-78',
   id: 'ddd',
   name: '合成站成品',
@@ -47,7 +47,7 @@ const itemC = {
   description: 'Crafting station build',
   tags: ['合成站', '1.21.x'],
 };
-const DATA = [itemA, itemB, itemLeafOnly, itemC];
+const DATA: ArchiveItem[] = [itemA, itemB, itemLeafOnly, itemC];
 
 describe('getSafePath', () => {
   it('leaves plain segments untouched and preserves slashes', () => {
@@ -62,7 +62,7 @@ describe('getSafePath', () => {
   it('encodes 中文 per segment but keeps / separators', () => {
     assert.equal(
       getSafePath('中文分类/空 格/文件.litematic'),
-      `${encodeURIComponent('中文分类')}/${encodeURIComponent('空 格')}/${encodeURIComponent('文件.litematic')}`
+      `${encodeURIComponent('中文分类')}/${encodeURIComponent('空 格')}/${encodeURIComponent('文件.litematic')}`,
     );
   });
 
@@ -145,26 +145,26 @@ describe('calculateDynamicTags', () => {
 
   it('falls back to the full union when data is empty', () => {
     const groups = calculateDynamicTags([], cats, emptySelected());
-    assert.ok(groups['生产/合成'].has('合成站'));
-    assert.ok(groups['生产/合成'].has('合成器相关'));
-    assert.ok(groups['版本'].has('1.21.x'));
+    assert.ok(groups['生产/合成']?.has('合成站'));
+    assert.ok(groups['生产/合成']?.has('合成器相关'));
+    assert.ok(groups['版本']?.has('1.21.x'));
     // object-category: contains both parent keys and leaves
-    assert.ok(groups['编码存储科技'].has('编码全物品单片'));
-    assert.ok(groups['编码存储科技'].has('常规编码单片'));
+    assert.ok(groups['编码存储科技']?.has('编码全物品单片'));
+    assert.ok(groups['编码存储科技']?.has('常规编码单片'));
   });
 
   it('narrows to tags actually present in filtered data', () => {
     const groups = calculateDynamicTags([itemC], cats, emptySelected());
-    assert.ok(groups['生产/合成'].has('合成站'));
-    assert.ok(!groups['生产/合成'].has('合成器相关'));
-    assert.ok(groups['版本'].has('1.21.x'));
-    assert.ok(!groups['版本'].has('1.20.x'));
+    assert.ok(groups['生产/合成']?.has('合成站'));
+    assert.ok(!groups['生产/合成']?.has('合成器相关'));
+    assert.ok(groups['版本']?.has('1.21.x'));
+    assert.ok(!groups['版本']?.has('1.20.x'));
   });
 
   it('pins selected tags so they survive narrowing', () => {
     const groups = calculateDynamicTags([itemC], cats, { '生产/合成': ['合成器相关'] });
-    assert.ok(groups['生产/合成'].has('合成器相关')); // absent from data, kept via selection
-    assert.ok(groups['生产/合成'].has('合成站')); // present in data
+    assert.ok(groups['生产/合成']?.has('合成器相关')); // absent from data, kept via selection
+    assert.ok(groups['生产/合成']?.has('合成站')); // present in data
   });
 });
 

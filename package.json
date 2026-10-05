@@ -12,8 +12,9 @@
     "build:AdminCSS": "tailwindcss -i ./css/AdminInput.css -o ./css/AdminOutput.css --minify",
     "build:vendor": "node scripts/build-vendor.js",
     "lint": "eslint .",
+    "check:types": "tsc --noEmit",
     "format:check": "prettier --check .",
-    "test": "node --test \"test/**/*.test.js\"",
+    "test": "node --test \"test/**/*.test.js\" \"test/**/*.test.ts\"",
     "check:paths": "node scripts/check-paths.js",
     "build": "node data/build.js && npm run build:sitemap && npm run build:ArchiveCSS && npm run build:PortalCSS && npm run build:AdminCSS && npm run build:vendor && vite build"
   },
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^7.3.1",
     "@tailwindcss/vite": "^4.2.4",
+    "@types/node": "24.19.1",
     "@vitejs/plugin-vue": "^6.0.3",
     "deepslate": "^0.10.1",
     "dompurify": "^3.4.14",
@@ -40,6 +42,7 @@
     "pako": "^3.0.1",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.2.4",
+    "typescript": "5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.5"
   },
