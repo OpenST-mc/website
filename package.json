@@ -20,6 +20,7 @@
     "build": "node data/build.js && npm run build:sitemap && npm run build:ArchiveCSS && npm run build:PortalCSS && npm run build:AdminCSS && npm run build:vendor && vite build && npm run build:static"
   },
   "dependencies": {
+    "@auth/core": "0.41.3",
     "@tailwindcss/cli": "^4.2.4",
     "@upstash/redis": "^1.38.2",
     "@vercel/analytics": "^2.0.1",
