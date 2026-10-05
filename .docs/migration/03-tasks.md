@@ -195,26 +195,29 @@
 **依赖**：T3.1 · **规模**：L · **文件**：`src/pages/admin_tools/admin_edit/*`、`src/lib/api.ts`
 **备注**：改用 `useSession` 会话门 + 同源 `/api/admin/*` 代理（方案 B）；四端点请求体形状保持不变。
 
-### [ ] T3.5 upload → SSG shell + 交互
+### [x] T3.5 upload → SSG shell + 交互
 **描述**：登录门、表单、标签、预览、JSZip→`archive-upload`→`submit-issue` 迁移；改用 `useSession`。
 **验收**：`info.json`/Issue body 逐字对等；失败回退。
 **验证**：E2E（mock）+ 受控端到端。
 **依赖**：T3.1 · **规模**：L · **文件**：`src/pages/upload/*`
+**备注**：`archive-upload` 保持直连（Worker 侧无需鉴权）；`submit-issue` 改走新增 Vercel `/api/submit-issue` 用户代理（方案 B：会话 ghToken + 服务签名），Worker 对 submit-issue 接受服务签名。E2E 覆盖未登录门。
 
-### [ ] T3.6 移除 `PortalAuth`
+### [!] T3.6 移除 `PortalAuth`
 **描述**：删除 `apps/auth/auth.js` 及全部 `PortalAuth` 引用（portal/upload/admin）。
 **验收**：grep 无 `PortalAuth`/`gh_auth` 业务（除迁移说明）。
 **验证**：`npm run lint` + grep。
 **依赖**：T3.2–T3.5 · **规模**：S · **文件**：`apps/auth/*`、各引用处
+**阻塞**：旧 portal（M4 才迁移）仍 `import '/auth/auth.js'` 使用 `PortalAuth`。upload/admin 已不再引用；完整移除顺延至 M4（portal 迁移）后。`apps/auth/auth-callback.html` 亦同。
 
-### [ ] T3.7 M3 对等与门
+### [x] T3.7 M3 对等与门
 **描述**：汇总对等清单并跑全量门。
 **验收**：认证/上传/管理全对等；门绿。
 **验证**：全门 + E2E。
 **依赖**：T3.2–T3.6 · **规模**：S · **文件**：本文件
+**备注**：门全绿（types/lint/test/check:paths/build/check:build/e2e）。OAuth 交互对等需真实 GitHub 凭据，属受控端到端，未在本会话验证。
 
 ### Checkpoint M3
-- [ ] 认证全链路对等；upload/admin 全对等；无 `PortalAuth` 残留
+- [~] 认证全链路对等；upload/admin 全对等；无 `PortalAuth` 残留 —— upload/admin 已对等；`PortalAuth` 因旧 portal 未迁移（M4）仍残留，T3.6 顺延
 
 ---
 
