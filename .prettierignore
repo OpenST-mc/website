@@ -2,6 +2,9 @@ vendor/
 dist/
 node_modules/
 package-lock.json
+test-results/
+playwright-report/
+blob-report/
 css/*Output.css
 *.min.js
 **/resource/assets.js
