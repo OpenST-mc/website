@@ -7,7 +7,11 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, 'dist', 'client');
 
 // M 阶段推进时扩充：路由 -> 产物 HTML 文件。
-const ROUTES: Array<{ route: string; file: string }> = [{ route: '/', file: 'index.html' }];
+const ROUTES: Array<{ route: string; file: string }> = [
+  { route: '/', file: 'index.html' },
+  { route: '/health', file: 'health/index.html' },
+  { route: '/profile/april/december', file: 'profile/april/december/index.html' },
+];
 
 // 迁移期仍需存在的静态资产（M7 退役 Vue 后移除 vue 项）。
 const REQUIRED_ASSETS = [
