@@ -33,7 +33,8 @@
     "test/**/*.tsx",
     "scripts/**/*.ts",
     "api/**/*.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "vitest.config.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }
