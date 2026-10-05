@@ -35,10 +35,10 @@ M0 评估 / 决策 / 分支 / 测试策略
 **任务**：T0.1 … T0.5。**产出**：本目录全部文档 + `refactor/react-ssg` 分支。
 
 ### Checkpoint M0
-- [ ] `00-assessment.md` / `01-target-architecture.md` 经维护者确认
-- [ ] `05-decisions.md` ADR 无未决项（尤其 ADR-005 认证信任模型）
-- [ ] `06-build-and-testing.md` 门命令可执行
-- [ ] `refactor/react-ssg` 分支已建立
+- [x] `00-assessment.md` / `01-target-architecture.md` 经维护者确认
+- [x] `05-decisions.md` ADR 无未决项（尤其 ADR-005 认证信任模型）
+- [x] `06-build-and-testing.md` 门命令可执行
+- [x] `refactor/react-ssg` 分支已建立
 
 ---
 
@@ -50,10 +50,10 @@ M0 评估 / 决策 / 分支 / 测试策略
 关键内容：TypeScript 与 `check:types`；Vike + `vike-react` renderer；`vite.config` 迁移 `.ts`；Vercel `buildCommand/outputDirectory`；静态资产拷贝；逻辑迁移 TS；Auth.js `api/auth/*`；Vitest/Playwright/构建断言；质量门重写。
 
 ### Checkpoint M1
-- [ ] `npm run build` 产出预渲染 HTML（至少一个路由）且静态资产完整
-- [ ] `npm run test`（Vitest）与 `npm run check:types` 绿
-- [ ] `npm run dev` HMR 正常；旧 Vue 页面抽查无回归
-- [ ] `/api/auth/session` 在本地可返回未登录态
+- [x] `npm run build` 产出预渲染 HTML（至少一个路由）且静态资产完整
+- [x] `npm run test`（Vitest）与 `npm run check:types` 绿
+- [x] `npm run dev` HMR 正常；旧 Vue 页面抽查无回归
+- [x] `/api/auth/session` 在本地可返回未登录态
 
 ---
 

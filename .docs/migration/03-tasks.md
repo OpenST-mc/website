@@ -8,118 +8,118 @@
 
 ## M0 · 评估、决策、分支与测试策略
 
-### [ ] T0.1 现状评估更新
+### [x] 1 现状评估更新
 **描述**：更新 `00-assessment.md`，标注 SPA→SSG、JS→TS、自研认证→Auth.js、根服务→Vercel 输出的差距。
 **验收**：页面清单/耦合点/构建链路准确；差距表完整。
 **验证**：与代码交叉核对。
 **依赖**：无 · **规模**：S · **文件**：`00-assessment.md`
 
-### [ ] T0.2 目标架构与 ADR 定稿
+### [x] 2 目标架构与 ADR 定稿
 **描述**：确认 `01-target-architecture.md` 与 `05-decisions.md`；重点敲定 ADR-005（Auth.js 与 CF Worker 的信任模型）。
 **验收**：无未决 ADR；路由↔公开 URL 映射逐条确认。
 **验证**：维护者评审。
 **依赖**：T0.1 · **规模**：M · **文件**：`01-target-architecture.md`、`05-decisions.md`
 
-### [ ] T0.3 建立重构分支
+### [x] 3 建立重构分支
 **描述**：从 `main` 创建 `refactor/react-ssg`，确认工作区干净。
 **验收**：`git branch --show-current` = `refactor/react-ssg`。
 **验证**：`git status`。
 **依赖**：T0.2 · **规模**：XS · **文件**：无
 
-### [ ] T0.4 构建与测试策略设计
+### [x] 4 构建与测试策略设计
 **描述**：完成 `06-build-and-testing.md`：构建管线、静态拷贝、Vercel 输出、测试分层、构建断言、门命令。
 **验收**：门命令可在当前基线执行；依赖清单与重量理由明确。
 **验证**：逐条执行现行命令。
 **依赖**：T0.2 · **规模**：M · **文件**：`06-build-and-testing.md`
 
-### [ ] T0.5 健壮性基线
+### [x] 5 健壮性基线
 **描述**：完成 `08-robustness-checklist.md` 并作为 M6 验收依据。
 **验收**：清单覆盖类型/校验/错误/SSR/安全/可访问性。
 **验证**：维护者评审。
 **依赖**：T0.2 · **规模**：S · **文件**：`08-robustness-checklist.md`
 
 ### Checkpoint M0
-- [ ] 文档全部确认；分支已建立；门命令可执行
+- [x] 文档全部确认；分支已建立；门命令可执行
 
 ---
 
 ## M1 · TS + Vike SSG 工具链 + 测试框架 + Auth.js 骨架
 
-### [ ] T1.1 引入 TypeScript 并迁移纯逻辑
+### [x] 1 引入 TypeScript 并迁移纯逻辑
 **描述**：新增 `tsconfig.json`（strict）、`check:types`；将 `scripts/config.js`、`scripts/logic.js` 迁移为 `src/lib/{config,logic}.ts` 并保留/迁移单测。
 **验收**：`npm run check:types` 无错；过滤逻辑行为不变（测试绿）。
 **验证**：`npm run check:types`；`npm run test`。
 **依赖**：M0 · **规模**：M · **文件**：`tsconfig.json`、`src/lib/{config,logic}.ts`、`test/logic.test.ts`
 
-### [ ] T1.2 安装 Vike + vike-react 并建 renderer 骨架
+### [x] 2 安装 Vike + vike-react 并建 renderer 骨架
 **描述**：加入 `vike`、`vike-react`（钉版）；建立 `src/renderer/{+config.ts,+onRenderHtml.tsx,+onRenderClient.tsx,+Layout.tsx,+Head.tsx}` 与一个最小 `pages/index`。
 **验收**：`vite dev` 渲染最小页；`vite build` 能 prerender 出 HTML。
 **验证**：`npm run dev`；`npm run build` 后检查 `dist/`。
 **依赖**：T1.1 · **规模**：M · **文件**：`package.json`、`src/renderer/*`、`src/pages/index/*`
 
-### [ ] T1.3 vite.config 迁移为 TS 并接入 Vike
+### [x] 3 vite.config 迁移为 TS 并接入 Vike
 **描述**：`vite.config.js` → `vite.config.ts`；加入 Vike 插件；保留 Tailwind 与公开 URL 解析（是否仍需 rewrite 中间件按 Vike 路由评估）。
 **验收**：dev/build 均通过；Tailwind 生效。
 **验证**：`npm run dev`、`npm run build`。
 **依赖**：T1.2 · **规模**：M · **文件**：`vite.config.ts`、`scripts/paths.ts`（若抽）
 
-### [ ] T1.4 SSG 构建与静态资产拷贝
+### [x] 4 SSG 构建与静态资产拷贝
 **描述**：确定构建流水线；新增/改造脚本把 `content/`、`vendor/`、`assets/`（images/fonts/s2t）、`webfonts/`、extra 资源拷贝进输出；`data/build.ts` 仍生成 `archive/data/database.json` 供构建期读取。
 **验收**：产物含上述静态树；公开 URL 可达。
 **验证**：`npm run build` 后逐一 `Test-Path` 产物文件。
 **依赖**：T1.2 · **规模**：M · **文件**：`scripts/build-static.*`、`package.json`、`vite.config.ts`
 
-### [ ] T1.5 Vercel 构建输出配置
+### [x] 5 Vercel 构建输出配置
 **描述**：`vercel.json` 增加 `buildCommand`/`outputDirectory`/`installCommand`（含子模块初始化）；确认 `api/**` Functions 仍被识别；确保输出根有 `404.html`；保留安全头与 `/share` rewrite。
 **验收**：Vercel 预览构建成功；路由/API/静态均可达。
 **验证**：部署预览或本地 `vercel build`（若可用）。
 **依赖**：T1.4 · **规模**：M · **文件**：`vercel.json`
 
-### [ ] T1.6 Tailwind @source 适配
+### [x] 6 Tailwind @source 适配
 **描述**：三入口 `@source` 覆盖 `src/**`（pages/components/hooks/lib）；移除 `[v-cloak]`。
 **验收**：仅出现在 `tsx` 的类名进入产物。
 **验证**：构造探针类名 grep 产物。
 **依赖**：T1.2 · **规模**：S · **文件**：`css/*Input.css`
 
-### [ ] T1.7 Auth.js `@auth/core` 骨架
+### [x] 7 Auth.js `@auth/core` 骨架
 **描述**：`api/auth/[...auth].ts` 调 `Auth(request, config)`；GitHub Provider、JWT 会话、`AUTH_SECRET`/`trustHost`；`callbacks` 预留 `isAdmin`。
 **验收**：`/api/auth/session` 返回 null（未登录）；`/api/auth/signin/github` 正确重定向。
 **验证**：本地 `vercel dev` 或受控环境请求。
 **依赖**：T1.5 · **规模**：M · **文件**：`api/auth/[...auth].ts`、`src/lib/auth-server.ts`
 
-### [ ] T1.8 前端 auth 客户端与 `useSession`
+### [x] 8 前端 auth 客户端与 `useSession`
 **描述**：`src/lib/auth.ts`（`getSession/signIn/signOut`）与 `src/hooks/useSession.ts`（`{user,isAdmin,status}`）。
 **验收**：类型完备；在最小页可读会话。
 **验证**：组件测试 + 手工。
 **依赖**：T1.7 · **规模**：M · **文件**：`src/lib/auth.ts`、`src/hooks/useSession.ts`
 
-### [ ] T1.9 Vitest 单元/组件测试框架
+### [x] 9 Vitest 单元/组件测试框架
 **描述**：引入 `vitest` + `@testing-library/react` + DOM 环境；配置 `npm run test`；迁移既有测试。
 **验收**：示例组件测试可运行。
 **验证**：`npm run test`。
 **依赖**：T1.1 · **规模**：M · **文件**：`package.json`、`vitest.config.ts`、`test/**`
 
-### [ ] T1.10 Playwright E2E 框架
+### [x] 10 Playwright E2E 框架
 **描述**：引入 `@playwright/test`；配置对构建预览的 E2E 基座与一条冒烟用例。
 **验收**：`npm run test:e2e` 可跑通冒烟。
 **验证**：本地执行。
 **依赖**：T1.4 · **规模**：M · **文件**：`playwright.config.ts`、`e2e/**`
 
-### [ ] T1.11 构建断言脚本
+### [x] 11 构建断言脚本
 **描述**：新增脚本断言：每个路由存在预渲染 HTML、含预期 SEO meta、首屏含关键内容、无 `unsafe-eval`（M7 后）、静态资产存在。
 **验收**：断言脚本在构建后运行；缺项即失败。
 **验证**：`npm run check:build`。
 **依赖**：T1.4 · **规模**：M · **文件**：`scripts/check-build.*`、`package.json`
 
-### [ ] T1.12 质量门重写
+### [x] 12 质量门重写
 **描述**：ESLint 迁移 `typescript-eslint` + React 插件；移除 `Vue` 全局；Prettier 适配；`check-paths` 适配新路由/输出。
 **验收**：`lint`/`check:types`/`check:paths` 绿。
 **验证**：三门连跑。
 **依赖**：T1.1、T1.3 · **规模**：M · **文件**：`eslint.config.*`、`.prettierignore`、`scripts/check-paths.*`
 
 ### Checkpoint M1
-- [ ] SSG 产物与静态资产完整；Vitest/类型门绿
-- [ ] dev HMR 正常；旧 Vue 页面抽查无回归；Auth 会话端点可用
+- [x] SSG 产物与静态资产完整；Vitest/类型门绿
+- [x] dev HMR 正常；旧 Vue 页面抽查无回归；Auth 会话端点可用
 
 ---
 
