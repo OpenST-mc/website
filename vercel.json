@@ -60,8 +60,7 @@
   ],
   "rewrites": [
     { "source": "/favicon.ico", "destination": "/images/favicon-2.png" },
-    { "source": "/", "destination": "/pages/home/index.html" },
-    { "source": "/index", "destination": "/pages/home/index.html" },
+    { "source": "/index", "destination": "/index.html" },
     { "source": "/js/:path*", "destination": "/packages/js/:path*" },
     { "source": "/fonts/:path*", "destination": "/assets/fonts/:path*" },
     { "source": "/images/:path*", "destination": "/assets/images/:path*" },

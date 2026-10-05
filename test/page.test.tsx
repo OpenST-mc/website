@@ -3,9 +3,9 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Page from '../src/pages/index/+Page.tsx';
 
-describe('index page component', () => {
-  it('renders the heading text into the DOM', () => {
+describe('home page component', () => {
+  it('renders the primary archive heading', () => {
     render(<Page />);
-    expect(screen.getByText('OpenST SSG skeleton')).toBeTruthy();
+    expect(screen.getByText('进入档案馆')).toBeTruthy();
   });
 });

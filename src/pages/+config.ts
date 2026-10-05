@@ -6,6 +6,7 @@ import vikeReact from 'vike-react/config';
 export default {
   extends: [vikeReact],
   prerender: true,
+  lang: 'zh-CN',
   title: 'OpenST',
   description: 'OpenST —— Minecraft 储电社区的门户与存档库。',
 } satisfies Config;

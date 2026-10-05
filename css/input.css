@@ -42,6 +42,15 @@
   --animate-marquee: marquee 180s linear infinite; /* 超长周期，线性速度 */
 }
 
+@keyframes scan {
+  0% {
+    top: 0%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
 @layer base {
   @font-face {
     font-family: 'JetBrains Mono';
@@ -138,5 +147,19 @@
       linear-gradient(to bottom, rgba(111, 111, 111, 0.05) 1px, transparent 1px);
     background-size: 40px 40px;
     background-attachment: fixed;
+  }
+
+  .scan-line {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #40b5ad, transparent);
+    position: fixed;
+    top: 0;
+    z-index: 10000;
+    animation: scan 2s linear infinite;
+  }
+
+  .brand-shadow {
+    text-shadow: 0 0 20px rgba(64, 181, 173, 0.5);
   }
 }

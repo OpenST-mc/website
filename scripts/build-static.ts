@@ -8,9 +8,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, 'dist', 'client');
 
 const DIRS = ['apps', 'archive', 'assets', 'content', 'css', 'packages', 'pages', 'vendor', 'webfonts'];
-// 注意：根 index.html 由 Vike SSG 生成，绝不覆盖；旧首页保留在 pages/home/index.html，
-// 由 vercel rewrite 在迁移期继续承接 `/`。
-const FILES = ['404.html', 'robots.txt', 'sitemap.xml', '.nojekyll'];
+// 注意：根 index.html / 404.html 由 Vike SSG 生成，绝不覆盖。
+const FILES = ['robots.txt', 'sitemap.xml', '.nojekyll'];
 
 const skipDotGit = (src: string) => !path.basename(src).startsWith('.git');
 
