@@ -24,8 +24,14 @@ export async function getCsrfToken(): Promise<string> {
 }
 
 // 开放重定向防护：callbackUrl 仅允许站内相对路径。
-function safeCallbackUrl(url: string): string {
-  return url.startsWith('/') && !url.startsWith('//') ? url : '/';
+// 拒绝绝对 URL（`https://evil.com`）、协议相对（`//evil.com`）、
+// 反斜杠绕过（`/\evil.com`）与控制字符。
+export function sanitizeCallbackUrl(url: unknown): string {
+  if (typeof url !== 'string' || url.length === 0) return '/';
+  if (!url.startsWith('/')) return '/';
+  if (url.startsWith('//') || url.startsWith('/\\')) return '/';
+  if (/[\u0000-\u001f]/.test(url)) return '/';
+  return url;
 }
 
 function submitForm(action: string, fields: Record<string, string>): void {
@@ -45,10 +51,10 @@ function submitForm(action: string, fields: Record<string, string>): void {
 
 export async function signIn(provider = 'github', callbackUrl = '/'): Promise<void> {
   const csrfToken = await getCsrfToken();
-  submitForm(`/api/auth/signin/${provider}`, { csrfToken, callbackUrl: safeCallbackUrl(callbackUrl) });
+  submitForm(`/api/auth/signin/${provider}`, { csrfToken, callbackUrl: sanitizeCallbackUrl(callbackUrl) });
 }
 
 export async function signOut(callbackUrl = '/'): Promise<void> {
   const csrfToken = await getCsrfToken();
-  submitForm('/api/auth/signout', { csrfToken, callbackUrl: safeCallbackUrl(callbackUrl) });
+  submitForm('/api/auth/signout', { csrfToken, callbackUrl: sanitizeCallbackUrl(callbackUrl) });
 }
