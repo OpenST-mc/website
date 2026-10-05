@@ -16,6 +16,7 @@
     "check:types": "tsc --noEmit",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "check:paths": "node scripts/check-paths.js",
     "build": "node data/build.js && npm run build:sitemap && npm run build:ArchiveCSS && npm run build:PortalCSS && npm run build:AdminCSS && npm run build:vendor && vite build && npm run build:static"
   },
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^7.3.1",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/vite": "^4.2.4",
     "@testing-library/dom": "10.4.2",
     "@testing-library/react": "16.3.3",
