@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 
 @source "../apps/admin";
-@source "../404.html";
 @source "../pages";
 @source "../src";
 
