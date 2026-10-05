@@ -69,7 +69,6 @@
     { "source": "/upload/:path*", "destination": "/apps/upload/:path*" },
     { "source": "/auth/:path*", "destination": "/apps/auth/:path*" },
     { "source": "/admin_tools/:path*", "destination": "/apps/admin/:path*" },
-    { "source": "/health/:path*", "destination": "/apps/health/:path*" },
     { "source": "/profile/april/december/:path*", "destination": "/apps/credits/:path*" },
     { "source": "/Extra-Function/:path*", "destination": "/apps/extra/:path*" },
     {
