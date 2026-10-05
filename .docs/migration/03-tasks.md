@@ -174,11 +174,12 @@
 **验证**：受控端点测试（登录/未登录/越权）。
 **依赖**：T1.7、M2 · **规模**：L · **文件**：`workers/workers 2.js`（或 `api/admin-proxy.ts`）、`src/lib/auth-server.ts`
 
-### [ ] T3.2 登录/登出/回调流程
+### [x] T3.2 登录/登出/回调流程
 **描述**：用 Auth.js 端点替换旧回调页；`signIn('github', { callbackUrl })` 的站内跳转白名单。
 **验收**：登录/登出/回跳对等；无法开放重定向。
 **验证**：E2E（mock） + 人工。
 **依赖**：T3.1 · **规模**：M · **文件**：`src/lib/auth.ts`、`src/components/*`、删除 `apps/auth/*`
+**备注**：`sanitizeCallbackUrl` + `AuthButton` 已落地并单测；旧 `apps/auth/auth-callback.html` 仍被未迁移的 portal/upload OAuth 重定向使用，删除顺延至 T3.6/T7.2（strangler 安全）。
 
 ### [ ] T3.3 admin_tools → TSX
 **描述**：打包器 UI/JSZip/`info.json` 逐行对等迁移。
