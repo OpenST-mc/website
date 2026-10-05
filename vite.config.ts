@@ -18,7 +18,6 @@ const PUBLIC_ALIASES: Record<string, string> = {
   '/archive/': 'apps/portal/',
   '/upload/': 'apps/upload/',
   '/auth/': 'apps/auth/',
-  '/admin_tools/': 'apps/admin/',
   '/Extra-Function/': 'apps/extra/',
 };
 

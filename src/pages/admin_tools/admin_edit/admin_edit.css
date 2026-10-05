@@ -1,0 +1,86 @@
+/* Admin Editor 自定义样式（对齐旧 apps/admin/admin_edit.html） */
+:root {
+  --brand: #40b5ad;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(64, 181, 173, 0.2);
+  border-radius: 10px;
+  transition: 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
+}
+
+.admin-edit-body {
+  background: #0a0a0a;
+  color: #fff;
+  min-height: 100vh;
+  overflow-y: auto;
+  padding-bottom: 5rem;
+}
+
+.markdown-body {
+  line-height: 1.6;
+  color: #ccc;
+  overflow-wrap: break-word;
+}
+.markdown-body h1 {
+  font-size: 1.5rem;
+  color: #fff;
+  border-bottom: 2px solid var(--brand);
+  padding-bottom: 0.3rem;
+  margin: 1.5rem 0 1rem;
+}
+.markdown-body h2 {
+  font-size: 1.25rem;
+  border-left: 4px solid var(--brand);
+  padding-left: 0.75rem;
+  margin: 1.2rem 0 0.8rem;
+}
+.markdown-body h3 {
+  font-size: 1.1rem;
+  color: var(--brand);
+  margin: 1rem 0 0.5rem;
+  font-weight: bold;
+}
+.markdown-body ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.markdown-body blockquote {
+  border-left: 4px solid #2a6a65;
+  color: #888;
+  background: rgba(64, 181, 173, 0.05);
+  padding: 8px 16px;
+  border-radius: 0 8px 8px 0;
+}
+.markdown-body code {
+  background: rgba(64, 181, 173, 0.15);
+  color: var(--brand);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+.markdown-body pre {
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 0.75rem;
+}
+.markdown-body img {
+  border-radius: 0.5rem;
+  max-width: 100%;
+}
+.markdown-body a {
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

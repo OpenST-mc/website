@@ -19,3 +19,16 @@ test('unknown route serves the 404 error page', async ({ page }) => {
   expect(res?.status()).toBe(404);
   await expect(page.getByText('LOST IN VOID')).toBeVisible();
 });
+
+test('admin packer renders the form', async ({ page }) => {
+  await page.goto('/admin_tools');
+  await expect(page).toHaveTitle('OpenST Admin Packer (Responsive)');
+  await expect(page.getByText('ADMIN PACKER PRO')).toBeVisible();
+  await expect(page.getByText('Pack & Download')).toBeVisible();
+});
+
+test('admin editor gates on session when unauthenticated', async ({ page }) => {
+  await page.goto('/admin_tools/admin_edit');
+  await expect(page).toHaveTitle('OpenST 稿件编辑器 (for staff)');
+  await expect(page.getByText('需要管理员权限')).toBeVisible();
+});
