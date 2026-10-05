@@ -69,7 +69,7 @@
     { "source": "/upload/:path*", "destination": "/apps/upload/:path*" },
     { "source": "/auth/:path*", "destination": "/apps/auth/:path*" },
     { "source": "/admin_tools/:path*", "destination": "/apps/admin/:path*" },
-    { "source": "/profile/april/december/:path*", "destination": "/apps/credits/:path*" },
+    { "source": "/profile/april/december/credits.html", "destination": "/profile/april/december" },
     { "source": "/Extra-Function/:path*", "destination": "/apps/extra/:path*" },
     {
       "source": "/share/:subid",
