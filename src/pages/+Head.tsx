@@ -1,5 +1,6 @@
-// 全站默认 head：favicon 与 referrer 策略（各页 +Head 在其上追加 CSS/SEO）。
-export default function Head() {
+// 全站默认 <head>：referrer 与 favicon。各页 `+Head.tsx` 追加页面级 SEO。
+// 累积（cumulative）：本组件与页面 Head 会同时输出。
+export default function GlobalHead() {
   return (
     <>
       <meta name="referrer" content="no-referrer" />

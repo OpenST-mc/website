@@ -2,41 +2,44 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
-  fallback?: ReactNode;
 }
 
 interface ErrorBoundaryState {
-  hasError: boolean;
+  error: Error | null;
 }
 
-// 页面级错误边界：捕获渲染异常并给出可重试的降级 UI。
+// 页面级错误边界：渲染期抛错时展示可重试的降级 UI，不白屏。
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  override state: ErrorBoundaryState = { hasError: false };
+  override state: ErrorBoundaryState = { error: null };
 
-  static getDerivedStateFromError(): ErrorBoundaryState {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { error };
   }
 
   override componentDidCatch(error: Error, info: ErrorInfo): void {
     console.error('[ErrorBoundary]', error, info.componentStack);
   }
 
+  private readonly reset = (): void => {
+    this.setState({ error: null });
+  };
+
   override render(): ReactNode {
-    if (this.state.hasError) {
+    if (this.state.error) {
       return (
-        this.props.fallback ?? (
-          <div role="alert" className="p-8 text-center text-white">
-            <h1 className="text-xl font-bold">页面出错了</h1>
-            <p className="mt-2 text-sm text-gray-400">渲染时发生异常，请重试。</p>
+        <div className="min-h-screen flex items-center justify-center bg-black text-gray-300 p-6">
+          <div className="text-center space-y-4">
+            <h1 className="text-2xl font-bold text-white">页面渲染出错</h1>
+            <p className="text-sm text-gray-500 break-all">{this.state.error.message}</p>
             <button
               type="button"
-              className="mt-4 rounded bg-white px-4 py-2 text-sm font-medium text-black"
-              onClick={() => this.setState({ hasError: false })}
+              onClick={this.reset}
+              className="px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition"
             >
               重试
             </button>
           </div>
-        )
+        </div>
       );
     }
     return this.props.children;

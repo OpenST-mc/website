@@ -18,7 +18,7 @@ export default function Page() {
   const [html, setHtml] = useState('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Markdown 仅在客户端解析净化（避免 SSR 依赖 DOM）。
+  // Markdown 仅在客户端解析净化（SSR 期不依赖 DOM）。
   useEffect(() => {
     try {
       const safe = DOMPurify.sanitize(String(marked.parse(creditsMd)));
@@ -28,7 +28,7 @@ export default function Page() {
     }
   }, []);
 
-  // 星空动画：初始化与卸载清理均在此 effect 内。
+  // 星空动画：初始化与卸载清理都在本 effect 内。
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;

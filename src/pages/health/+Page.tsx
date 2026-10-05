@@ -1,4 +1,4 @@
-import { useHealthCheck, type OverallStatus } from '../../hooks/useHealthCheck';
+import { useHealthCheck, type EndpointStatus, type OverallStatus } from '../../hooks/useHealthCheck';
 
 interface OverallConfig {
   text: string;
@@ -52,13 +52,13 @@ const OVERALL: Record<OverallStatus, OverallConfig> = {
   },
 };
 
-function dotClass(status: 'unknown' | 'online' | 'offline'): string {
+function dotClass(status: EndpointStatus): string {
   if (status === 'online') return 'w-2.5 h-2.5 rounded-full bg-green-500 dot-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]';
   if (status === 'offline') return 'w-2.5 h-2.5 rounded-full bg-red-600';
   return 'w-2.5 h-2.5 rounded-full bg-gray-600';
 }
 
-function pingText(status: 'unknown' | 'online' | 'offline', ping: number | null): string {
+function pingText(status: EndpointStatus, ping: number | null): string {
   if (status === 'online') return `${ping} ms`;
   if (status === 'offline') return 'TIMEOUT';
   return '-- ms';
@@ -69,96 +69,93 @@ export default function Page() {
   const cfg = OVERALL[overall];
 
   return (
-    <div className="bg-grid min-h-screen bg-black font-sans text-gray-200">
-      <div className="mx-auto max-w-3xl px-6 py-12">
-        <header className="mb-12 flex items-center justify-between rounded-xl border border-white/5 bg-black/40 p-4 backdrop-blur-sm">
+    <div className="bg-grid min-h-screen bg-black text-gray-200 font-sans">
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        <header className="flex justify-between items-center mb-12 backdrop-blur-sm bg-black/40 p-4 rounded-xl border border-white/5">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">OpenST System Status</h1>
-            <p className="mt-1 text-sm text-gray-500">站点状态</p>
+            <h1 className="text-2xl font-bold text-white tracking-tight">OpenST System Status</h1>
+            <p className="text-gray-500 text-sm mt-1">站点状态</p>
           </div>
-          <div className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${cfg.badge}`}>{cfg.badgeText}</div>
+          <div className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${cfg.badge}`}>{cfg.badgeText}</div>
         </header>
 
-        <div
-          id="main-status"
-          className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900 p-10 text-center shadow-2xl transition-all duration-500"
-        >
-          <div className="mb-4 inline-block rounded-full bg-zinc-800 p-4">
-            <div className={`h-4 w-4 rounded-full transition-all duration-700 ${cfg.dot}`} />
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-10 mb-8 text-center shadow-2xl transition-all duration-500">
+          <div className="inline-block p-4 rounded-full bg-zinc-800 mb-4">
+            <div className={`w-4 h-4 rounded-full transition-all duration-700 ${cfg.dot}`} />
           </div>
           <h2 className={`text-xl font-semibold ${cfg.textColor}`}>{cfg.text}</h2>
-          <p className="mt-2 text-sm text-gray-500">{cfg.desc}</p>
+          <p className="text-gray-500 text-sm mt-2">{cfg.desc}</p>
         </div>
 
         <div className="grid gap-4">
-          <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/60 p-5 backdrop-blur-md">
+          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={dotClass(data.portal.status)} />
               <div>
-                <div className="text-sm font-medium text-white">Portal 主站</div>
-                <div className="text-[10px] tracking-widest text-gray-500 uppercase">Vercel Edge Network</div>
+                <div className="text-white font-medium text-sm">Portal 主站</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-widest">Vercel Edge Network</div>
               </div>
             </div>
-            <div className="font-mono text-sm text-gray-400">{pingText(data.portal.status, data.portal.ping)}</div>
+            <div className="text-sm font-mono text-gray-400">{pingText(data.portal.status, data.portal.ping)}</div>
           </div>
 
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5 backdrop-blur-md">
-            <div className="mb-4 flex items-center justify-between">
+          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
                 <div className={dotClass(data.api.status)} />
                 <div>
-                  <div className="text-sm font-medium text-white">API/后端</div>
-                  <div className="text-[10px] tracking-widest text-gray-500 uppercase">Cloudflare Workers</div>
+                  <div className="text-white font-medium text-sm">API/后端</div>
+                  <div className="text-[10px] text-gray-500 uppercase tracking-widest">Cloudflare Workers</div>
                 </div>
               </div>
-              <div className="font-mono text-sm text-gray-400">{pingText(data.api.status, data.api.ping)}</div>
+              <div className="text-sm font-mono text-gray-400">{pingText(data.api.status, data.api.ping)}</div>
             </div>
             <div className="flex gap-2">
-              <span className="rounded border border-white/5 bg-black/40 px-2 py-1 font-mono text-[10px] tracking-tighter text-gray-500">
+              <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">
                 NODE: {data.api.status === 'online' && data.api.region ? data.api.region : '--'}
               </span>
-              <span className="rounded border border-white/5 bg-black/40 px-2 py-1 font-mono text-[10px] tracking-tighter text-gray-500">
+              <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">
                 UPSTREAM: {data.api.status === 'online' && data.api.upstream ? data.api.upstream : '--'}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5 backdrop-blur-md">
-          <div className="mb-4 flex items-center justify-between">
+        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800 p-5 rounded-xl">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <div className={dotClass(data.cdn.status)} />
               <div>
-                <div className="text-sm font-medium text-white">下载服务（CDN）</div>
-                <div className="text-[10px] tracking-widest text-gray-500 uppercase">cdn.linvin.net (EdgeOne)</div>
+                <div className="text-white font-medium text-sm">下载服务（CDN）</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-widest">cdn.linvin.net (EdgeOne)</div>
               </div>
             </div>
-            <div className="font-mono text-sm text-gray-400">{pingText(data.cdn.status, data.cdn.ping)}</div>
+            <div className="text-sm font-mono text-gray-400">{pingText(data.cdn.status, data.cdn.ping)}</div>
           </div>
           <div className="flex gap-2">
-            <span className="rounded border border-white/5 bg-black/40 px-2 py-1 font-mono text-[10px] tracking-tighter text-gray-500">
+            <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">
               {data.cdn.status === 'online' ? 'NODE: EO_ANYCAST' : 'NODE: ANYCAST'}
             </span>
-            <span className="rounded border border-white/5 bg-black/40 px-2 py-1 font-mono text-[10px] tracking-tighter text-gray-500">
+            <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">
               {data.cdn.status === 'online' ? 'STATUS: OPERATIONAL' : 'CACHE: FETCHING'}
             </span>
           </div>
         </div>
 
-        <footer className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-zinc-800/50 pt-8 md:flex-row">
-          <div className="font-mono text-xs text-gray-600">© 2026 OPENST • AUTO_REFRESH: 30S</div>
+        <footer className="mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-xs text-gray-600 font-mono">&copy; 2026 OPENST &bull; AUTO_REFRESH: 30S</div>
           <div className="flex gap-3">
             <button
               type="button"
-              className="rounded-lg bg-zinc-800 px-4 py-2 text-[11px] text-gray-300 transition hover:bg-zinc-700"
               onClick={copyDebug}
+              className="text-[11px] bg-zinc-800 text-gray-300 px-4 py-2 rounded-lg hover:bg-zinc-700 transition"
             >
               复制诊断信息
             </button>
             <button
               type="button"
-              className="rounded-lg bg-white px-4 py-2 text-[11px] font-bold text-black transition hover:bg-gray-200"
               onClick={refresh}
+              className="text-[11px] bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-200 transition font-bold"
             >
               手动刷新
             </button>
@@ -166,7 +163,7 @@ export default function Page() {
         </footer>
       </div>
 
-      <div className="pointer-events-none h-24 w-full bg-gradient-to-t from-black to-transparent" />
+      <div className="h-24 w-full bg-gradient-to-t from-black to-transparent pointer-events-none" />
     </div>
   );
 }

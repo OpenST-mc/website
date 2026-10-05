@@ -1,8 +1,8 @@
-/* Credits 页专属样式（自 apps/credits/credits.html 迁移，去除 [v-cloak]）。 */
 :root {
   --brand: #ffffff;
   --text-secondary: #86868b;
 }
+
 body,
 html {
   margin: 0;
@@ -98,7 +98,6 @@ a {
   letter-spacing: 2px;
 }
 
-/* 移动端专项适配 (Mobile Styles) */
 @media (max-width: 768px) {
   #credits-wrap {
     width: 92%;

@@ -46,6 +46,12 @@ function legacyPages(): Plugin {
           next();
           return;
         }
+        // Vercel 注入的分析端点（dev 无平台侧）：直接空响应，避免 Vike 误当路由。
+        if (pathname.startsWith('/_vercel/')) {
+          res.statusCode = 204;
+          res.end();
+          return;
+        }
 
         for (const [pub, phys] of Object.entries(PUBLIC_ALIASES)) {
           const base = pub.replace(/\/$/, '');
@@ -53,7 +59,12 @@ function legacyPages(): Plugin {
           const rest = pathname.slice(base.length).replace(/^\//, '');
 
           if (path.extname(pathname)) {
-            // 静态资源：重写到物理路径后交由 Vite 静态服务
+            // 旧 HTML 直接响应（Vike 会把未知 .html 当路由并 500）
+            if (path.extname(pathname) === '.html' && sendHtml(res, path.join(__dirname, phys, rest))) {
+              console.log(`[legacy] page ${pathname} -> ${phys}${rest}`);
+              return;
+            }
+            // 其余静态资源：重写到物理路径后交由 Vite 静态服务
             console.log(`[legacy] asset ${pathname} -> /${phys}${rest}`);
             req.url = '/' + phys + rest + query;
             next();

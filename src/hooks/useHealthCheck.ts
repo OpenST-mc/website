@@ -41,7 +41,7 @@ export interface HealthCheck {
   copyDebug: () => void;
 }
 
-// 系统状态拨测：主站 / API / CDN，30s 轮询。所有副作用限定在 effect。
+// 系统状态拨测：主站 / API / CDN，30s 轮询。副作用限定在 effect。
 export function useHealthCheck(): HealthCheck {
   const [data, setData] = useState<HealthData>(INITIAL);
   const [overall, setOverall] = useState<OverallStatus>('loading');
