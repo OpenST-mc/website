@@ -125,44 +125,44 @@
 
 ## M2 · 共享布局/SEO/错误边界 + 静态页 SSG 化
 
-### [ ] T2.1 共享 Layout/Head/SEO 与错误边界
+### [x] 1 共享 Layout/Head/SEO 与错误边界
 **描述**：统一 head（title/description/og/twitter/itemprop/favicon/JSON-LD）、根布局、`ErrorBoundary`、`NotFound`。
 **验收**：各页面可复用且 SEO 可覆盖。
 **验证**：构建断言 + 人工。
 **依赖**：M1 · **规模**：M · **文件**：`src/renderer/*`、`src/components/*`
 
-### [ ] T2.2 home → SSG TSX
+### [x] 2 home → SSG TSX
 **描述**：`/` 迁移 `pages/home` 与 `packages/js/portal.js`（彩蛋过渡、字体解锁、控制台提示）。
 **验收**：首屏含内容；交互/SEO 对等；移除 `data/build.js` 的 home→根 index 复制。
 **验证**：E2E + 人工；构建断言。
 **依赖**：T2.1 · **规模**：M · **文件**：`src/pages/index/+Page.tsx`、`data/build.ts`
 
-### [ ] T2.3 404 → SSG
+### [x] 3 404 → SSG
 **描述**：`sub-*` 劫持与错误页迁移；确保输出根 `404.html`。
 **验收**：命中/未命中行为对等。
 **验证**：E2E + 人工。
 **依赖**：T2.1 · **规模**：S · **文件**：`src/pages/_error/*`、`vercel.json`
 
-### [ ] T2.4 health → SSG TSX
+### [x] 4 health → SSG TSX
 **描述**：拨测/30s 轮询/复制诊断迁移；网络请求放 `useEffect`。
 **验收**：状态判定与自动刷新对等。
 **验证**：E2E + 人工。
 **依赖**：T2.1 · **规模**：M · **文件**：`src/pages/health/*`、`src/hooks/*`
 
-### [ ] T2.5 credits → SSG TSX
+### [x] 5 credits → SSG TSX
 **描述**：星空 canvas、Markdown 加载、入场遮罩迁移；canvas 逻辑放 `useEffect`。
 **验收**：动画/加载/遮罩对等。
 **验证**：E2E + 人工。
 **依赖**：T2.1 · **规模**：M · **文件**：`src/pages/credits/*`
 
-### [ ] T2.6 静态页对等与构建断言
+### [x] 6 静态页对等与构建断言
 **描述**：对上述页面逐项核对 SEO/行为，扩充构建断言。
 **验收**：对等清单全勾；断言覆盖新路由。
 **验证**：`npm run check:build` + E2E。
 **依赖**：T2.2–T2.5 · **规模**：S · **文件**：`e2e/**`、`scripts/check-build.*`
 
 ### Checkpoint M2
-- [ ] 静态页首屏含内容、水合无警告、SEO 对等；构建断言通过
+- [x] 静态页首屏含内容、水合无警告、SEO 对等；构建断言通过
 
 ---
 

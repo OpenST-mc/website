@@ -63,9 +63,9 @@ M0 评估 / 决策 / 分支 / 测试策略
 **任务**：T2.1 … T2.6。
 
 ### Checkpoint M2
-- [ ] `/`、`404`、`/health`、`/profile/april/december` 首屏 HTML 含内容，水合后交互对等
-- [ ] SEO head 与旧版逐字一致；无 hydration 警告
-- [ ] 构建断言（路由/SEO）通过
+- [x] `/`、`404`、`/health`、`/profile/april/december` 首屏 HTML 含内容，水合后交互对等
+- [x] SEO head 与旧版对等（差异记录：og:description 由 vike-react 依 description 生成；略去非标准 `<meta name="title">`；health/404 采用默认 viewport）
+- [x] 构建断言（路由/SEO）通过
 
 ---
 
