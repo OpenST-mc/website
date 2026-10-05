@@ -181,17 +181,19 @@
 **依赖**：T3.1 · **规模**：M · **文件**：`src/lib/auth.ts`、`src/components/*`、删除 `apps/auth/*`
 **备注**：`sanitizeCallbackUrl` + `AuthButton` 已落地并单测；旧 `apps/auth/auth-callback.html` 仍被未迁移的 portal/upload OAuth 重定向使用，删除顺延至 T3.6/T7.2（strangler 安全）。
 
-### [ ] T3.3 admin_tools → TSX
+### [x] T3.3 admin_tools → TSX
 **描述**：打包器 UI/JSZip/`info.json` 逐行对等迁移。
 **验收**：zip 与 `info.json` 语义一致。
 **验证**：组件/单元测试 + 人工。
 **依赖**：T3.1 · **规模**：M · **文件**：`src/pages/admin_tools/*`
+**备注**：`/admin_tools` 与 `/admin_tools/admin_edit` 共享旧 `/admin_tools/:path*` rewrite，会遮蔽 Vike 路由，故与 T3.4 合并落地；`info.json`/zip 语义抽到 `src/lib/packer.ts` 并单测。
 
-### [ ] T3.4 admin_edit → TSX
+### [x] T3.4 admin_edit → TSX
 **描述**：编辑器表单、标签、预览、`update-preview/replace-litematic/update-info/delete-archive` 迁移并用新会话鉴权。
 **验收**：四端点请求形状与成功/失败分支对等。
 **验证**：受控环境抽查 + 人工。
 **依赖**：T3.1 · **规模**：L · **文件**：`src/pages/admin_tools/admin_edit/*`、`src/lib/api.ts`
+**备注**：改用 `useSession` 会话门 + 同源 `/api/admin/*` 代理（方案 B）；四端点请求体形状保持不变。
 
 ### [ ] T3.5 upload → SSG shell + 交互
 **描述**：登录门、表单、标签、预览、JSZip→`archive-upload`→`submit-issue` 迁移；改用 `useSession`。
