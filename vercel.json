@@ -65,7 +65,6 @@
     { "source": "/fonts/:path*", "destination": "/assets/fonts/:path*" },
     { "source": "/images/:path*", "destination": "/assets/images/:path*" },
     { "source": "/Traditional-Simplefild/:path*", "destination": "/assets/s2t/:path*" },
-    { "source": "/auth/:path*", "destination": "/apps/auth/:path*" },
     { "source": "/profile/april/december/credits.html", "destination": "/profile/april/december" },
     { "source": "/Extra-Function/:path*", "destination": "/apps/extra/:path*" },
     {

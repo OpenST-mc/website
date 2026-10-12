@@ -15,7 +15,6 @@ const PUBLIC_ALIASES: Record<string, string> = {
   '/fonts/': 'assets/fonts/',
   '/images/': 'assets/images/',
   '/Traditional-Simplefild/': 'assets/s2t/',
-  '/auth/': 'apps/auth/',
   '/Extra-Function/': 'apps/extra/',
 };
 
