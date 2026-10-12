@@ -223,62 +223,62 @@
 
 ## M4 · portal（切片）
 
-### [ ] T4.1 构建期数据注入
+### [x] T4.1 构建期数据注入
 **描述**：`+data.ts` 在构建期读取 `database.json` 与繁简字典；定义 `ArchiveItem` 类型与 runtime 校验；序列化传客户端。
 **验收**：SSG 首屏含稿件列表；无需首屏 `fetch`。
 **验证**：构建断言（HTML 含稿件名）+ 单测。
 **依赖**：M3 · **规模**：M · **文件**：`src/pages/archive/+data.ts`、`src/lib/{types,schema}.ts`
 
-### [ ] T4.2 壳、深链与认证
+### [x] T4.2 壳、深链与认证
 **描述**：`App` 壳；`?sub-*` 打开详情；`popstate` 还原；`document.title` 同步；`useSession`。
 **验收**：深链/前进后退/标题与旧版一致。
 **验证**：E2E + 人工。
 **依赖**：T4.1 · **规模**：M · **文件**：`src/pages/archive/+Page.tsx`、`src/components/App.tsx`
 
-### [ ] T4.3 NavBar 与 SideBar
+### [x] T4.3 NavBar 与 SideBar
 **描述**：显式 props/回调；移动抽屉、收藏开关、动态标签收窄、重置。
 **验收**：筛选/清除/收藏计数/移动端对等；无 `$parent` 类耦合。
 **验证**：组件测试 + 人工。
 **依赖**：T4.2 · **规模**：M · **文件**：`src/components/{NavBar,SideBar}.tsx`
 
-### [ ] T4.4 卡片网格、懒加载与分页
+### [x] T4.4 卡片网格、懒加载与分页
 **描述**：`ArchiveCard`、`useLazyImage`、分页/页码输入。
 **验收**：懒加载进/出视口与分页对等。
 **验证**：组件测试 + 网络面板。
 **依赖**：T4.3 · **规模**：M · **文件**：`src/components/ArchiveCard.tsx`、`src/hooks/useLazyImage.ts`
 
-### [ ] T4.5 DetailModal
+### [x] T4.5 DetailModal
 **描述**：Markdown（marked+DOMPurify，`dangerouslySetInnerHTML`）、下载链接、`/api/stats` 计数、3D 预览链接、代理开关、复制直链。
 **验收**：渲染/计数/链接/复制对等。
 **验证**：组件测试 + E2E。
 **依赖**：T4.4 · **规模**：M · **文件**：`src/components/DetailModal.tsx`
 
-### [ ] T4.6 图片放大与标题
+### [x] T4.6 图片放大与标题
 **描述**：根级图片放大、body overflow 锁、`closeZoom`。
 **验收**：行为对等。
 **验证**：E2E + 人工。
 **依赖**：T4.5 · **规模**：S · **文件**：`src/components/ImageZoom.tsx`
 
-### [ ] T4.7 逻辑复用与组件测试
+### [x] T4.7 逻辑复用与组件测试
 **描述**：确认筛选/动态标签仍走 `src/lib/logic.ts`；补组件测试（SideBar/ArchiveCard/分页）。
 **验收**：`logic` 单测不变；组件测试覆盖主交互。
 **验证**：`npm run test`。
 **依赖**：T4.4 · **规模**：M · **文件**：`test/**`
 
-### [ ] T4.8 性能与 SSG/水合核对
+### [x] T4.8 性能与 SSG/水合核对
 **描述**：检查首屏 HTML、水合耗时、bundle 体积、图片懒加载、无 hydration mismatch。
 **验收**：无明显性能回归；无警告。
 **验证**：Lighthouse/内存 + 控制台。
 **依赖**：T4.6 · **规模**：M · **文件**：`src/pages/archive/*`
 
-### [ ] T4.9 portal 切路由与验收
+### [x] T4.9 portal 切路由与验收
 **描述**：`/archive` 路由替换旧 HTML；跑对等与全门。
 **验收**：公开 URL/SEO 不变；功能对等。
 **验证**：全门 + E2E。
 **依赖**：T4.8 · **规模**：S · **文件**：`src/pages/archive/*`
 
 ### Checkpoint M4
-- [ ] SSG 首屏含列表；筛选/分页/收藏/深链/下载全对等；门绿
+- [x] SSG 首屏含列表；筛选/分页/收藏/深链/下载全对等；门绿
 
 ---
 
