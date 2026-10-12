@@ -1,26 +1,26 @@
 /* 档案页排版对齐旧站 css/style.css（旧站该文件仅由 /archive 加载）。
-   包含：字号提升、正文排版、弹层 Markdown、滚动条、栅格渲染提示；
+   所有规则限定在 .archive-page 根节点内，避免客户端路由后残留样式泄漏到其它页面；
    [v-cloak]/Vue 过渡等已废弃规则不迁。 */
 
-.text-\[10px\] {
-  font-size: 0.85rem !important;
-}
-
-.text-xs {
-  font-size: 0.9rem !important;
-}
-
-.text-sm {
-  font-size: 1.1rem !important;
-}
-
-body {
+.archive-page {
   background-color: #1f2223;
   -webkit-font-smoothing: antialiased;
   letter-spacing: 0.01em;
 }
 
-#main-content {
+.archive-page .text-\[10px\] {
+  font-size: 0.85rem !important;
+}
+
+.archive-page .text-xs {
+  font-size: 0.9rem !important;
+}
+
+.archive-page .text-sm {
+  font-size: 1.1rem !important;
+}
+
+.archive-page #main-content {
   position: relative;
   padding-bottom: 0;
 }
@@ -28,7 +28,7 @@ body {
 /* iOS Safari 动态底栏补偿（仅触摸设备） */
 @media (pointer: coarse) {
   @supports (-webkit-touch-callout: none) {
-    #main-content::after {
+    .archive-page #main-content::after {
       content: '';
       display: block;
       height: calc(env(safe-area-inset-bottom, 20px) + 120px);
@@ -38,34 +38,34 @@ body {
   }
 }
 
-.grid > a,
-.grid > div {
+.archive-page .grid > a,
+.archive-page .grid > div {
   content-visibility: auto;
   contain-intrinsic-size: 1px 320px;
 }
 
-::-webkit-scrollbar {
+.archive-page ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
+.archive-page ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.02);
   border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb {
+.archive-page ::-webkit-scrollbar-thumb {
   background: rgba(64, 181, 173, 0.2);
   border-radius: 10px;
   transition: background 0.3s ease;
 }
 
-::-webkit-scrollbar-thumb:hover {
+.archive-page ::-webkit-scrollbar-thumb:hover {
   background: #40b5ad;
   box-shadow: 0 0 8px rgba(64, 181, 173, 0.4);
 }
 
-.markdown-body {
+.archive-page .markdown-body {
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
@@ -74,7 +74,7 @@ body {
   scroll-behavior: smooth;
 }
 
-.markdown-body pre {
+.archive-page .markdown-body pre {
   overflow-x: auto;
   max-width: 100%;
   background: rgba(255, 255, 255, 0.05);
@@ -82,7 +82,7 @@ body {
   border-radius: 0.75rem;
 }
 
-.markdown-body h1 {
+.archive-page .markdown-body h1 {
   font-size: 1.5rem;
   color: #fff;
   border-bottom: 2px solid #40b5ad;
@@ -90,33 +90,33 @@ body {
   margin: 1.5rem 0 1rem;
 }
 
-.markdown-body h2 {
+.archive-page .markdown-body h2 {
   font-size: 1.25rem;
   border-left: 4px solid #40b5ad;
   padding-left: 0.75rem;
   margin: 1.2rem 0 0.8rem;
 }
 
-.markdown-body h3 {
+.archive-page .markdown-body h3 {
   font-size: 1.1rem;
   color: #40b5ad;
   margin: 1rem 0 0.5rem;
   font-weight: bold;
 }
 
-.markdown-body ul {
+.archive-page .markdown-body ul {
   list-style-type: disc;
   padding-left: 1.5rem;
   margin: 1rem 0;
 }
 
-.markdown-body ol {
+.archive-page .markdown-body ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
   margin: 1rem 0;
 }
 
-.markdown-body input[type='checkbox'] {
+.archive-page .markdown-body input[type='checkbox'] {
   accent-color: #40b5ad;
   width: 1rem;
   height: 1rem;
@@ -124,17 +124,17 @@ body {
   margin-right: 4px;
 }
 
-.markdown-body strong {
+.archive-page .markdown-body strong {
   color: #fff;
   font-weight: bold;
 }
 
-.markdown-body del {
+.archive-page .markdown-body del {
   color: #555;
   text-decoration: line-through;
 }
 
-.markdown-body blockquote {
+.archive-page .markdown-body blockquote {
   border-left: 4px solid #2a6a65;
   padding: 8px 16px;
   color: #888;
@@ -142,17 +142,17 @@ body {
   border-radius: 0 8px 8px 0;
 }
 
-.markdown-body a {
+.archive-page .markdown-body a {
   color: #40b5ad;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-.markdown-body a:hover {
+.archive-page .markdown-body a:hover {
   filter: brightness(1.2);
 }
 
-.markdown-body code {
+.archive-page .markdown-body code {
   background: rgba(64, 181, 173, 0.15);
   color: #40b5ad;
   padding: 0.2rem 0.4rem;
@@ -160,16 +160,16 @@ body {
   font-family: monospace;
 }
 
-.markdown-body img {
+.archive-page .markdown-body img {
   border-radius: 0.5rem;
   cursor: zoom-in;
   transition: transform 0.2s;
 }
 
-.markdown-body img:active {
+.archive-page .markdown-body img:active {
   transform: scale(0.98);
 }
 
-img:not(nav img):not(button img) {
+.archive-page img:not(nav img):not(button img) {
   cursor: zoom-in;
 }

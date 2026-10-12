@@ -187,7 +187,7 @@ export default function Page() {
   };
 
   return (
-    <div className="bg-dark text-white overflow-hidden font-sans flex flex-col h-screen h-[100dvh]">
+    <div className="bg-dark text-white overflow-hidden font-sans flex flex-col h-screen h-[100dvh] archive-page">
       <div style={{ display: 'none' }} aria-hidden="true">
         <h1>OpenST 档案馆 - Minecraft 存储科技投影下载</h1>
         <p>汇集 1.16/1.21+ 版本最前沿的存储技术，包括全物品仓库、编码单片、自动打包机等。</p>
