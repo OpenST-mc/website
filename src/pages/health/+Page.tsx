@@ -74,7 +74,7 @@ export default function Page() {
         <header className="flex justify-between items-center mb-12 backdrop-blur-sm bg-black/40 p-4 rounded-xl border border-white/5">
           <div>
             <h1 className="text-2xl font-bold text-white tracking-tight">OpenST System Status</h1>
-            <p className="text-gray-500 text-sm mt-1">站点状态</p>
+            <p className="text-gray-400 text-sm mt-1">站点状态</p>
           </div>
           <div className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${cfg.badge}`}>{cfg.badgeText}</div>
         </header>
@@ -84,7 +84,7 @@ export default function Page() {
             <div className={`w-4 h-4 rounded-full transition-all duration-700 ${cfg.dot}`} />
           </div>
           <h2 className={`text-xl font-semibold ${cfg.textColor}`}>{cfg.text}</h2>
-          <p className="text-gray-500 text-sm mt-2">{cfg.desc}</p>
+          <p className="text-gray-400 text-sm mt-2">{cfg.desc}</p>
         </div>
 
         <div className="grid gap-4">
@@ -93,7 +93,7 @@ export default function Page() {
               <div className={dotClass(data.portal.status)} />
               <div>
                 <div className="text-white font-medium text-sm">Portal 主站</div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-widest">Vercel Edge Network</div>
+                <div className="text-[10px] text-gray-400 uppercase tracking-widest">Vercel Edge Network</div>
               </div>
             </div>
             <div className="text-sm font-mono text-gray-400">{pingText(data.portal.status, data.portal.ping)}</div>
@@ -105,16 +105,16 @@ export default function Page() {
                 <div className={dotClass(data.api.status)} />
                 <div>
                   <div className="text-white font-medium text-sm">API/后端</div>
-                  <div className="text-[10px] text-gray-500 uppercase tracking-widest">Cloudflare Workers</div>
+                  <div className="text-[10px] text-gray-400 uppercase tracking-widest">Cloudflare Workers</div>
                 </div>
               </div>
               <div className="text-sm font-mono text-gray-400">{pingText(data.api.status, data.api.ping)}</div>
             </div>
             <div className="flex gap-2">
-              <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">
+              <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-400 tracking-tighter">
                 NODE: {data.api.status === 'online' && data.api.region ? data.api.region : '--'}
               </span>
-              <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">
+              <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-400 tracking-tighter">
                 UPSTREAM: {data.api.status === 'online' && data.api.upstream ? data.api.upstream : '--'}
               </span>
             </div>
@@ -127,23 +127,23 @@ export default function Page() {
               <div className={dotClass(data.cdn.status)} />
               <div>
                 <div className="text-white font-medium text-sm">下载服务（CDN）</div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-widest">cdn.linvin.net (EdgeOne)</div>
+                <div className="text-[10px] text-gray-400 uppercase tracking-widest">cdn.linvin.net (EdgeOne)</div>
               </div>
             </div>
             <div className="text-sm font-mono text-gray-400">{pingText(data.cdn.status, data.cdn.ping)}</div>
           </div>
           <div className="flex gap-2">
-            <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">
+            <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-400 tracking-tighter">
               {data.cdn.status === 'online' ? 'NODE: EO_ANYCAST' : 'NODE: ANYCAST'}
             </span>
-            <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-500 tracking-tighter">
+            <span className="text-[10px] font-mono bg-black/40 px-2 py-1 rounded border border-white/5 text-gray-400 tracking-tighter">
               {data.cdn.status === 'online' ? 'STATUS: OPERATIONAL' : 'CACHE: FETCHING'}
             </span>
           </div>
         </div>
 
         <footer className="mt-12 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-xs text-gray-600 font-mono">&copy; 2026 OPENST &bull; AUTO_REFRESH: 30S</div>
+          <div className="text-xs text-gray-400 font-mono">&copy; 2026 OPENST &bull; AUTO_REFRESH: 30S</div>
           <div className="flex gap-3">
             <button
               type="button"

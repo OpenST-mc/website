@@ -3,7 +3,11 @@ import JSZip from 'jszip';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { DEFAULT_DESC, buildInfoJson, flattenTagConfig, sanitizeZipName } from '../../lib/packer';
+import { notify } from '../../lib/notify';
+import { IMAGE_EXTENSIONS, validateUploadFile } from '../../lib/upload';
 import './admin_tools.css';
+
+const PACKER_ARCHIVE_EXTENSIONS = ['.litematic'];
 
 // 管理员打包工具：生成投稿压缩包（zip 与 info.json 语义对齐旧实现）。
 export default function Page() {
@@ -30,6 +34,34 @@ export default function Page() {
 
   const toggleTag = (tag: string) =>
     setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+
+  const handlePreviewFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    if (file) {
+      const invalid = validateUploadFile(file, { extensions: IMAGE_EXTENSIONS, label: '预览图' });
+      if (invalid) {
+        notify('error', invalid);
+        e.target.value = '';
+        setPreviewFile(null);
+        return;
+      }
+    }
+    setPreviewFile(file);
+  };
+
+  const handleArchiveFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    if (file) {
+      const invalid = validateUploadFile(file, { extensions: PACKER_ARCHIVE_EXTENSIONS, label: '存档文件' });
+      if (invalid) {
+        notify('error', invalid);
+        e.target.value = '';
+        setLitematicFile(null);
+        return;
+      }
+    }
+    setLitematicFile(file);
+  };
 
   const resetEverything = () => {
     setName('');
@@ -71,7 +103,7 @@ export default function Page() {
         setIsProcessing(false);
       }, 500);
     } catch (e) {
-      alert('Error: ' + (e as Error).message);
+      notify('error', '打包失败: ' + (e as Error).message);
       setIsProcessing(false);
     }
   };
@@ -85,7 +117,7 @@ export default function Page() {
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
             <h1 className="text-2xl font-black text-[#40B5AD] tracking-tighter italic">ADMIN PACKER PRO</h1>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Responsive Factory Mode</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Responsive Factory Mode</p>
           </div>
           {isProcessing ? (
             <div className="flex items-center gap-2 text-[#40B5AD] bg-[#40B5AD]/10 px-4 py-2 rounded-full border border-[#40B5AD]/20">
@@ -98,31 +130,31 @@ export default function Page() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
           <div className="space-y-6 order-1">
             <div className="grid grid-cols-2 gap-4">
-              <label className="border-2 border-dashed border-slate-700 p-4 rounded-2xl text-center cursor-pointer hover:border-[#40B5AD]/50 hover:bg-[#40B5AD]/5 transition-all">
+              <label className="border-2 border-dashed border-slate-700 p-4 rounded-2xl text-center cursor-pointer hover:border-[#40B5AD]/50 hover:bg-[#40B5AD]/5 transition-all peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[#40B5AD]">
                 <span className="block text-2xl mb-1">🖼️</span>
-                <p className={`text-[10px] font-bold uppercase truncate px-2 ${previewFile ? 'text-[#40B5AD]' : 'text-slate-500'}`}>
+                <p className={`text-[10px] font-bold uppercase truncate px-2 ${previewFile ? 'text-[#40B5AD]' : 'text-slate-400'}`}>
                   {previewFile ? previewFile.name : 'Image'}
                 </p>
                 <input
                   type="file"
                   ref={previewInputRef}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setPreviewFile(e.target.files?.[0] ?? null)}
-                  className="hidden"
+                  onChange={handlePreviewFile}
+                  className="sr-only peer"
                   accept="image/*"
                 />
               </label>
-              <label className="border-2 border-dashed border-slate-700 p-4 rounded-2xl text-center cursor-pointer hover:border-[#40B5AD]/50 hover:bg-[#40B5AD]/5 transition-all">
+              <label className="border-2 border-dashed border-slate-700 p-4 rounded-2xl text-center cursor-pointer hover:border-[#40B5AD]/50 hover:bg-[#40B5AD]/5 transition-all peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[#40B5AD]">
                 <span className="block text-2xl mb-1">📦</span>
                 <p
-                  className={`text-[10px] font-bold uppercase truncate px-2 ${litematicFile ? 'text-[#40B5AD]' : 'text-slate-500'}`}
+                  className={`text-[10px] font-bold uppercase truncate px-2 ${litematicFile ? 'text-[#40B5AD]' : 'text-slate-400'}`}
                 >
                   {litematicFile ? litematicFile.name : 'Schem'}
                 </p>
                 <input
                   type="file"
                   ref={litematicInputRef}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setLitematicFile(e.target.files?.[0] ?? null)}
-                  className="hidden"
+                  onChange={handleArchiveFile}
+                  className="sr-only peer"
                   accept=".litematic"
                 />
               </label>
@@ -155,7 +187,7 @@ export default function Page() {
             <div className="space-y-4 bg-black/20 p-4 rounded-2xl border border-white/5">
               {Object.entries(flatConfig).map(([cat, catTags]) => (
                 <div key={cat} className="space-y-2">
-                  <p className="text-[9px] text-[#40B5AD]/50 font-bold uppercase tracking-widest">{cat}</p>
+                  <p className="text-[9px] text-[#40B5AD]/80 font-bold uppercase tracking-widest">{cat}</p>
                   <div className="flex flex-wrap gap-2">
                     {catTags.map((tag) => (
                       <button
@@ -165,7 +197,7 @@ export default function Page() {
                         className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all uppercase tracking-tight ${
                           tags.includes(tag)
                             ? 'bg-[#40B5AD] text-slate-900 border-[#40B5AD]'
-                            : 'bg-white/5 text-slate-500 border-white/10'
+                            : 'bg-white/5 text-slate-400 border-white/10'
                         }`}
                       >
                         {tag}
@@ -195,7 +227,7 @@ export default function Page() {
               {desc ? (
                 <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
               ) : (
-                <div className="text-slate-600 text-xs italic">No description to preview...</div>
+                <div className="text-slate-400 text-xs italic">No description to preview...</div>
               )}
             </div>
           </div>

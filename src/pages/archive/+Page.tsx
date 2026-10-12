@@ -3,6 +3,7 @@ import { useData } from 'vike-react/useData';
 import { CATEGORIES } from '../../lib/config';
 import { calculateDynamicTags, getFilteredList, getSafePath, type SelectedTags } from '../../lib/logic';
 import type { ArchiveData, ArchiveItem } from '../../lib/types';
+import { parseFavoriteIds, parseSubIdFromSearch, toJsonLd } from '../../lib/schema';
 import { useSession } from '../../hooks/useSession';
 import { signIn, signOut } from '../../lib/auth';
 import { NavBar } from '../../components/NavBar';
@@ -10,13 +11,15 @@ import { SideBar } from '../../components/SideBar';
 import { ArchiveCard } from '../../components/ArchiveCard';
 import { DetailModal } from '../../components/DetailModal';
 import { ImageZoom } from '../../components/ImageZoom';
+import { StatusPanel } from '../../components/StatusPanel';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
 
 const PAGE_SIZE = 7;
 const FAVS_KEY = 'openst_favs';
 
 function loadFavorites(): string[] {
   try {
-    return JSON.parse(localStorage.getItem(FAVS_KEY) || '[]') as string[];
+    return parseFavoriteIds(JSON.parse(localStorage.getItem(FAVS_KEY) || '[]'));
   } catch {
     return [];
   }
@@ -80,12 +83,12 @@ export default function Page() {
     setFavorites(loadFavorites());
   }, []);
 
-  // 深链 `?sub-*` 与浏览器前进/后退。
+  // 深链 `?sub-*` 与浏览器前进/后退（仅接受规范 sub-id）。
   useEffect(() => {
     const applyFromUrl = () => {
-      const qs = window.location.search.replace('?', '');
-      if (qs.startsWith('sub-')) {
-        const target = items.find((item) => item.sub_id === qs) ?? null;
+      const subId = parseSubIdFromSearch(window.location.search);
+      if (subId) {
+        const target = items.find((item) => item.sub_id === subId) ?? null;
         setDetailItem(target);
         document.title = target?.name ? `${target.name} - OpenST 档案馆` : 'OpenST Archive';
       } else {
@@ -227,7 +230,7 @@ export default function Page() {
                 </div>
                 <div className="text-center lg:text-left xl:text-center">
                   <h3 className="text-lg font-bold text-white tracking-tight">贡献你的机器</h3>
-                  <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                  <p className="text-xs text-gray-400 mt-2 leading-relaxed">
                     欢迎分享你的作品
                     <br />
                     点击前往投递系统
@@ -254,7 +257,7 @@ export default function Page() {
               <div className="flex items-center gap-4">
                 <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/10" />
                 <div className="flex flex-col items-center gap-1">
-                  <span className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">Discovery</span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em]">Discovery</span>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-2xl font-black text-white leading-none tracking-tighter">{fullFilteredList.length}</span>
                     <span className="text-[10px] text-brand font-bold uppercase tracking-wider">Archives Found</span>
@@ -281,6 +284,7 @@ export default function Page() {
                         key={currentPage}
                         type="number"
                         defaultValue={currentPage}
+                        aria-label="跳转页码"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') setPage((e.target as HTMLInputElement).value);
                         }}
@@ -288,7 +292,7 @@ export default function Page() {
                         className="w-8 bg-transparent text-center text-lg font-black text-brand outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                       <span className="text-white/10 font-light text-xl">/</span>
-                      <span className="text-gray-500 text-sm font-bold tracking-tighter">{totalPages}</span>
+                      <span className="text-gray-400 text-sm font-bold tracking-tighter">{totalPages}</span>
                     </div>
 
                     <button
@@ -301,35 +305,48 @@ export default function Page() {
                       ›
                     </button>
                   </div>
-                  <span className="text-[9px] text-gray-700 font-bold uppercase tracking-[0.4em] ml-1">Navigate System</span>
+                  <span className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.4em] ml-1">Navigate System</span>
                 </div>
               ) : null}
             </div>
+          ) : items.length === 0 ? (
+            <StatusPanel
+              variant="error"
+              title="稿件数据暂不可用"
+              description="数据库为空或加载失败，请稍后重试"
+              onRetry={() => window.location.reload()}
+            />
           ) : (
-            <div className="py-20 text-center text-gray-500 italic text-sm">没有找到符合条件的机器...</div>
+            <StatusPanel variant="empty" title="没有找到符合条件的机器..." description="尝试清除筛选或更换搜索关键词" />
           )}
         </main>
       </div>
 
       {detailItem ? (
-        <DetailModal
-          item={{ ...detailItem, preview: getSafePath(detailItem.preview) }}
-          isAdmin={isAdmin}
-          useProxy={useProxy}
-          onToggleProxy={setUseProxy}
-          onClose={closeDetail}
-          onEdit={() => openEdit(detailItem)}
-          on3DPreview={() => open3DPreview(detailItem)}
-          onImageZoom={handleImageZoom}
-        />
+        <ErrorBoundary>
+          <DetailModal
+            item={{ ...detailItem, preview: getSafePath(detailItem.preview) }}
+            isAdmin={isAdmin}
+            useProxy={useProxy}
+            onToggleProxy={setUseProxy}
+            onClose={closeDetail}
+            onEdit={() => openEdit(detailItem)}
+            on3DPreview={() => open3DPreview(detailItem)}
+            onImageZoom={handleImageZoom}
+          />
+        </ErrorBoundary>
       ) : null}
 
-      {zoomImage ? <ImageZoom url={zoomImage.url} name={zoomImage.name} onClose={closeZoom} /> : null}
+      {zoomImage ? (
+        <ErrorBoundary>
+          <ImageZoom url={zoomImage.url} name={zoomImage.name} onClose={closeZoom} />
+        </ErrorBoundary>
+      ) : null}
 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: toJsonLd({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
             name: 'OpenST Archive',

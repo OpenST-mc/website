@@ -284,32 +284,36 @@
 
 ## M5 · extra 工具 TS 化 + 静态资源收口
 
-### [ ] T5.1 extra 决策
+### [x] T5.1 extra 决策
 **描述**：书面确认命令式核心保持；仅 TSX 外壳承接 UI。
 **验收**：决策记录；核心不移入 React 状态流。
 **验证**：评审。
 **依赖**：M4 · **规模**：XS · **文件**：本文件
+**备注**：ADR-006 已补「M5 实现定稿」段：converter 纯逻辑迁 `src/lib/litematic/*`（pako 改 import）；preview 命令式模块迁 `src/pages/litematic-preview/*.ts`，仅外壳 TSX；vendor 全局以 npm 类型 + `declare global` 类型化；resource 静态保留。
 
-### [ ] T5.2 litematic-converter TS 化
+### [x] T5.2 litematic-converter TS 化
 **描述**：`index.js` → TS 模块；`+Page.tsx` 外壳挂载；pako 由 import。
 **验收**：转换行为对等。
 **验证**：E2E + 人工。
 **依赖**：T5.1 · **规模**：M · **文件**：`src/pages/litematic-converter/*`、`src/lib/litematic/*`
+**备注**：`nbt.ts`（读写）+ `convert.ts`（版本转换/Count/Sign/红石线遍历）+ `+Page.tsx`（React 表单承接读文件与下载）落地；18 条单测覆盖读写往返/转换分支/版本映射/gzip；E2E 用真实 gzip NBT 上传 → 下载并解析回验 3953/7；旧 `apps/extra/litematic-converter` 已删除。
 
-### [ ] T5.3 litematic-preview TSX 外壳
+### [x] T5.3 litematic-preview TSX 外壳
 **描述**：`+Page.tsx` 外壳 + 原命令式模块（deepslate/gl-matrix/WebGL）保持；仅类型化边界。
 **验收**：预览/设置/触控行为对等，无渲染回归。
 **验证**：E2E + 人工。
 **依赖**：T5.1 · **规模**：L · **文件**：`src/pages/litematic-preview/*`
+**备注**：`viewer/settings/main/ui-init/litematic-utils/deepslate-helpers/script-loader/loading` 全部迁 TS 命令式模块；`+Page.tsx` 渲染静态 JSX，`useEffect` 顺序加载 vendor 与 resource 后初始化（引擎单例，不再挂 `window`）；8 条单测覆盖 NBT→区域/位解码/材质统计/Structure 构建；E2E 用真实 litematic 解码出材质清单且 WebGL 引擎启动；旧 index.html 与 `src/*.js` 已删除，`resource/` 原样保留。
 
-### [ ] T5.4 静态资源收口
+### [x] T5.4 静态资源收口
 **描述**：确认 `content/`、`vendor/`、`assets/`、`webfonts/`、extra 资源进入输出且缓存头正确。
 **验收**：公开 URL 可达；`immutable` 头保留。
 **验证**：构建后 `Test-Path` + 响应头检查。
 **依赖**：T1.4、T5.2、T5.3 · **规模**：M · **文件**：`scripts/build-static.*`、`vercel.json`
+**备注**：check-build 扩至 9 路由 + 13 项静态资产（含 deepslate/gl-matrix/resource/assets.js/opaque.js/atlas.png）+ vercel immutable 缓存头断言；`vite preview` 新增镜像 `vercel.json` rewrites 的中间件（静态文件优先），产物 E2E 可直连 `/Extra-Function/**` 资源；`check:paths` 仍绿。
 
 ### Checkpoint M5
-- [ ] extra 对等；静态资产在输出模型下可达
+- [x] extra 对等；静态资产在输出模型下可达（E2E：转换下载往返 + 预览解码/渲染；`check:build` 9 路由/13 资产/缓存头；全量门绿）
 
 ---
 
@@ -317,44 +321,50 @@
 
 > 逐条落实 `08-robustness-checklist.md`。
 
-### [ ] T6.1 Runtime schema 校验
+### [x] T6.1 Runtime schema 校验
 **描述**：对 `database.json`、会话、Worker/Auth 响应、URL 参数做校验；失败走降级/错误边界。
 **验收**：畸形数据不致崩溃；类型收窄。
 **验证**：单测（注入坏数据）。
 **依赖**：M5 · **规模**：M · **文件**：`src/lib/schema.ts`、`src/lib/api.ts`
+**备注**：`schema.ts` 增加 `parseSession/parseWorkerUpload/parseDownloadStats/parseHealthExtra/parseFavoriteIds/isSubId/parseSubIdFromSearch/sanitizeQueryParam`；`types.ts` 集中 `Session/SessionUser/WorkerResponse/WorkerUploadResponse/DownloadStats`，`api.ts` 改判别联合、NavBar/ArchiveCard 不再重复声明。未引入 zod/valibot：校验面小且全部为降级语义，纯函数 + 14 断言（含畸形 fixture）成本更低、零运行期依赖。
 
-### [ ] T6.2 错误边界与网络封装
+### [x] T6.2 错误边界与网络封装
 **描述**：统一 fetch 封装（超时/中止/错误归一）、页面级错误边界与降级 UI。
 **验收**：网络失败有可见反馈；无未捕获异常。
 **验证**：单测 + 手工断网。
 **依赖**：T6.1 · **规模**：M · **文件**：`src/lib/http.ts`、`src/components/ErrorBoundary.tsx`
+**备注**：`http.ts`（`HttpError` code=timeout/aborted/network/invalid-json；AbortController 超时；GET/HEAD 有限重试 + ×2 退避，写操作绝不重试；`fetchJson/readJsonSafe`）接入 auth/api/stats/health/upload/404/admin_edit；`+Wrapper` 页面级边界 + archive 详情/放大子树级 `ErrorBoundary`；`StatusPanel` 统一空/加载/失败态（含重试）；`notify + Toaster`（useSyncExternalStore，SSG 空快照）替换全部 `alert`；会话请求竞态序号保护、health 轮询 in-flight 防重入、stats AbortController 取消。
 
-### [ ] T6.3 SSR/水合安全审查
+### [x] T6.3 SSR/水合安全审查
 **描述**：消除渲染期对 `window/document/localStorage` 的访问；时间/随机值导致的水合差异修复。
 **验收**：构建期不触浏览器全局；无 hydration mismatch。
 **验证**：构建 + 控制台 + 单测。
 **依赖**：M4 · **规模**：M · **文件**：`src/**`
+**备注**：新增 `test/ssr-safety.test.ts`（`@vitest-environment node`，无浏览器全局下 renderToString 全部 8 个页面 + 9 个组件，兼作渲染期全局访问的机器门）；新增 `e2e/hydration.spec.ts`（5 路由断言无 mismatch / pageerror）；JSON-LD 统一 `toJsonLd` 转义 `<`；grep 审查确认 `Date.now/Math.random` 仅存在于 effect/事件/服务端。
 
-### [ ] T6.4 安全审查
+### [x] T6.4 安全审查
 **描述**：XSS（仅 sanitize 后注入）、URL/重定向白名单、上传类型/大小校验、OAuth state、CSP 兼容。
 **验收**：无危险注入；上传有约束。
 **验证**：安全清单走查 + E2E 负例。
 **依赖**：T6.2 · **规模**：M · **文件**：`src/lib/*`、`src/pages/upload/*`
+**备注**：新增 `src/lib/upload.ts`（类型 + ≤50MB 前置校验）接入 upload / admin 打包 / admin_edit；`sub-*` 深链与 `folder` 参数格式校验、投稿 Issue 外链 `sanitizeGithubUrl` 白名单；修复 litematic 材质名 `innerHTML` DOM XSS（textContent 化，`test/security.test.ts` 负例）；`npm audit` 由 11 项（7 high）清零：补丁升级 vite/dompurify/vue，sharp→0.35.5、esbuild→0.28.2 精确钉版并全量构建验证。CSP 收紧留待 M7。
 
-### [ ] T6.5 可访问性与键盘
+### [x] T6.5 可访问性与键盘
 **描述**：图片 alt、按钮语义、焦点管理（弹层/抽屉）、键盘可达。
 **验收**：关键交互键盘可用；无严重 axe 问题。
 **验证**：axe/Lighthouse + 人工。
 **依赖**：M4 · **规模**：M · **文件**：`src/components/*`
+**备注**：`useDialog`（打开聚焦、Esc 关闭、Tab 焦点陷阱、关闭恢复焦点，4 单测）用于 DetailModal/ImageZoom/SideBar 抽屉；卡片缩略图与标题改真实 `<button>`（键盘可达）；文件选择 `sr-only peer` + `peer-focus-visible` 可见焦点；暗底小字号文本整体提升至 gray-400/slate-400、white/60-70；三入口 CSS 增加 `:focus-visible` 与 `prefers-reduced-motion`；新增 `@axe-core/playwright@4.13.0` 与 `e2e/a11y.spec.ts`：4 路由 WCAG2 A/AA serious/critical 零违规 + 弹层/抽屉键盘用例。
 
-### [ ] T6.6 性能收口
+### [x] T6.6 性能收口
 **描述**：bundle 拆分/按路由、图片与字体优化、避免重复依赖。
 **验收**：关键路由体积/首屏达标。
 **验证**：构建报告 + Lighthouse。
 **依赖**：M4 · **规模**：M · **文件**：`vite.config.ts`、`src/**`
+**备注**：构建报告确认按路由产出独立 entry（archive 30.2KB / index 12.3KB / health 10.4KB / upload 14.1KB / admin_edit 15.5KB，共享 React chunk 复用）；卡片图 `loading="lazy"` + `onError` 回退（移除矛盾的 `fetchPriority=high`）；`font-display: swap` 沿用；分页维持每页 7 条；新增 `@axe-core/playwright` 为 devDependency 且精确钉版。
 
 ### Checkpoint M6
-- [ ] 清单全部落实；无渲染期浏览器全局；上传/重定向有校验
+- [x] 清单全部落实；无渲染期浏览器全局；上传/重定向有校验（`08-robustness-checklist.md` 43/43 勾选；`test/ssr-safety.test.ts` node 渲染全页通过；`upload.test`/`auth.test`/`security.test` 负例；`npx playwright test` 25 例含 axe 零严重项与 hydration 检查；`npm audit` 0 漏洞）
 
 ---
 

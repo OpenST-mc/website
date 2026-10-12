@@ -1,6 +1,10 @@
-import { useEffect, useMemo, useState, type MouseEvent } from 'react';
+import { useEffect, useId, useMemo, useState, type MouseEvent } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import { fetchJson, HttpError } from '../lib/http';
+import { parseDownloadStats } from '../lib/schema';
+import { notify } from '../lib/notify';
+import { useDialog } from '../hooks/useDialog';
 import type { ArchiveItem } from '../lib/types';
 
 interface DetailModalProps {
@@ -25,9 +29,16 @@ export function DetailModal({
   onImageZoom,
 }: DetailModalProps) {
   const [downloadCount, setDownloadCount] = useState<number | null>(null);
+  const [previewFailed, setPreviewFailed] = useState(false);
+  const titleId = useId();
+  const dialogRef = useDialog<HTMLDivElement>(true, onClose);
+
+  useEffect(() => {
+    setPreviewFailed(false);
+  }, [item.preview]);
 
   const renderedDescription = useMemo(() => {
-    if (!item.description) return '<p class="italic opacity-50 text-gray-600">作者没留下任何简介，一定是大佬吧！</p>';
+    if (!item.description) return '<p class="italic opacity-50 text-gray-400">作者没留下任何简介，一定是大佬吧！</p>';
     try {
       return DOMPurify.sanitize(String(marked.parse(item.description, { breaks: true, gfm: true })));
     } catch {
@@ -41,18 +52,22 @@ export function DetailModal({
   useEffect(() => {
     setDownloadCount(null);
     if (!id) return;
-    let cancelled = false;
-    fetch(`/api/stats?id=${encodeURIComponent(id)}`)
-      .then((res) => res.json())
-      .then((data: { count?: number }) => {
-        if (!cancelled && data && typeof data.count === 'number') setDownloadCount(data.count);
+    const controller = new AbortController();
+    fetchJson<unknown>(`/api/stats?id=${encodeURIComponent(id)}`, {
+      signal: controller.signal,
+      timeoutMs: 8000,
+      retries: 1,
+    })
+      .then(({ data }) => {
+        const count = parseDownloadStats(data);
+        if (count !== null) setDownloadCount(count);
       })
-      .catch(() => {
-        /* 统计失败静默处理，不影响下载 */
+      .catch((error: unknown) => {
+        // 统计失败不影响下载：取消静默，其余仅告警。
+        if (error instanceof HttpError && error.code === 'aborted') return;
+        console.warn('[stats] 下载计数获取失败', error);
       });
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [id]);
 
   const handleMdClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -62,14 +77,24 @@ export function DetailModal({
 
   const copyPermalink = () => {
     if (!item.sub_id) return;
-    void navigator.clipboard.writeText(`https://openstmc.com/api/share?${item.sub_id}`);
+    navigator.clipboard
+      .writeText(`https://openstmc.com/api/share?${item.sub_id}`)
+      .then(() => notify('success', '直链已复制到剪贴板'))
+      .catch(() => notify('error', '复制失败，请检查浏览器剪贴板权限'));
   };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 detail-modal-container">
       <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={onClose} aria-hidden="true" />
 
-      <div className="bg-[#1a1a1a] w-full max-w-6xl md:rounded-[2rem] shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row h-full md:h-auto md:max-h-[90vh] border border-white/5">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="bg-[#1a1a1a] w-full max-w-6xl md:rounded-[2rem] shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row h-full md:h-auto md:max-h-[90vh] border border-white/5"
+      >
         {isAdmin ? (
           <div className="absolute top-6 left-6 z-30 flex gap-2">
             <button
@@ -95,7 +120,7 @@ export function DetailModal({
 
         <div className="flex flex-col md:flex-row w-full overflow-y-auto md:overflow-visible">
           <div className="w-full md:w-3/5 bg-black/20 flex items-center justify-center border-b md:border-b-0 md:border-r border-white/5 p-4 md:p-10 md:sticky md:top-0 h-auto md:h-[90vh]">
-            {item.preview ? (
+            {item.preview && !previewFailed ? (
               <img
                 src={item.preview}
                 alt={item.name}
@@ -103,15 +128,20 @@ export function DetailModal({
                   e.stopPropagation();
                   onImageZoom((e.target as HTMLImageElement).src, item.name);
                 }}
+                onError={() => setPreviewFailed(true)}
                 className="w-full h-auto md:max-h-full object-contain rounded-xl shadow-2xl cursor-zoom-in"
               />
-            ) : null}
+            ) : (
+              <div className="text-sm text-gray-400 italic">预览图暂不可用</div>
+            )}
           </div>
 
           <div className="w-full md:w-2/5 p-8 md:p-10 flex flex-col gap-8 bg-[#1a1a1a] md:overflow-y-auto md:h-[90vh] text-gray-400">
             <div>
               <div className="text-brand text-xs font-bold tracking-[0.2em] uppercase mb-2">Archive Detail</div>
-              <h2 className="text-3xl font-bold text-white leading-tight">{item.name}</h2>
+              <h2 id={titleId} className="text-3xl font-bold text-white leading-tight">
+                {item.name}
+              </h2>
 
               <div className="flex flex-col gap-3 mt-4">
                 <p className="text-lg text-gray-200">by {item.author}</p>
@@ -122,7 +152,7 @@ export function DetailModal({
                   title="点击复制直链"
                   className="group self-start flex items-center gap-2 bg-white/5 hover:bg-brand/10 border border-white/5 hover:border-brand/30 px-3 py-1.5 rounded-xl cursor-pointer transition-all active:scale-95"
                 >
-                  <span className="text-[10px] text-gray-500 font-mono tracking-tighter uppercase">ID:</span>
+                  <span className="text-[10px] text-gray-400 font-mono tracking-tighter uppercase">ID:</span>
                   <span className="text-xs font-mono text-gray-400 group-hover:text-brand transition-colors">{item.sub_id}</span>
                 </button>
               </div>
@@ -166,7 +196,7 @@ export function DetailModal({
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs font-bold text-gray-200">GitHub 下载加速</span>
-                    <span className="text-[10px] text-gray-500 font-medium">如果下载速度慢请开启</span>
+                    <span className="text-[10px] text-gray-400 font-medium">如果下载速度慢请开启</span>
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -188,7 +218,7 @@ export function DetailModal({
                   下载文件
                 </a>
                 {downloadCount !== null ? (
-                  <span className="text-center text-[10px] text-gray-500 font-mono">已下载 {downloadCount} 次</span>
+                  <span className="text-center text-[10px] text-gray-400 font-mono">已下载 {downloadCount} 次</span>
                 ) : null}
               </div>
             </div>

@@ -30,12 +30,13 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-streaming": "0.4.21",
-    "sharp": "^0.34.5",
+    "sharp": "0.35.5",
     "vike": "0.4.267",
     "vike-react": "0.6.29",
     "vue": "^3.5.27"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@fortawesome/fontawesome-free": "^7.3.1",
     "@playwright/test": "1.63.0",
     "@tailwindcss/vite": "^4.2.4",
@@ -48,7 +49,7 @@
     "@vitejs/plugin-vue": "^6.0.3",
     "deepslate": "^0.10.1",
     "dompurify": "^3.4.14",
-    "esbuild": "0.27.7",
+    "esbuild": "0.28.2",
     "eslint": "^9.34.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "gl-matrix": "^3.4.3",

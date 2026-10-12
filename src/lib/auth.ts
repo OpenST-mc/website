@@ -1,26 +1,23 @@
 // Auth.js 前端薄客户端。会话 Cookie 为 HttpOnly，此处只读非敏感资料。
-export interface SessionUser {
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  isAdmin?: boolean;
-}
-
-export interface Session {
-  user?: SessionUser;
-  expires?: string;
-}
+import { fetchJson } from './http.ts';
+import { parseSession } from './schema.ts';
+import type { Session } from './types.ts';
 
 export async function getSession(): Promise<Session | null> {
-  const res = await fetch('/api/auth/session', { credentials: 'include' });
-  if (!res.ok) return null;
-  return (await res.json()) as Session | null;
+  const { data, response } = await fetchJson<unknown>('/api/auth/session', {
+    credentials: 'include',
+    timeoutMs: 8000,
+  });
+  if (!response.ok) return null;
+  return parseSession(data);
 }
 
 export async function getCsrfToken(): Promise<string> {
-  const res = await fetch('/api/auth/csrf', { credentials: 'include' });
-  const data = (await res.json()) as { csrfToken?: string };
-  return data.csrfToken ?? '';
+  const { data } = await fetchJson<{ csrfToken?: unknown }>('/api/auth/csrf', {
+    credentials: 'include',
+    timeoutMs: 8000,
+  });
+  return typeof data?.csrfToken === 'string' ? data.csrfToken : '';
 }
 
 // 开放重定向防护：callbackUrl 仅允许站内相对路径。

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { usePageContext } from 'vike-react/usePageContext';
+import { fetchJson } from '../../lib/http';
+import { isSubId, parseDatabase } from '../../lib/schema';
 
-// Vike 错误页：404「定位失败」；对 `sub-*` 路径查库劫持并跳回档案馆深链。
+// Vike 错误页：404「定位失败」；对合法 `sub-*` 路径查库劫持并跳回档案馆深链。
 export default function Page() {
   const { is404 } = usePageContext();
   const [targetPath, setTargetPath] = useState('');
@@ -11,18 +13,22 @@ export default function Page() {
     const segment = window.location.pathname.split('/').pop() ?? '';
     setTargetPath(segment);
 
-    if (segment.startsWith('sub-')) {
-      fetch('/archive/data/database.json')
-        .then((res) => res.json())
-        .then((db: unknown) => {
-          const exists = Array.isArray(db) && db.some((item) => (item as { sub_id?: string }).sub_id === segment);
+    let cancelled = false;
+    if (isSubId(segment)) {
+      fetchJson<unknown>('/archive/data/database.json', { timeoutMs: 15000, retries: 1 })
+        .then(({ data, response }) => {
+          if (cancelled || !response.ok) return;
+          const exists = parseDatabase(data).some((item) => item.sub_id === segment);
           if (exists) window.location.replace(`/archive?${segment}`);
         })
         .catch((e) => console.error('Database fetch failed', e));
     }
 
     const timer = window.setTimeout(() => setShowError(true), 1000);
-    return () => window.clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, []);
 
   return (
@@ -37,7 +43,7 @@ export default function Page() {
           </div>
           <div className="space-y-2">
             <h2 className="text-2xl font-black tracking-[0.3em] text-[#40B5AD] brand-shadow uppercase">Analyzing...</h2>
-            <p id="target-path" className="text-white/30 font-mono text-sm tracking-widest">
+            <p id="target-path" className="text-white/60 font-mono text-sm tracking-widest">
               {targetPath ? `COORD: ${targetPath}` : 'ROOT_ACCESS'}
             </p>
           </div>
@@ -52,7 +58,7 @@ export default function Page() {
               </span>
             </h1>
             <div className="h-px w-24 bg-[#40B5AD]/30 mx-auto" />
-            <p className="text-white/50 leading-relaxed text-sm">
+            <p className="text-white/70 leading-relaxed text-sm">
               页面 <span id="error-id" className="text-[#40B5AD] font-mono">{targetPath || 'null'}</span> 可能是无效的。
             </p>
           </div>

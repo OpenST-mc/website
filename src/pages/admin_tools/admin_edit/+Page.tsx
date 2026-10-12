@@ -3,11 +3,14 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { TAG_CONFIG } from '../../../lib/config';
 import { deleteArchive, replaceLitematic, updateInfo, updatePreview } from '../../../lib/api';
+import { fetchJson, HttpError } from '../../../lib/http';
+import { parseDatabase, sanitizeQueryParam } from '../../../lib/schema';
+import { notify } from '../../../lib/notify';
+import { ARCHIVE_EXTENSIONS, IMAGE_EXTENSIONS, validateUploadFile } from '../../../lib/upload';
 import { useSession } from '../../../hooks/useSession';
 import { AuthButton } from '../../../components/AuthButton';
+import { StatusPanel } from '../../../components/StatusPanel';
 import './admin_edit.css';
-
-const ALLOWED_EXTS = ['.litematic', '.zip', '.rar'];
 
 interface EditForm {
   id: string;
@@ -61,21 +64,29 @@ export default function Page() {
   const previewInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const folder = new URLSearchParams(window.location.search).get('folder');
-    if (!folder) return;
-    fetch('/archive/data/database.json')
-      .then((res) => res.json())
-      .then((db: unknown) => {
-        if (!Array.isArray(db)) return;
-        const item = db.find((i) => (i as { id?: string }).id === folder) as Partial<EditForm> | undefined;
+    const folder = sanitizeQueryParam(new URLSearchParams(window.location.search).get('folder'));
+    if (!folder) {
+      notify('error', '缺少或非法的 folder 参数');
+      return;
+    }
+    const controller = new AbortController();
+    fetchJson<unknown>('/archive/data/database.json', { signal: controller.signal, timeoutMs: 15000, retries: 1 })
+      .then(({ data, response }) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const item = parseDatabase(data).find((entry) => entry.id === folder);
         if (!item) {
-          console.warn('在数据库中未找到该稿件:', folder);
+          notify('error', `在数据库中未找到该稿件：${folder}`);
           return;
         }
-        setForm({ ...EMPTY_FORM, ...item, folder: item.folder || item.id || folder });
-        console.log('加载成功，当前操作目录:', item.folder || item.id || folder);
+        setForm({ ...EMPTY_FORM, ...item, folder: item.id });
+        console.log('加载成功，当前操作目录:', item.id);
       })
-      .catch((e) => console.error('Load failed', e));
+      .catch((error: unknown) => {
+        if (error instanceof HttpError && error.code === 'aborted') return;
+        console.error('[admin_edit] database load failed', error);
+        notify('error', '稿件数据加载失败，请刷新重试');
+      });
+    return () => controller.abort();
   }, []);
 
   const previewHtml = useMemo(() => {
@@ -98,6 +109,12 @@ export default function Page() {
     async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      const invalid = validateUploadFile(file, { extensions: IMAGE_EXTENSIONS, label: '预览图' });
+      if (invalid) {
+        notify('error', invalid);
+        e.target.value = '';
+        return;
+      }
       const folder = form.folder;
       console.log('当前稿件文件夹:', folder);
       setIsUploadingPreview(true);
@@ -106,15 +123,18 @@ export default function Page() {
         if (res.ok) {
           const newName = (res.json as { newName?: string } | undefined)?.newName;
           if (newName) setForm((prev) => ({ ...prev, preview: newName }));
-          alert('✅ 预览图更新成功');
+          notify('success', '预览图更新成功');
+        } else if (res.status === 401) {
+          notify('error', '认证失效，请重新登录');
         } else {
-          alert('❌ 上传失败，请检查登录状态');
+          notify('error', `预览图上传失败（HTTP ${res.status}）`);
         }
       } catch (err) {
         console.error(err);
-        alert('❌ 网络错误');
+        notify('error', '网络错误，预览图未更新');
       } finally {
         setIsUploadingPreview(false);
+        e.target.value = '';
       }
     },
     [form.folder],
@@ -124,27 +144,32 @@ export default function Page() {
     async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      const isAllowed = ALLOWED_EXTS.some((ext) => file.name.toLowerCase().endsWith(ext));
-      if (!isAllowed) {
-        alert(`目前只支持以下格式: ${ALLOWED_EXTS.join(', ')}`);
+      const invalid = validateUploadFile(file, { extensions: ARCHIVE_EXTENSIONS, label: '资源文件' });
+      if (invalid) {
+        notify('error', invalid);
+        e.target.value = '';
         return;
       }
-      if (!confirm(`确定要替换资源文件为: ${file.name}?`)) return;
+      if (!confirm(`确定要替换资源文件为: ${file.name}?`)) {
+        e.target.value = '';
+        return;
+      }
 
       setIsUploadingLitematic(true);
       try {
         const res = await replaceLitematic(file, form.folder || form.id);
         if (res.ok) {
           setForm((prev) => ({ ...prev, filename: file.name }));
-          alert('✅ 资源文件已成功替换');
+          notify('success', '资源文件已成功替换');
         } else {
-          alert(`❌ 替换失败: ${res.text}`);
+          notify('error', `替换失败（HTTP ${res.status}）: ${res.text}`);
         }
       } catch (err) {
         console.error(err);
-        alert('❌ 网络错误，请检查控制台');
+        notify('error', '网络错误，资源文件未替换');
       } finally {
         setIsUploadingLitematic(false);
+        e.target.value = '';
       }
     },
     [form.folder, form.id],
@@ -153,19 +178,19 @@ export default function Page() {
   const handleDeleteArchive = useCallback(async () => {
     const confirmID = prompt(`⚠️ 危险操作：此操作将永久删除该存档！\n请输入该存档 ID [ ${form.id} ] 以确认：`);
     if (confirmID !== form.id) {
-      if (confirmID !== null) alert('❌ ID 输入错误');
+      if (confirmID !== null) notify('error', 'ID 输入错误');
       return;
     }
     try {
       const res = await deleteArchive(form.id);
       if (res.ok) {
-        alert('🗑️ 稿件已彻底删除');
+        notify('success', '稿件已彻底删除');
         window.location.href = '/archive/';
       } else {
-        alert('❌ 删除失败');
+        notify('error', `删除失败（HTTP ${res.status}）`);
       }
     } catch {
-      alert('❌ 请求错误');
+      notify('error', '请求错误，删除未执行');
     }
   }, [form.id]);
 
@@ -187,16 +212,16 @@ export default function Page() {
     try {
       const res = await updateInfo(source.id, finalInfoJson);
       if (res.status === 401) {
-        alert('❌ 认证失效，请先登录');
+        notify('error', '认证失效，请先登录');
         window.location.href = '/archive/';
       } else if (res.ok) {
-        alert('✅ 信息修改成功！');
+        notify('success', '信息修改成功！');
         window.location.href = '/archive/';
       } else {
-        alert('❌ 提交失败');
+        notify('error', `提交失败（HTTP ${res.status}）`);
       }
     } catch {
-      alert('❌ 网络错误');
+      notify('error', '网络错误，修改未提交');
     } finally {
       setIsSaving(false);
     }
@@ -214,7 +239,9 @@ export default function Page() {
   if (status === 'loading') {
     return (
       <div className="admin-edit-body p-6 md:p-12">
-        <div className="max-w-[1400px] mx-auto text-white/40">检查登录状态...</div>
+        <div className="max-w-[1400px] mx-auto">
+          <StatusPanel variant="loading" title="检查登录状态..." />
+        </div>
       </div>
     );
   }
@@ -224,7 +251,7 @@ export default function Page() {
       <div className="admin-edit-body p-6 md:p-12">
         <div className="max-w-[1400px] mx-auto space-y-4 text-center">
           <h1 className="text-2xl font-bold text-white">需要管理员权限</h1>
-          <p className="text-white/40 text-sm">请使用具备仓库权限的 GitHub 账号登录。</p>
+          <p className="text-white/60 text-sm">请使用具备仓库权限的 GitHub 账号登录。</p>
           <AuthButton className="px-8 py-2.5 rounded-xl bg-[#40B5AD] text-black font-extrabold" />
         </div>
       </div>
@@ -237,7 +264,7 @@ export default function Page() {
         <header className="flex justify-between items-end mb-10 border-b border-white/5 pb-6">
           <div>
             <h1 className="text-3xl font-bold text-[#40B5AD] tracking-tight">OpenST Editor</h1>
-            <p className="text-white/30 text-sm mt-2 font-mono">Archive: {form.id}</p>
+            <p className="text-white/60 text-sm mt-2 font-mono">Archive: {form.id}</p>
           </div>
           <div className="flex gap-4">
             <a
@@ -261,7 +288,7 @@ export default function Page() {
           <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-white/40 ml-1 uppercase tracking-widest">作品名称</label>
+                <label className="text-xs font-bold text-white/60 ml-1 uppercase tracking-widest">作品名称</label>
                 <input
                   value={form.name}
                   onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
@@ -269,7 +296,7 @@ export default function Page() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-white/40 ml-1 uppercase tracking-widest">作者</label>
+                <label className="text-xs font-bold text-white/60 ml-1 uppercase tracking-widest">作者</label>
                 <input
                   value={form.author}
                   onChange={(e) => setForm((p) => ({ ...p, author: e.target.value }))}
@@ -279,7 +306,7 @@ export default function Page() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-bold text-white/40 ml-1 uppercase tracking-widest">
+              <label className="text-xs font-bold text-white/60 ml-1 uppercase tracking-widest">
                 标签分类 (二级/三级均可点选)
               </label>
               <div className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-8">
@@ -300,7 +327,7 @@ export default function Page() {
                             className={`px-2.5 py-1 rounded-lg text-[11px] transition-all border ${
                               form.tags.includes(tag)
                                 ? 'bg-[#40B5AD] text-black border-[#40B5AD]'
-                                : 'bg-white/5 text-white/40 border-white/10 hover:border-white/30'
+                                : 'bg-white/5 text-white/60 border-white/10 hover:border-white/30'
                             }`}
                           >
                             {tag}
@@ -318,7 +345,7 @@ export default function Page() {
                                 className={`text-[10px] font-mono uppercase tracking-tighter px-2 py-0.5 border rounded transition-all ${
                                   form.tags.includes(subCat)
                                     ? 'text-[#40B5AD] border-[#40B5AD] bg-[#40B5AD]/10'
-                                    : 'text-white/30 border-transparent hover:text-white/60'
+                                    : 'text-white/60 border-transparent hover:text-white/60'
                                 }`}
                               >
                                 {subCat}
@@ -336,7 +363,7 @@ export default function Page() {
                                   className={`px-2.5 py-1 rounded-lg text-[11px] transition-all border ${
                                     form.tags.includes(tag)
                                       ? 'bg-[#40B5AD] text-black border-[#40B5AD]'
-                                      : 'bg-white/5 text-white/40 border-white/10 hover:border-white/30'
+                                      : 'bg-white/5 text-white/60 border-white/10 hover:border-white/30'
                                   }`}
                                 >
                                   {tag}
@@ -353,7 +380,7 @@ export default function Page() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-bold text-white/40 ml-1 uppercase tracking-widest">Markdown 内容</label>
+              <label className="text-xs font-bold text-white/60 ml-1 uppercase tracking-widest">Markdown 内容</label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
@@ -373,7 +400,7 @@ export default function Page() {
                     <div className="p-2.5 rounded-xl bg-[#40B5AD]/10 text-[#40B5AD]">📄</div>
                     <div className="flex flex-col truncate">
                       <span className="text-xs font-bold text-white truncate">{form.filename}</span>
-                      <span className="text-[9px] text-white/30 uppercase font-mono">Litematic File</span>
+                      <span className="text-[9px] text-white/60 uppercase font-mono">Litematic File</span>
                     </div>
                   </div>
                   <input
@@ -416,7 +443,7 @@ export default function Page() {
           <div className="sticky top-6">
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl group">
               <div className="px-6 py-4 bg-white/5 border-b border-white/5 flex justify-between items-center">
-                <span className="text-xs font-bold text-white/20 uppercase tracking-[0.2em]">
+                <span className="text-xs font-bold text-white/60 uppercase tracking-[0.2em]">
                   Live Preview / 点击图片更换
                 </span>
                 <div className="flex gap-2">
@@ -436,7 +463,7 @@ export default function Page() {
                     className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${
                       isUploadingPreview ? 'opacity-30' : ''
                     }`}
-                    alt="preview"
+                    alt={form.name ? `${form.name} 预览图` : '预览图'}
                   />
                 ) : null}
 

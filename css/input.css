@@ -1,9 +1,6 @@
 @import 'tailwindcss';
 
-/* 显式扫描范围：门户首页与使用本产物的页面 */
-@source "../pages/home";
-@source "../apps/health";
-@source "../packages/js";
+/* 显式扫描范围：使用本产物的页面（首页/health）与 React 源码 */
 @source "../src";
 
 @theme {
@@ -161,5 +158,23 @@
 
   .brand-shadow {
     text-shadow: 0 0 20px rgba(64, 181, 173, 0.5);
+  }
+}
+
+/* M6 �� ���̿ɼ����㣨unlayered ���������� Tailwind �ֲ㹤���࣬���� outline-none�� */
+:focus-visible {
+  outline: 2px solid #40b5ad;
+  outline-offset: 2px;
+}
+
+/* M6 �� ����ϵͳ���ٶ�Чƫ�� */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

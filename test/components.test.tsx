@@ -1,9 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { cleanup, render, screen, fireEvent } from '@testing-library/react';
 import { ArchiveCard } from '../src/components/ArchiveCard';
 import { SideBar } from '../src/components/SideBar';
 import { DetailModal } from '../src/components/DetailModal';
 import type { ArchiveItem } from '../src/lib/types';
+
+afterEach(cleanup);
 
 class MockIntersectionObserver {
   observe(): void {}
@@ -51,6 +53,13 @@ describe('ArchiveCard', () => {
     rerender(<ArchiveCard item={item} isAdmin isFav onOpen={() => {}} onEdit={onEdit} onToggleFav={() => {}} />);
     fireEvent.click(screen.getByLabelText('编辑稿件'));
     expect(onEdit).toHaveBeenCalled();
+  });
+
+  it('opens via keyboard-accessible controls (buttons, not clickable divs)', () => {
+    const onOpen = vi.fn();
+    render(<ArchiveCard item={item} isAdmin={false} isFav={false} onOpen={onOpen} onEdit={() => {}} onToggleFav={() => {}} />);
+    fireEvent.click(screen.getByLabelText('查看 测试机器'));
+    expect(onOpen).toHaveBeenCalledTimes(1);
   });
 });
 
