@@ -268,7 +268,7 @@ export default function Page() {
           </div>
           <div className="flex gap-4">
             <a
-              href="/archive/index.html"
+              href="/archive"
               className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-sm border border-white/10"
             >
               放弃返回

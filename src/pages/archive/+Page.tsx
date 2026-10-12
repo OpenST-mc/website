@@ -13,6 +13,7 @@ import { DetailModal } from '../../components/DetailModal';
 import { ImageZoom } from '../../components/ImageZoom';
 import { StatusPanel } from '../../components/StatusPanel';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
+import './archive.css';
 
 const PAGE_SIZE = 7;
 const FAVS_KEY = 'openst_favs';
@@ -159,7 +160,7 @@ export default function Page() {
 
   const open3DPreview = (item: ArchiveItem) => {
     const fileUrl = downloadLink(item);
-    if (fileUrl) window.open(`/Extra-Function/litematic-preview/index.html#${fileUrl}`, '_blank');
+    if (fileUrl) window.open(`/Extra-Function/litematic-preview#${fileUrl}`, '_blank');
   };
 
   const handleImageZoom = (url: string, name: string) => {

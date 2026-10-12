@@ -156,7 +156,7 @@ export default function Page() {
               </p>
             </div>
 
-            <a href="/archive/index.html" className="block group relative">
+            <a href="/archive" className="block group relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-cyan-600 opacity-20 group-hover:opacity-40 blur transition duration-500" />
               <div className="relative tech-panel p-8 md:p-12 overflow-hidden bg-black h-64 md:h-80 flex flex-col justify-between">
                 <div className="z-10">
@@ -197,7 +197,7 @@ export default function Page() {
             </a>
 
             <a
-              href="/Extra-Function/litematic-converter/index.html"
+              href="/Extra-Function/litematic-converter"
               target="_blank"
               className="tech-panel p-6 md:p-8 group border-l-purple-900/50 hover:border-l-purple-500"
             >
@@ -213,7 +213,7 @@ export default function Page() {
             </a>
 
             <a
-              href="/Extra-Function/litematic-preview/index.html"
+              href="/Extra-Function/litematic-preview"
               target="_blank"
               className="tech-panel p-6 md:p-8 group border-l-orange-900/50 hover:border-l-orange-500"
             >
