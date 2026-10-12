@@ -103,6 +103,7 @@ npm run build
 | `jose` | Worker 校验 JWT（ADR-005 A） | 是 | 唯一信任模型落地 |
 | `vitest` / `@testing-library/react` / DOM 环境 | 单元/组件测试 | 是 | 需求 3 |
 | `@playwright/test` | E2E | 是 | 需求 3 |
+| `react-doctor` | React 反模式/性能/安全检查（本地 + CI） | 是（0.9.17） | 用户要求；仅 devDependency |
 | `zod` 或 `valibot`（二选一） | runtime 校验 | 是 | 健壮性需求 4 |
 | `@typescript-eslint/*`、`eslint-plugin-react*` | 类型感知 lint | 是 | 质量门 |
 
@@ -117,5 +118,6 @@ npm run build
 ## 7. CI 调整
 
 - 现有 `sync-archive.yml`：子模块更新 → 重建 `database.json`/sitemap → 提交（保留）。
-- 新增/扩展检查工作流：`npm ci` → `check:types` → `lint` → `test` → `build`（含 `check:build`）。E2E 可按需在 PR/发布触发。
+- `ci.yml`：`quality` 作业 `npm ci` → `check:types` → `lint` → `test` → `check:paths`；`build-and-e2e` 作业（recursive checkout）`npm ci` → `npm run build`（含 `check:build`）→ `npm run test:e2e`（Playwright chromium；失败上传 report）。触发：push（main/refactor/react-ssg）、PR、手动。
+- `react-doctor.yml`：React Doctor 诊断（状态/副作用/性能/安全/可维护性），PR 仅报告变更引入的新问题并回帖摘要，main 记录趋势；默认 advisory 不阻塞（可 `react-doctor ci config --blocking error` 收紧）。
 - Vercel 侧执行 `buildCommand` 产出生产产物。

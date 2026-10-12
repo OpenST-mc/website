@@ -1,0 +1,32 @@
+name: React Doctor
+
+on:
+  # PR：只扫描变更引入的新问题，并回帖摘要（advisory，不阻塞合并）
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  # main：记录健康分趋势（失败不置红）
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  statuses: write
+
+concurrency:
+  group: react-doctor-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  react-doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: React Doctor
+        uses: millionco/react-doctor@v2

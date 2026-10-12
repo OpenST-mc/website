@@ -45,6 +45,8 @@ npm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Ve
 - `npm run build` 依次执行：`data/build.js`（读子模块 `content/` 生成 `archive/data/database.json`）→ `build:sitemap` → `build:ArchiveCSS` → `build:PortalCSS` → `build:AdminCSS` → `build:vendor` → `vite build`（Vike `prerender: true` 产出 `dist/client`）→ `build:static`（拷贝静态资产进输出）→ `check:build`（路由/SEO/资产/CSP 断言）。
 - 单独构建 CSS：`npm run build:ArchiveCSS` / `build:PortalCSS` / `build:AdminCSS`（生成并提交静态 `css/*Output.css`，用于公开 `/css/*.css` 兼容；页面运行时不再引用它们）。
 - `npm run build:vendor`：从 node_modules 复制第三方 dist 到 `vendor/` 并以 esbuild 打包（含 `packages/js/insights-src.js` → insights.bundle.js）。vendor 已提交，仅升级依赖后需重跑。
+- `npm run doctor`：React Doctor（`react-doctor`，钉版 devDependency）扫描 React 反模式/性能/安全/可维护性（advisory）。
+- CI（GitHub Actions）：`.github/workflows/ci.yml`（`quality`：`check:types`/`lint`/`test`/`check:paths`；`build-and-e2e`：`npm run build` + `npm run test:e2e`）与 `.github/workflows/react-doctor.yml`（PR 增量扫描 + 评论，advisory）。
 
 ## 稿件数据架构（2026-08 拆分）
 
