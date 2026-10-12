@@ -53,7 +53,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://va.vercel-scripts.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         }
       ]
     }
@@ -61,7 +61,6 @@
   "rewrites": [
     { "source": "/favicon.ico", "destination": "/images/favicon-2.png" },
     { "source": "/index", "destination": "/index.html" },
-    { "source": "/js/:path*", "destination": "/packages/js/:path*" },
     { "source": "/fonts/:path*", "destination": "/assets/fonts/:path*" },
     { "source": "/images/:path*", "destination": "/assets/images/:path*" },
     { "source": "/Traditional-Simplefild/:path*", "destination": "/assets/s2t/:path*" },

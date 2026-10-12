@@ -19,11 +19,10 @@ const ROUTES: Array<{ route: string; file: string }> = [
   { route: '/Extra-Function/litematic-preview', file: 'Extra-Function/litematic-preview/index.html' },
 ];
 
-// 迁移期仍需存在的静态资产（M7 退役 Vue 后移除 vue 项）。
+// 必须存在于输出的静态资产（公开 URL 可达性守卫）。
 const REQUIRED_ASSETS = [
   '404.html',
   'content',
-  'vendor/vue.global.prod.js',
   'vendor/deepslate.umd.js',
   'vendor/gl-matrix-min.js',
   'assets/images',
@@ -43,9 +42,7 @@ const REQUIRED_IMMUTABLE_SOURCES = [
   '/vendor/(.*)',
 ];
 
-// M7（Vue 完全移除）后置为 true：断言 CSP 不含 'unsafe-eval'。
-const ENFORCE_NO_UNSAFE_EVAL = process.env.ENFORCE_CSP === '1';
-
+// Vue 已完全移除：CSP 不得再含 `'unsafe-eval'`。
 const failures: string[] = [];
 const fail = (msg: string) => failures.push(msg);
 
@@ -75,7 +72,7 @@ const csp = vercel.headers
   ?.flatMap((h) => h.headers ?? [])
   .find((h) => h.key.toLowerCase() === 'content-security-policy')?.value;
 if (!csp) fail('vercel.json 缺少 Content-Security-Policy');
-else if (ENFORCE_NO_UNSAFE_EVAL && csp.includes("'unsafe-eval'")) fail('CSP 仍含 unsafe-eval');
+else if (csp.includes("'unsafe-eval'")) fail('CSP 仍含 unsafe-eval');
 
 for (const source of REQUIRED_IMMUTABLE_SOURCES) {
   const entry = vercel.headers?.find((h) => h.source === source);

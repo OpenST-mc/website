@@ -56,8 +56,8 @@ function checkMaps(vercel, aliases) {
   }
 }
 
-const SCAN_ROOTS = ['apps', 'pages', 'packages/js', 'src'];
-const EXTS = new Set(['.html', '.js', '.css', '.vue', '.ts', '.tsx']);
+const SCAN_ROOTS = ['apps', 'src'];
+const EXTS = new Set(['.html', '.js', '.css', '.ts', '.tsx']);
 const PHYS_RE = /["'(]\/(apps|packages)\//g;
 const STALE_RE = /(?<![\w/])data\/database\.json/g;
 

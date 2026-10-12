@@ -124,9 +124,9 @@ M0 评估 / 决策 / 分支 / 测试策略
 **任务**：T7.1 … T7.5。
 
 ### Checkpoint M7
-- [ ] 仓库无 `Vue`/`createApp`/`v-cloak`/手写页面 HTML 残留
-- [ ] CSP 无 `'unsafe-eval'`
-- [ ] 干净安装可重现构建；生产预览冒烟通过
+- [x] 仓库无 `Vue`/`createApp`/`v-cloak`/手写页面 HTML 残留
+- [x] CSP 无 `'unsafe-eval'`
+- [x] 干净安装可重现构建；生产预览冒烟通过
 
 ---
 

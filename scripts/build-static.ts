@@ -3,11 +3,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // SSG 输出为 dist/client（HTML + 哈希资源）。原「仓库根静态服务」下的公开目录
-// 需拷贝进输出，保持公开 URL 不变（迁移期：未迁移旧页与静态资产仍可达）。
+// 需拷贝进输出，保持公开 URL 不变（extra 资源与其余静态资产）。
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, 'dist', 'client');
 
-const DIRS = ['apps', 'archive', 'assets', 'content', 'css', 'packages', 'pages', 'vendor', 'webfonts'];
+const DIRS = ['apps', 'archive', 'assets', 'content', 'css', 'vendor', 'webfonts'];
 // 注意：根 index.html / 404.html 由 Vike SSG 生成，绝不覆盖。
 const FILES = ['robots.txt', 'sitemap.xml', '.nojekyll'];
 

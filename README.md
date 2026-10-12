@@ -4,11 +4,11 @@
   <img src="https://deepwiki.com/badge.svg" alt="Ask Deepwiki">
 </a>
 
-![github repo sth](https://socialify.git.ci/OpenST-mc/website/image?custom_language=Vue&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit+Board&pulls=1&stargazers=1&theme=Dark)
+![github repo sth](https://socialify.git.ci/OpenST-mc/website/image?custom_language=React&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit+Board&pulls=1&stargazers=1&theme=Dark)
 
 OpenST的官方网站
 
-采用vue+tailwind css+cf workers+vercel api架构
+采用 React + TypeScript + Vike（SSG 预渲染）+ Tailwind CSS + CF Workers + Vercel Functions 架构
 
 ## 鸣谢 & 参考 (Acknowledgments)
 
@@ -30,6 +30,10 @@ cd website
 ```
 
 ```bash
+git submodule update --init --recursive
+```
+
+```bash
 npm install
 ```
 
@@ -40,5 +44,12 @@ npm run dev
 ```
 
 - vite服务器会自动部署于localhost:4000，并开启局域网内访问功能
+
+3. 构建与预览（SSG 产物 `dist/client`，Vercel 构建部署同一产物）
+
+```bash
+npm run build
+npm run preview
+```
 
 > [OpenST开发文档](https://openst-mc.github.io/OpenST-Docs/#/)

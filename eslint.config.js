@@ -44,33 +44,6 @@ const browserGlobals = {
   ResizeObserver: 'readonly',
 };
 
-// Legacy classic-script sharing (vendor libs + cross-file functions loaded
-// via plain <script> tags, no modules). Grandfathered: no new entries.
-// TODO(M7): remove after Vue/legacy HTML retirement.
-const vendorGlobals = {
-  Vue: 'readonly',
-  marked: 'readonly',
-  DOMPurify: 'readonly',
-  JSZip: 'readonly',
-  pako: 'readonly',
-  deepslate: 'readonly',
-  assets: 'readonly',
-  glMatrix: 'readonly',
-  OPAQUE_BLOCKS: 'readonly',
-  NON_SELF_CULLING: 'readonly',
-  TRANSPARENT_BLOCKS: 'readonly',
-  deepslateResources: 'writable',
-  hideLoading: 'readonly',
-  loadAndProcessFile: 'readonly',
-  loadDeepslateResources: 'readonly',
-  openSettings: 'readonly',
-  closeSettings: 'readonly',
-  readLitematicFromNBTData: 'readonly',
-  structuresFromLitematic: 'readonly',
-  iterateRegionBlocks: 'readonly',
-  getMaterialList: 'readonly',
-};
-
 const nodeGlobals = {
   process: 'readonly',
   Buffer: 'readonly',
@@ -119,7 +92,7 @@ export default tseslint.config(
       'node_modules/',
       'css/*Output.css',
       '**/*.min.js',
-      'resource/assets.js',
+      '**/resource/assets.js',
       '.docs/',
       '.agents/',
       'test-results/',
@@ -149,14 +122,14 @@ export default tseslint.config(
       'react-hooks/exhaustive-deps': 'warn',
     },
   },
-  // Legacy JS (old Vue apps / scripts / worker) — same minimal gate as before,
-  // kept permissive until M7 retirement.
+  // Classic / Node JS（构建脚本、api functions、Worker、insights 打包源码、
+  // litematic 运行时资源）：同一套最小门。
   {
     files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: { ...browserGlobals, ...nodeGlobals, ...workerGlobals, ...vendorGlobals },
+      globals: { ...browserGlobals, ...nodeGlobals, ...workerGlobals },
     },
     rules: {
       'no-undef': 'error',

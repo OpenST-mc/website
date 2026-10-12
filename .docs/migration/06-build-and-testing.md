@@ -70,8 +70,8 @@ npm run build
 - 断言每个预期路由产出 HTML 文件。
 - 断言各页 `<title>`/`<meta name="description">`/og 存在且非空。
 - 断言 `/archive` 首屏 HTML 含至少一个稿件名（SSG 生效）。
-- 断言静态资产存在：`dist/content/...`、`dist/vendor/vue`（仅 M7 前其它 vendor）、图片/字体。
-- 断言 CSP 不含 `'unsafe-eval'`（M7 之后启用此断言）。
+- 断言静态资产存在：`dist/content/...`、`dist/vendor/*`（Vue 已于 M7 移除）、图片/字体。
+- 断言 CSP 不含 `'unsafe-eval'`（M7 起为常开断言）。
 
 ## 4. 门命令（package.json scripts）
 

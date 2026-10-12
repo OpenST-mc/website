@@ -370,38 +370,43 @@
 
 ## M7 · 退役 Vue/旧 HTML + CSP 收紧 + 发布
 
-### [ ] T7.1 删除 Vue 依赖与产物
+### [x] T7.1 删除 Vue 依赖与产物
 **描述**：删除 `vue`/`@vitejs/plugin-vue`/`vite-plugin-vue-devtools` 与 `vendor/vue.global.prod.js` 及 `build-vendor` 中的复制项。
 **验收**：依赖与 vendor 无 vue；构建成功。
 **验证**：`npm install && npm run build`；grep。
 **依赖**：M2–M6 · **规模**：M · **文件**：`package.json`、`package-lock.json`、`scripts/build-vendor.*`、`vendor/`
+**备注**：三个依赖移除后 lock 收敛（-58 包）；`build-vendor.js` 删除 vue 复制项、`vendor/vue.global.prod.js` 删除；`insights-src.js` 埋点 framework vue→react（bundle 重建验证 `framework:"react"` 且无 vue 字样）。
 
-### [ ] T7.2 清理旧 HTML/JS/CSS 残留
+### [x] T7.2 清理旧 HTML/JS/CSS 残留
 **描述**：删除手写页面 HTML、旧 Vue/patched JS、`[v-cloak]`、`packages/js/*` 中已迁移脚本；移除 `Vue` 全局。
 **验收**：无 `Vue`/`createApp`/`v-cloak`/手写页面 HTML 残留。
 **验证**：grep + `npm run lint`。
 **依赖**：T7.1 · **规模**：M · **文件**：`apps/**`、`pages/**`、`packages/js/**`、`css/*`
+**备注**：删除 `apps/{portal,admin,upload,health}`、`pages/`、`packages/js/{404,credits,health,portal}.js`、`css/style.css`；`vite.config.ts` 迁移期 `legacyPages` 收敛为 `devPublicRewrites`（仅静态别名重写，页面全交 Vike）并移除 `/js` 映射（vercel rewrite 同步删除）；`build-static` 停拷 `packages/`、`pages/`；Tailwind 三入口 @source 收敛为 `../src`；eslint 删除 Vue/legacy 全局表；prettierignore/check-paths 清理。grep 无 Vue/createApp/v-cloak 残留。
 
-### [ ] T7.3 CSP 移除 `'unsafe-eval'`
+### [x] T7.3 CSP 移除 `'unsafe-eval'`
 **描述**：确认无运行期 eval 需求后，从 `vercel.json` CSP 移除 `'unsafe-eval'`。
 **验收**：生产/预览无 CSP 违规。
 **验证**：控制台检查。
 **依赖**：T7.2 · **规模**：S · **文件**：`vercel.json`
+**备注**：CSP 移除 `'unsafe-eval'`；`check-build` 的 CSP 断言由 `ENFORCE_CSP` 环境开关改为常开并同步删除 vue 资产断言项。构建断言通过（9 路由 / 12 资产 / CSP 校验）。
 
-### [ ] T7.4 文档更新
+### [x] T7.4 文档更新
 **描述**：更新 `AGENTS.md`（技术栈/目录/构建顺序/部署/认证/@source）、`README.md`、`package.json` 描述。
 **验收**：文档与实现一致；无 Vue/旧部署表述。
 **验证**：人工审阅。
 **依赖**：T7.2 · **规模**：M · **文件**：`AGENTS.md`、`README.md`、`package.json`
+**备注**：AGENTS.md 更新技术栈（React+Vike SSG）、目录结构、构建链（含 build:static/check:build）、preview=生产产物、公开 URL 与 rewrites 清单、Auth.js 会话模型、@source、Gotchas；README 更新架构描述/子模块安装/构建命令；package.json 增补 description。
 
-### [ ] T7.5 全量验收 + 生产预览冒烟
+### [x] T7.5 全量验收 + 生产预览冒烟
 **描述**：干净安装重现构建；全门；全部公开 URL 冒烟。
 **验收**：门全绿；URL 行为对等；`404`、认证、上传、下载正常。
 **验证**：Vercel 预览。
 **依赖**：T7.3、T7.4 · **规模**：M · **文件**：无
+**备注**：独立干净副本 `npm ci` → `check:types`/`lint`/`test`(129)/`check:paths`/`build`(含 check:build) 全绿，验证干净安装可重现；主仓库全门 + `playwright test` 25/25 通过（SSG 冒烟、静态页、404、admin/upload 未登录门槛、axe 零严重项、hydration 无 mismatch、extra 转换下载往返/预览解码、移动抽屉）。
 
 ### Checkpoint M7
-- [ ] 无 Vue/旧 HTML 残留；CSP 无 `unsafe-eval`；干净安装可重现；预览冒烟通过
+- [x] 无 Vue/旧 HTML 残留；CSP 无 `unsafe-eval`；干净安装可重现；预览冒烟通过
 
 ---
 
