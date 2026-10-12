@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig, type Connect, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import vike from 'vike/plugin';
@@ -89,8 +89,40 @@ function legacyPages(): Plugin {
   };
 }
 
+// 预览（vite preview）下镜像 vercel.json 的公开路径 rewrite：把 /Extra-Function、
+// /images 等公开路径映射到输出内的物理目录，便于对构建产物做 E2E（生产由 Vercel 应用同一映射）。
+// 与 Vercel 一致：静态文件优先，命中输出文件时不 rewrite（如 Vike 预渲染页面）。
+function publicRewritesPreview(): Plugin {
+  const outDir = path.join(__dirname, 'dist', 'client');
+  const existsAsStatic = (pathname: string): boolean => {
+    const abs = path.join(outDir, pathname.replace(/^\//, ''));
+    return fs.existsSync(abs) || fs.existsSync(abs + '.html') || fs.existsSync(path.join(abs, 'index.html'));
+  };
+
+  const handle: Connect.NextHandleFunction = (req, _res, next) => {
+    const raw = req.url ?? '';
+    const pathname = raw.split('?')[0] ?? '';
+    const query = raw.slice(pathname.length);
+    for (const [pub, phys] of Object.entries(PUBLIC_ALIASES)) {
+      const base = pub.replace(/\/$/, '');
+      if (pathname !== base && !pathname.startsWith(base + '/')) continue;
+      if (existsAsStatic(pathname)) break;
+      const rest = pathname.slice(base.length).replace(/^\//, '');
+      req.url = '/' + phys + rest + query;
+      break;
+    }
+    next();
+  };
+  return {
+    name: 'public-rewrites-preview',
+    configurePreviewServer(server) {
+      server.middlewares.use(handle);
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [legacyPages(), react(), tailwindcss(), vike()],
+  plugins: [legacyPages(), publicRewritesPreview(), react(), tailwindcss(), vike()],
   resolve: {
     alias: Object.entries(PUBLIC_ALIASES).map(([pub, phys]) => ({
       find: new RegExp('^' + pub.replace(/\//g, '\\/')),

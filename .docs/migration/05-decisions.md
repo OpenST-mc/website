@@ -44,9 +44,14 @@
 - **风险链接**：R4/R5。
 
 ## ADR-006 · extra 工具保持命令式核心
-- **状态**：Accepted
+- **状态**：Accepted（M5 实现定稿）
 - **背景**：`litematic-preview`（WebGL/deepslate）与 `litematic-converter`（pako）无框架耦合，React 化核心收益低、风险高。
 - **决策**：核心保持命令式 TS 模块；仅以 `+Page.tsx` 外壳承接与类型化边界。
+- **实现（M5）**：
+  1. `litematic-converter`：NBT 解析/写出与版本转换迁 `src/lib/litematic/{nbt,convert}.ts`（纯逻辑 + 单测）；`pako` 改为 `import` 打包；`+Page.tsx` 用 React 表单事件承接 UI，不再有全局脚本。
+  2. `litematic-preview`：`viewer`（WebGL）/`litematic-utils`/`deepslate-helpers`/`settings`/`ui-init`/`main` 迁 `src/pages/litematic-preview/*.ts` 命令式模块（状态与 DOM 操作不进 React 状态流）；`+Page.tsx` 仅渲染静态 JSX 外壳，`useEffect` 顺序加载 vendor 脚本（`deepslate`/`gl-matrix`）与 `resource/` 资源后初始化。
+  3. 类型化边界：vendor 全局（`deepslate`/`glMatrix`/`assets`/opaque 集合）以 `declare global` + npm 包类型（`typeof import('deepslate'|'gl-matrix')`）声明；核心内部使用自有最小 NBT/结构类型，不在渲染期触碰浏览器全局。
+  4. 静态资源：`resource/*`（`assets.js`/`opaque.js`/`atlas.png`/chest 贴图）保持经典脚本/静态文件，随构建拷贝进输出，公开 URL `/Extra-Function/litematic-preview/resource/**` 不变。
 - **影响**：避免 R12；与“统一 tsx”以「外壳 tsx + 核心 ts」达成一致。
 
 ## ADR-007 · 退役 Vue 后移除 CSP `'unsafe-eval'`

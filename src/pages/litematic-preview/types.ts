@@ -1,0 +1,60 @@
+// litematic-preview 自有最小类型：与 deepslate/WebGL 核心的「类型化边界」。
+// 不引入 React 状态；命令式模块共享这些结构。
+
+export interface NbtTag {
+  type: string;
+  value: unknown;
+}
+
+export type NbtCompound = Record<string, NbtTag>;
+
+export interface RawLitematicNbt {
+  value: NbtCompound;
+}
+
+export interface BlockPaletteEntry {
+  Name: string;
+  // stripNBTTyping 后 Properties 为纯值字典（如 { facing: 'north' }）。
+  Properties?: Record<string, unknown>;
+}
+
+export interface LitematicRegion {
+  name: string;
+  width: number;
+  height: number;
+  depth: number;
+  size: [number, number, number];
+  position: [number, number, number];
+  packedData: Array<[number, number]>;
+  nbits: number;
+  blockPalette: BlockPaletteEntry[];
+}
+
+export interface Litematic {
+  regions: LitematicRegion[];
+}
+
+export interface StructurePlacement {
+  structure: unknown;
+  position: [number, number, number];
+}
+
+export interface LitematicAssets {
+  blockstates: Record<string, unknown>;
+  models: Record<string, unknown>;
+  textures: Record<string, [number, number, number, number]>;
+}
+
+export interface DeepslateResources {
+  getBlockDefinition(id: string): unknown;
+  getBlockModel(id: string): unknown;
+  getTextureUV(id: string): unknown;
+  getTextureAtlas(): ImageData;
+  getBlockFlags(id: string): {
+    opaque: boolean;
+    self_culling: boolean;
+    semi_transparent: boolean;
+  };
+  getBlockProperties(id: string): null;
+  getDefaultBlockProperties(id: string): null;
+}
