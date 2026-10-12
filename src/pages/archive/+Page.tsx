@@ -13,6 +13,7 @@ import { DetailModal } from '../../components/DetailModal';
 import { ImageZoom } from '../../components/ImageZoom';
 import { StatusPanel } from '../../components/StatusPanel';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
+import '../../../css/ArchiveInput.css';
 import './archive.css';
 
 const PAGE_SIZE = 7;

@@ -6,6 +6,7 @@ import { loadScript } from './script-loader';
 import { createEngine } from './viewer';
 import { hideLoading } from './loading';
 import { notify } from '../../lib/notify';
+import '../../../css/ArchiveInput.css';
 import './preview.css';
 
 // Litematic Preview（/Extra-Function/litematic-preview）：

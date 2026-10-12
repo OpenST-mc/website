@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { usePageContext } from 'vike-react/usePageContext';
 import { fetchJson } from '../../lib/http';
 import { isSubId, parseDatabase } from '../../lib/schema';
+import '../../../css/AdminInput.css';
 
 // Vike 错误页：404「定位失败」；对合法 `sub-*` 路径查库劫持并跳回档案馆深链。
 export default function Page() {

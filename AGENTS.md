@@ -43,7 +43,7 @@ npm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Ve
 ```
 
 - `npm run build` 依次执行：`data/build.js`（读子模块 `content/` 生成 `archive/data/database.json`）→ `build:sitemap` → `build:ArchiveCSS` → `build:PortalCSS` → `build:AdminCSS` → `build:vendor` → `vite build`（Vike `prerender: true` 产出 `dist/client`）→ `build:static`（拷贝静态资产进输出）→ `check:build`（路由/SEO/资产/CSP 断言）。
-- 单独构建 CSS：`npm run build:ArchiveCSS` / `build:PortalCSS` / `build:AdminCSS`。
+- 单独构建 CSS：`npm run build:ArchiveCSS` / `build:PortalCSS` / `build:AdminCSS`（生成并提交静态 `css/*Output.css`，用于公开 `/css/*.css` 兼容；页面运行时不再引用它们）。
 - `npm run build:vendor`：从 node_modules 复制第三方 dist 到 `vendor/` 并以 esbuild 打包（含 `packages/js/insights-src.js` → insights.bundle.js）。vendor 已提交，仅升级依赖后需重跑。
 
 ## 稿件数据架构（2026-08 拆分）
@@ -58,7 +58,7 @@ npm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Ve
 
 - `npm run dev` 的 `vite.config.ts devPublicRewrites` 与 `vercel.json rewrites` 镜像：本地访问 `/fonts/*`、`/images/*`、`/Traditional-Simplefild/*`、`/Extra-Function/*`（静态资源）行为与生产一致；页面路由由 Vike 直接接管（`/`、`/archive`、`/upload`、`/admin_tools`、`/health`、`/profile/april/december`、`/Extra-Function/*`），**请勿**用物理路径（如 `/apps/extra/`）判断线上表现。
 - `npm run preview` 服务的是 SSG 生产产物 `dist/client`（Playwright E2E 基座）；页面 HTML 均为构建期预渲染，不存在「预览 ≠ 生产形态」的差异。
-- Tailwind 三入口统一 `@source "../src"` 扫描 React 源码；新增独立源码目录时必须同步加入三入口的 @source，否则类名静默丢失。
+- Tailwind 三入口（`css/{input,ArchiveInput,AdminInput}.css`）由页面 `import` 进入 Vite 模块图：dev 下由 `@tailwindcss/vite` 编译并 HMR，构建期产出哈希资源注入各页 HTML；三入口统一 `source(none)` + `@source "../src"`（只扫 `src/`）。新增独立源码目录时必须同步加入三入口的 @source，否则类名静默丢失。
 
 ## 目录结构
 
@@ -86,7 +86,7 @@ npm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Ve
 - React 19 函数组件 + Vike SSG（`prerender: true`），应用代码全部 `.ts/.tsx`；文件式路由，不引入 Router。
 - 第三方库自托管于 `vendor/`，禁止外链 CDN；`vendor/` 由 `npm run build:vendor` 从 node_modules 生成并已提交。
 - 模块引用用相对路径或别名 `@/*`；运行时公开资源一律以根绝对路径字面量出现（如 `/vendor/deepslate.umd.js`）。
-- CSS：Tailwind v4 三入口按 `@source ../src` 编译；产物已提交。
+- CSS：`css/{input,ArchiveInput,AdminInput}.css` 是唯一样式源（Tailwind v4，`source(none)` + `@source ../src`），页面通过相对路径 `import` 引入；dev HMR、构建产出哈希资源。`npm run build:*CSS` 仍生成并提交静态 `css/*Output.css`（公开路径兼容）。
 - **注意**：不能使用 `public/` 目录——静态资产由 `build:static` 显式拷贝进 `dist/client`。
 
 ## 安全头与认证

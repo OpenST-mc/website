@@ -12,6 +12,7 @@ import { IMAGE_EXTENSIONS, SUBMISSION_ARCHIVE_EXTENSIONS, validateUploadFile } f
 import { signIn, signOut } from '../../lib/auth';
 import { useSession } from '../../hooks/useSession';
 import { StatusPanel } from '../../components/StatusPanel';
+import '../../../css/ArchiveInput.css';
 import './upload.css';
 
 const WORKER_URL = 'https://api.openstmc.com';

@@ -5,6 +5,7 @@ import DOMPurify from 'dompurify';
 import { DEFAULT_DESC, buildInfoJson, flattenTagConfig, sanitizeZipName } from '../../lib/packer';
 import { notify } from '../../lib/notify';
 import { IMAGE_EXTENSIONS, validateUploadFile } from '../../lib/upload';
+import '../../../css/ArchiveInput.css';
 import './admin_tools.css';
 
 const PACKER_ARCHIVE_EXTENSIONS = ['.litematic'];

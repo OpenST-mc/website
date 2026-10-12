@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { toJsonLd } from '../../lib/schema';
+import '../../../css/input.css';
 
 const BYPASS_LOGS = ['SPOOFING_IP...', 'DECRYPTING_V_FILES...', 'BYPASSING_GATE...', 'ACCESS_GRANTED'];
 const CREDITS_URL = '/profile/april/december';

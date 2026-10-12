@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
 
 /* 显式扫描范围：使用本产物的页面（archive/upload/admin/extra）React 源码 */
 @source "../src";

@@ -24,7 +24,6 @@ export default function HomeHead() {
       <meta itemProp="name" content="OpenST | Portal" />
       <meta itemProp="description" content="OpenST：提供精密机器存档下载与 WebGL 投影预览。" />
       <meta itemProp="image" content="https://openstmc.com/images/favicon-1.png" />
-      <link rel="stylesheet" href="/css/output.css" />
       <script src="/vendor/insights.bundle.js" defer></script>
     </>
   );

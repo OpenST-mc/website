@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
 
 /* 显式扫描范围：使用本产物的页面（首页/health）与 React 源码 */
 @source "../src";
@@ -51,7 +51,7 @@
 @layer base {
   @font-face {
     font-family: 'JetBrains Mono';
-    src: url('../fonts/JetBrainsMono-Bold.woff2') format('woff2');
+    src: url('/fonts/JetBrainsMono-Bold.woff2') format('woff2');
     font-display: swap;
   }
 

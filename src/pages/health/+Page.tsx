@@ -1,4 +1,5 @@
 import { useHealthCheck, type EndpointStatus, type OverallStatus } from '../../hooks/useHealthCheck';
+import '../../../css/input.css';
 
 interface OverallConfig {
   text: string;

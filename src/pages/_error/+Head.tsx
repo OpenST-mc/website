@@ -1,4 +1,4 @@
-// 错误页 <head>：复用 AdminOutput.css + 页面内联特效样式；错误页不入索引。
+// 错误页 <head>：页面内联特效样式（Tailwind 由 +Page 引入 AdminInput.css）；错误页不入索引。
 const PAGE_CSS = `
   body {
     background-color: #0a0a0a;
@@ -29,7 +29,6 @@ const PAGE_CSS = `
 export default function ErrorHead() {
   return (
     <>
-      <link rel="stylesheet" href="/css/AdminOutput.css" />
       <meta name="robots" content="noindex" />
       <style dangerouslySetInnerHTML={{ __html: PAGE_CSS }} />
     </>

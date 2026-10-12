@@ -10,6 +10,7 @@ import { ARCHIVE_EXTENSIONS, IMAGE_EXTENSIONS, validateUploadFile } from '../../
 import { useSession } from '../../../hooks/useSession';
 import { AuthButton } from '../../../components/AuthButton';
 import { StatusPanel } from '../../../components/StatusPanel';
+import '../../../../css/AdminInput.css';
 import './admin_edit.css';
 
 interface EditForm {
