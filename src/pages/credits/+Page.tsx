@@ -85,7 +85,7 @@ export default function Page() {
   }, []);
 
   return (
-    <>
+    <div className="credits-page">
       {portalMounted ? (
         <div
           id="portal"
@@ -102,6 +102,6 @@ export default function Page() {
       <canvas id="starfield" ref={canvasRef} />
       <div className="fade-overlay" />
       <div id="credits-wrap" className="markdown-body" dangerouslySetInnerHTML={{ __html: html }} />
-    </>
+    </div>
   );
 }

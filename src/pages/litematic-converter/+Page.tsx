@@ -75,7 +75,7 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-8 relative overflow-hidden converter-page">
       <div className="soft-bg"></div>
 
       <div className="relative z-10 w-full max-w-2xl">

@@ -110,7 +110,7 @@ export default function Page() {
   };
 
   return (
-    <div className="bg-[#0f172a] text-slate-200 p-4 md:p-8">
+    <div className="bg-[#0f172a] text-slate-200 p-4 md:p-8 admin-tools-page">
       <div
         id="app"
         className={`max-w-6xl mx-auto transition-all ${isProcessing ? 'opacity-50 pointer-events-none' : ''}`}

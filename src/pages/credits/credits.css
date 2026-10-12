@@ -1,10 +1,14 @@
-:root {
+/* Credits 页样式（对齐旧 apps/credits）。
+   全局元素规则经 :has(.credits-page) 限定在本页挂载期间，
+   客户端路由离开后自动失效，避免泄漏到其它页面。 */
+
+.credits-page {
   --brand: #ffffff;
   --text-secondary: #86868b;
 }
 
-body,
-html {
+html:has(.credits-page),
+body:has(.credits-page) {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -14,7 +18,8 @@ html {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   scroll-behavior: smooth;
 }
-body::-webkit-scrollbar {
+
+body:has(.credits-page)::-webkit-scrollbar {
   display: none;
 }
 
@@ -46,23 +51,23 @@ body::-webkit-scrollbar {
   padding-bottom: 30vh;
 }
 
-a {
+.credits-page a {
   text-decoration: none;
   color: var(--brand);
 }
 
-.markdown-body {
+.credits-page .markdown-body {
   color: var(--text-secondary);
   line-height: 2;
   width: 100%;
 }
-.markdown-body h2 {
+.credits-page .markdown-body h2 {
   font-size: 32px;
   font-weight: 700;
   color: #fff;
   margin: 40px 0 20px 0;
 }
-.markdown-body h3 {
+.credits-page .markdown-body h3 {
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.4em;
@@ -70,12 +75,12 @@ a {
   text-transform: uppercase;
   margin-top: 25vh;
 }
-.markdown-body p {
+.credits-page .markdown-body p {
   font-size: 16px;
   margin-bottom: 30px;
   padding: 0 10px;
 }
-.markdown-body ul {
+.credits-page .markdown-body ul {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -84,13 +89,13 @@ a {
   padding: 0;
   margin: 20px 0;
 }
-.markdown-body li {
+.credits-page .markdown-body li {
   font-size: 20px;
   color: #fff;
   font-weight: 300;
   word-break: break-word;
 }
-.markdown-body strong {
+.credits-page .markdown-body strong {
   display: block;
   margin-top: 30vh;
   font-size: 18px;
@@ -103,20 +108,20 @@ a {
     width: 92%;
     padding-top: 40vh;
   }
-  .markdown-body h2 {
+  .credits-page .markdown-body h2 {
     font-size: 26px;
   }
-  .markdown-body p {
+  .credits-page .markdown-body p {
     font-size: 15px;
     line-height: 1.8;
   }
-  .markdown-body li {
+  .credits-page .markdown-body li {
     font-size: 18px;
   }
-  .markdown-body h3 {
+  .credits-page .markdown-body h3 {
     margin-top: 15vh;
   }
-  .markdown-body strong {
+  .credits-page .markdown-body strong {
     margin-top: 20vh;
     font-size: 16px;
   }
@@ -133,7 +138,7 @@ a {
   cursor: pointer;
   transition: 1s;
 }
-.portal-btn {
+.credits-page .portal-btn {
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 15px 30px;
   border-radius: 50px;
@@ -141,7 +146,7 @@ a {
   font-size: 11px;
   letter-spacing: 3px;
 }
-.back-home {
+.credits-page .back-home {
   display: inline-block;
   margin-top: 15vh;
   font-size: 11px;
@@ -150,6 +155,6 @@ a {
   letter-spacing: 2px;
   transition: 0.3s;
 }
-.back-home:hover {
+.credits-page .back-home:hover {
   color: #fff;
 }

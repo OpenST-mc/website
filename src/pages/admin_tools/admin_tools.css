@@ -1,107 +1,113 @@
-/* Admin Packer 自定义样式（对齐旧 apps/admin/admin_tools.html） */
-::-webkit-scrollbar {
+/* Admin Packer 自定义样式（对齐旧 apps/admin/admin_tools.html）。
+   选择器限定在 .admin-tools-page 根节点内（滚动条规则经 :has 限定），避免客户端路由后泄漏。 */
+
+html:has(.admin-tools-page)::-webkit-scrollbar,
+.admin-tools-page::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-::-webkit-scrollbar-track {
+html:has(.admin-tools-page)::-webkit-scrollbar-track,
+.admin-tools-page::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.02);
   border-radius: 10px;
 }
-::-webkit-scrollbar-thumb {
+html:has(.admin-tools-page)::-webkit-scrollbar-thumb,
+.admin-tools-page::-webkit-scrollbar-thumb {
   background: rgba(64, 181, 173, 0.2);
   border-radius: 10px;
   transition: background 0.3s ease;
 }
-::-webkit-scrollbar-thumb:hover {
+html:has(.admin-tools-page)::-webkit-scrollbar-thumb:hover,
+.admin-tools-page::-webkit-scrollbar-thumb:hover {
   background: #40b5ad;
   box-shadow: 0 0 8px rgba(64, 181, 173, 0.4);
 }
 
-.markdown-body {
+.admin-tools-page .markdown-body {
   line-height: 1.6;
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
   max-width: 100%;
 }
-.markdown-body h1 {
+.admin-tools-page .markdown-body h1 {
   font-size: 1.5rem;
   color: #fff;
   border-bottom: 2px solid #40b5ad;
   padding-bottom: 0.3rem;
   margin: 1.5rem 0 1rem;
 }
-.markdown-body h2 {
+.admin-tools-page .markdown-body h2 {
   font-size: 1.25rem;
   border-left: 4px solid #40b5ad;
   padding-left: 0.75rem;
   margin: 1.2rem 0 0.8rem;
 }
-.markdown-body h3 {
+.admin-tools-page .markdown-body h3 {
   font-size: 1.1rem;
   color: #40b5ad;
   margin: 1rem 0 0.5rem;
   font-weight: bold;
 }
-.markdown-body ul {
+.admin-tools-page .markdown-body ul {
   list-style-type: disc;
   padding-left: 1.5rem;
   margin: 1rem 0;
 }
-.markdown-body ol {
+.admin-tools-page .markdown-body ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
   margin: 1rem 0;
 }
-.markdown-body input[type='checkbox'] {
+.admin-tools-page .markdown-body input[type='checkbox'] {
   accent-color: #40b5ad;
   width: 1rem;
   height: 1rem;
   vertical-align: middle;
   margin-right: 4px;
 }
-.markdown-body strong {
+.admin-tools-page .markdown-body strong {
   color: #fff;
   font-weight: bold;
 }
-.markdown-body del {
+.admin-tools-page .markdown-body del {
   color: #555;
   text-decoration: line-through;
 }
-.markdown-body blockquote {
+.admin-tools-page .markdown-body blockquote {
   border-left: 4px solid #2a6a65;
   color: #888;
   background: rgba(64, 181, 173, 0.05);
   padding: 8px 16px;
   border-radius: 0 8px 8px 0;
 }
-.markdown-body a {
+.admin-tools-page .markdown-body a {
   color: #40b5ad;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.markdown-body a:hover {
+.admin-tools-page .markdown-body a:hover {
   filter: brightness(1.2);
 }
-.markdown-body code {
+.admin-tools-page .markdown-body code {
   background: rgba(64, 181, 173, 0.15);
   color: #40b5ad;
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
   font-family: monospace;
 }
-.markdown-body pre {
+.admin-tools-page .markdown-body pre {
   overflow-x: auto;
   max-width: 100%;
   background: rgba(255, 255, 255, 0.05);
   padding: 1rem;
   border-radius: 0.75rem;
 }
-.markdown-body img {
+.admin-tools-page .markdown-body img {
   border-radius: 0.5rem;
   cursor: zoom-in;
   transition: transform 0.2s;
 }
-.markdown-body img:active {
+.admin-tools-page .markdown-body img:active {
   transform: scale(0.98);
 }

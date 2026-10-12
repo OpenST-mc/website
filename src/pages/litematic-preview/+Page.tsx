@@ -59,7 +59,7 @@ export default function Page() {
   }, []);
 
   return (
-    <>
+    <div className="preview-page">
       <div className="top-bar"></div>
 
       <div id="viewer"></div>
@@ -176,6 +176,6 @@ export default function Page() {
       </div>
 
       <img id="atlas" src={`${RESOURCE_BASE}/atlas.png`} crossOrigin="anonymous" hidden alt="" />
-    </>
+    </div>
   );
 }

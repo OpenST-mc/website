@@ -1,8 +1,12 @@
-:root {
+/* Litematic Converter 页样式（对齐旧 apps/extra/litematic-converter）。
+   全局元素规则经 :has(.converter-page) 限定在本页挂载期间，避免客户端路由后泄漏。 */
+
+.converter-page {
   --brand-color: #40b5ad;
 }
 
-body {
+html:has(.converter-page),
+body:has(.converter-page) {
   background: #0c0c0c;
   color: #d1d1d6;
   font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
@@ -53,7 +57,7 @@ body {
   opacity: 0.4;
 }
 
-select option {
+.converter-page select option {
   background-color: #1a1a1a; /* 匹配 body 背景 */
   color: #d1d1d6;
 }

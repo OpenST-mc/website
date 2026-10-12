@@ -1,20 +1,25 @@
-:root {
+/* Litematic Preview 页样式（对齐旧 apps/extra/litematic-preview）。
+   全局元素规则经 :has(.preview-page) 限定在本页挂载期间，避免客户端路由后泄漏。 */
+
+.preview-page {
   --primary: #40b5ad;
   --bg-dark: #0c0c0c;
   --panel-bg: rgba(20, 20, 20, 0.85);
 }
 
-*,
-*::before,
-*::after {
+.preview-page,
+.preview-page *,
+.preview-page *::before,
+.preview-page *::after {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
 }
 
-body {
-  background-color: var(--bg-dark);
+html:has(.preview-page),
+body:has(.preview-page) {
+  background-color: #0c0c0c;
   color: #e0e0e0;
   font-family: 'Inter', -apple-system, sans-serif;
   overflow: hidden;
