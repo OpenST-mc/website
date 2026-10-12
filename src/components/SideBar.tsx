@@ -68,7 +68,7 @@ export function SideBar({
                 type="button"
                 aria-label="清空搜索"
                 onClick={() => onSearchChange('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
               >
                 ✕
               </button>
@@ -76,7 +76,7 @@ export function SideBar({
           </div>
 
           <div className="flex flex-col gap-2">
-            <span className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-1">我的收藏</span>
+            <span className="text-[11px] text-gray-600 font-bold uppercase tracking-[0.2em] mb-1">我的收藏</span>
             <div className="flex flex-col text-[14px]">
               <button
                 type="button"
@@ -86,7 +86,7 @@ export function SideBar({
                 }`}
               >
                 <svg
-                  className={`w-3.5 h-3.5 ${showOnlyFavs ? 'fill-current text-brand' : 'text-white/20 group-hover:text-white/60'}`}
+                  className={`w-3.5 h-3.5 ${showOnlyFavs ? 'fill-current text-brand' : 'text-white/20 group-hover:text-white/40'}`}
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -123,7 +123,7 @@ export function SideBar({
             const flat = Array.isArray(catConfig);
             return (
               <div key={cat} className="flex flex-col gap-2">
-                <span className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-1">{cat}</span>
+                <span className="text-[11px] text-gray-600 font-bold uppercase tracking-[0.2em] mb-1">{cat}</span>
                 <div className="flex flex-col text-[14px]">
                   {flat ? (
                     Array.from(groups[cat] ?? []).map((tag) => (
@@ -178,7 +178,7 @@ export function SideBar({
                                     type="button"
                                     onClick={() => onToggleTag(cat, tag)}
                                     className={`text-left text-[13px] py-1.5 px-4 rounded transition-all ${
-                                      selected[cat]?.includes(tag) ? 'text-brand font-bold bg-brand/5' : 'text-white/70 hover:text-white'
+                                      selected[cat]?.includes(tag) ? 'text-brand font-bold bg-brand/5' : 'text-white/50 hover:text-white'
                                     }`}
                                   >
                                     {tag}

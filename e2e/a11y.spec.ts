@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 // M6 · 可访问性门：关键页面无 serious/critical 级 axe 违规（WCAG 2 A/AA）。
+// 例外（维护者决定，2026-10）：保留原暗色视觉层次，显式豁免 color-contrast 规则。
 const A11Y_PAGES = ['/', '/health', '/admin_tools', '/archive'];
 
 for (const path of A11Y_PAGES) {
@@ -13,7 +14,10 @@ for (const path of A11Y_PAGES) {
       .waitForFunction(() => document.body.classList.contains('ready'), undefined, { timeout: 5000 })
       .catch(() => undefined);
 
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .disableRules(['color-contrast'])
+      .analyze();
     const serious = results.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
     if (serious.length > 0) {
       console.log(

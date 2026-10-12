@@ -24,7 +24,7 @@ export function NavBar({ user, isAdmin, onLogin, onLogout, onOpenMenu }: NavBarP
         </button>
         <div className="font-bold tracking-tighter text-brand text-xl">
           <a href="https://github.com/OpenST-mc/website">OpenST档案馆</a>{' '}
-          <span className="hidden sm:inline text-white/60 text-xs tracking-normal ml-1 font-normal uppercase">v4.5</span>
+          <span className="hidden sm:inline text-white/40 text-xs tracking-normal ml-1 font-normal uppercase">v4.5</span>
         </div>
       </div>
 
@@ -41,7 +41,7 @@ export function NavBar({ user, isAdmin, onLogin, onLogout, onOpenMenu }: NavBarP
                 type="button"
                 onClick={onLogout}
                 aria-label="退出登录"
-                className="text-gray-400 hover:text-red-400 p-1"
+                className="text-gray-500 hover:text-red-400 p-1"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path

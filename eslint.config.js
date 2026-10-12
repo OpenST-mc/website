@@ -95,6 +95,7 @@ export default tseslint.config(
       '**/resource/assets.js',
       '.docs/',
       '.agents/',
+      'temp-opencode/',
       'test-results/',
       'playwright-report/',
       'blob-report/',

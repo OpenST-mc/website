@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <div className="min-h-screen flex items-center justify-center bg-black text-gray-300 p-6">
           <div className="text-center space-y-4">
             <h1 className="text-2xl font-bold text-white">页面渲染出错</h1>
-            <p className="text-sm text-gray-400 break-all">{this.state.error.message}</p>
+            <p className="text-sm text-gray-500 break-all">{this.state.error.message}</p>
             <button
               type="button"
               onClick={this.reset}

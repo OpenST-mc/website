@@ -33,7 +33,7 @@ export function ArchiveCard({ item, isAdmin, isFav, onOpen, onEdit, onToggleFav 
         }`}
       >
         <svg
-          className={`w-4 h-4 transition-colors ${isFav ? 'text-brand fill-current' : 'text-white/60 group-hover:text-white/80'}`}
+          className={`w-4 h-4 transition-colors ${isFav ? 'text-brand fill-current' : 'text-white/40 group-hover:text-white/80'}`}
           viewBox="0 0 24 24"
           stroke="currentColor"
         >
@@ -92,7 +92,7 @@ export function ArchiveCard({ item, isAdmin, isFav, onOpen, onEdit, onToggleFav 
           <h3 className="font-bold text-base line-clamp-2 h-[2.8rem] text-gray-100 group-hover:text-brand transition-colors">
             {item.name}
           </h3>
-          <p className="text-xs text-gray-400 mt-1 truncate">by {item.author}</p>
+          <p className="text-xs text-gray-500 mt-1 truncate">by {item.author}</p>
         </button>
         <div className="flex flex-wrap gap-1.5 mt-2">
           {item.tags.map((tag, index) => (

@@ -230,7 +230,7 @@ export default function Page() {
                 </div>
                 <div className="text-center lg:text-left xl:text-center">
                   <h3 className="text-lg font-bold text-white tracking-tight">贡献你的机器</h3>
-                  <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                  <p className="text-xs text-gray-500 mt-2 leading-relaxed">
                     欢迎分享你的作品
                     <br />
                     点击前往投递系统
@@ -257,7 +257,7 @@ export default function Page() {
               <div className="flex items-center gap-4">
                 <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/10" />
                 <div className="flex flex-col items-center gap-1">
-                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em]">Discovery</span>
+                  <span className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">Discovery</span>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-2xl font-black text-white leading-none tracking-tighter">{fullFilteredList.length}</span>
                     <span className="text-[10px] text-brand font-bold uppercase tracking-wider">Archives Found</span>
@@ -292,7 +292,7 @@ export default function Page() {
                         className="w-8 bg-transparent text-center text-lg font-black text-brand outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                       <span className="text-white/10 font-light text-xl">/</span>
-                      <span className="text-gray-400 text-sm font-bold tracking-tighter">{totalPages}</span>
+                      <span className="text-gray-500 text-sm font-bold tracking-tighter">{totalPages}</span>
                     </div>
 
                     <button
@@ -305,7 +305,7 @@ export default function Page() {
                       ›
                     </button>
                   </div>
-                  <span className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.4em] ml-1">Navigate System</span>
+                  <span className="text-[9px] text-gray-700 font-bold uppercase tracking-[0.4em] ml-1">Navigate System</span>
                 </div>
               ) : null}
             </div>

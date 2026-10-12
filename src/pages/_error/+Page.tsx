@@ -43,7 +43,7 @@ export default function Page() {
           </div>
           <div className="space-y-2">
             <h2 className="text-2xl font-black tracking-[0.3em] text-[#40B5AD] brand-shadow uppercase">Analyzing...</h2>
-            <p id="target-path" className="text-white/60 font-mono text-sm tracking-widest">
+            <p id="target-path" className="text-white/30 font-mono text-sm tracking-widest">
               {targetPath ? `COORD: ${targetPath}` : 'ROOT_ACCESS'}
             </p>
           </div>
@@ -58,7 +58,7 @@ export default function Page() {
               </span>
             </h1>
             <div className="h-px w-24 bg-[#40B5AD]/30 mx-auto" />
-            <p className="text-white/70 leading-relaxed text-sm">
+            <p className="text-white/50 leading-relaxed text-sm">
               页面 <span id="error-id" className="text-[#40B5AD] font-mono">{targetPath || 'null'}</span> 可能是无效的。
             </p>
           </div>

@@ -22,7 +22,7 @@ export function ImageZoom({ url, name, onClose }: ImageZoomProps) {
       <button
         type="button"
         aria-label="关闭"
-        className="absolute top-6 right-6 text-white/70 hover:text-brand transition-colors p-2"
+        className="absolute top-6 right-6 text-white/50 hover:text-brand transition-colors p-2"
       >
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M6 18L18 6M6 6l12 12" strokeWidth="2.5" />

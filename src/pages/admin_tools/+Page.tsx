@@ -117,7 +117,7 @@ export default function Page() {
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
             <h1 className="text-2xl font-black text-[#40B5AD] tracking-tighter italic">ADMIN PACKER PRO</h1>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Responsive Factory Mode</p>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Responsive Factory Mode</p>
           </div>
           {isProcessing ? (
             <div className="flex items-center gap-2 text-[#40B5AD] bg-[#40B5AD]/10 px-4 py-2 rounded-full border border-[#40B5AD]/20">
@@ -132,7 +132,7 @@ export default function Page() {
             <div className="grid grid-cols-2 gap-4">
               <label className="border-2 border-dashed border-slate-700 p-4 rounded-2xl text-center cursor-pointer hover:border-[#40B5AD]/50 hover:bg-[#40B5AD]/5 transition-all peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[#40B5AD]">
                 <span className="block text-2xl mb-1">🖼️</span>
-                <p className={`text-[10px] font-bold uppercase truncate px-2 ${previewFile ? 'text-[#40B5AD]' : 'text-slate-400'}`}>
+                <p className={`text-[10px] font-bold uppercase truncate px-2 ${previewFile ? 'text-[#40B5AD]' : 'text-slate-500'}`}>
                   {previewFile ? previewFile.name : 'Image'}
                 </p>
                 <input
@@ -146,7 +146,7 @@ export default function Page() {
               <label className="border-2 border-dashed border-slate-700 p-4 rounded-2xl text-center cursor-pointer hover:border-[#40B5AD]/50 hover:bg-[#40B5AD]/5 transition-all peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[#40B5AD]">
                 <span className="block text-2xl mb-1">📦</span>
                 <p
-                  className={`text-[10px] font-bold uppercase truncate px-2 ${litematicFile ? 'text-[#40B5AD]' : 'text-slate-400'}`}
+                  className={`text-[10px] font-bold uppercase truncate px-2 ${litematicFile ? 'text-[#40B5AD]' : 'text-slate-500'}`}
                 >
                   {litematicFile ? litematicFile.name : 'Schem'}
                 </p>
@@ -187,7 +187,7 @@ export default function Page() {
             <div className="space-y-4 bg-black/20 p-4 rounded-2xl border border-white/5">
               {Object.entries(flatConfig).map(([cat, catTags]) => (
                 <div key={cat} className="space-y-2">
-                  <p className="text-[9px] text-[#40B5AD]/80 font-bold uppercase tracking-widest">{cat}</p>
+                  <p className="text-[9px] text-[#40B5AD]/50 font-bold uppercase tracking-widest">{cat}</p>
                   <div className="flex flex-wrap gap-2">
                     {catTags.map((tag) => (
                       <button
@@ -197,7 +197,7 @@ export default function Page() {
                         className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all uppercase tracking-tight ${
                           tags.includes(tag)
                             ? 'bg-[#40B5AD] text-slate-900 border-[#40B5AD]'
-                            : 'bg-white/5 text-slate-400 border-white/10'
+                            : 'bg-white/5 text-slate-500 border-white/10'
                         }`}
                       >
                         {tag}
@@ -227,7 +227,7 @@ export default function Page() {
               {desc ? (
                 <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
               ) : (
-                <div className="text-slate-400 text-xs italic">No description to preview...</div>
+                <div className="text-slate-600 text-xs italic">No description to preview...</div>
               )}
             </div>
           </div>

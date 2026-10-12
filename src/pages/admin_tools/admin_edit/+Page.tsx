@@ -251,7 +251,7 @@ export default function Page() {
       <div className="admin-edit-body p-6 md:p-12">
         <div className="max-w-[1400px] mx-auto space-y-4 text-center">
           <h1 className="text-2xl font-bold text-white">需要管理员权限</h1>
-          <p className="text-white/60 text-sm">请使用具备仓库权限的 GitHub 账号登录。</p>
+          <p className="text-white/40 text-sm">请使用具备仓库权限的 GitHub 账号登录。</p>
           <AuthButton className="px-8 py-2.5 rounded-xl bg-[#40B5AD] text-black font-extrabold" />
         </div>
       </div>
@@ -264,7 +264,7 @@ export default function Page() {
         <header className="flex justify-between items-end mb-10 border-b border-white/5 pb-6">
           <div>
             <h1 className="text-3xl font-bold text-[#40B5AD] tracking-tight">OpenST Editor</h1>
-            <p className="text-white/60 text-sm mt-2 font-mono">Archive: {form.id}</p>
+            <p className="text-white/30 text-sm mt-2 font-mono">Archive: {form.id}</p>
           </div>
           <div className="flex gap-4">
             <a
@@ -288,7 +288,7 @@ export default function Page() {
           <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-white/60 ml-1 uppercase tracking-widest">作品名称</label>
+                <label className="text-xs font-bold text-white/40 ml-1 uppercase tracking-widest">作品名称</label>
                 <input
                   value={form.name}
                   onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
@@ -296,7 +296,7 @@ export default function Page() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-white/60 ml-1 uppercase tracking-widest">作者</label>
+                <label className="text-xs font-bold text-white/40 ml-1 uppercase tracking-widest">作者</label>
                 <input
                   value={form.author}
                   onChange={(e) => setForm((p) => ({ ...p, author: e.target.value }))}
@@ -306,7 +306,7 @@ export default function Page() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-bold text-white/60 ml-1 uppercase tracking-widest">
+              <label className="text-xs font-bold text-white/40 ml-1 uppercase tracking-widest">
                 标签分类 (二级/三级均可点选)
               </label>
               <div className="bg-white/5 p-6 rounded-3xl border border-white/10 space-y-8">
@@ -327,7 +327,7 @@ export default function Page() {
                             className={`px-2.5 py-1 rounded-lg text-[11px] transition-all border ${
                               form.tags.includes(tag)
                                 ? 'bg-[#40B5AD] text-black border-[#40B5AD]'
-                                : 'bg-white/5 text-white/60 border-white/10 hover:border-white/30'
+                                : 'bg-white/5 text-white/40 border-white/10 hover:border-white/30'
                             }`}
                           >
                             {tag}
@@ -345,7 +345,7 @@ export default function Page() {
                                 className={`text-[10px] font-mono uppercase tracking-tighter px-2 py-0.5 border rounded transition-all ${
                                   form.tags.includes(subCat)
                                     ? 'text-[#40B5AD] border-[#40B5AD] bg-[#40B5AD]/10'
-                                    : 'text-white/60 border-transparent hover:text-white/60'
+                                    : 'text-white/30 border-transparent hover:text-white/60'
                                 }`}
                               >
                                 {subCat}
@@ -363,7 +363,7 @@ export default function Page() {
                                   className={`px-2.5 py-1 rounded-lg text-[11px] transition-all border ${
                                     form.tags.includes(tag)
                                       ? 'bg-[#40B5AD] text-black border-[#40B5AD]'
-                                      : 'bg-white/5 text-white/60 border-white/10 hover:border-white/30'
+                                      : 'bg-white/5 text-white/40 border-white/10 hover:border-white/30'
                                   }`}
                                 >
                                   {tag}
@@ -380,7 +380,7 @@ export default function Page() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-bold text-white/60 ml-1 uppercase tracking-widest">Markdown 内容</label>
+              <label className="text-xs font-bold text-white/40 ml-1 uppercase tracking-widest">Markdown 内容</label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
@@ -400,7 +400,7 @@ export default function Page() {
                     <div className="p-2.5 rounded-xl bg-[#40B5AD]/10 text-[#40B5AD]">📄</div>
                     <div className="flex flex-col truncate">
                       <span className="text-xs font-bold text-white truncate">{form.filename}</span>
-                      <span className="text-[9px] text-white/60 uppercase font-mono">Litematic File</span>
+                      <span className="text-[9px] text-white/30 uppercase font-mono">Litematic File</span>
                     </div>
                   </div>
                   <input
@@ -443,7 +443,7 @@ export default function Page() {
           <div className="sticky top-6">
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl group">
               <div className="px-6 py-4 bg-white/5 border-b border-white/5 flex justify-between items-center">
-                <span className="text-xs font-bold text-white/60 uppercase tracking-[0.2em]">
+                <span className="text-xs font-bold text-white/20 uppercase tracking-[0.2em]">
                   Live Preview / 点击图片更换
                 </span>
                 <div className="flex gap-2">

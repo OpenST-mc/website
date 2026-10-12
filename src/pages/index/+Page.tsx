@@ -85,7 +85,7 @@ function BypassOverlay() {
           </div>
           <div className="space-y-2">
             <h2 className="text-2xl font-black tracking-[0.3em] text-[#40B5AD] brand-shadow uppercase">Bypassing...</h2>
-            <p className="text-white/60 font-mono text-xs tracking-widest uppercase">STATUS: {log}</p>
+            <p className="text-white/30 font-mono text-xs tracking-widest uppercase">STATUS: {log}</p>
           </div>
         </div>
       </div>
@@ -120,7 +120,7 @@ export default function Page() {
                 OPEN<span className="text-[#40B5AD] loading-skeleton">ST</span>
               </h1>
             </div>
-            <p className="text-[9px] md:text-[10px] text-gray-400 uppercase tracking-[0.2em] md:tracking-[0.4em] loading-skeleton">
+            <p className="text-[9px] md:text-[10px] text-gray-600 uppercase tracking-[0.2em] md:tracking-[0.4em] loading-skeleton">
               Protocol Version 4.5 // Sub-System Active
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function Page() {
             onClick={registerClick}
             className="group cursor-pointer text-right hidden sm:block"
           >
-            <div className="text-[10px] text-gray-400 group-hover:text-cyan-500 transition-colors tracking-widest loading-skeleton">
+            <div className="text-[10px] text-gray-700 group-hover:text-cyan-500 transition-colors tracking-widest loading-skeleton">
               ACCESS_KEY: CREDITS
             </div>
             <div className="flex gap-1 mt-1 justify-end">
@@ -150,7 +150,7 @@ export default function Page() {
               </h2>
               <p
                 onClick={registerClick}
-                className="text-gray-400 border-l-2 border-red-600 pl-4 md:pl-6 max-w-md italic loading-skeleton text-sm md:text-base uppercase cursor-pointer"
+                className="text-gray-500 border-l-2 border-red-600 pl-4 md:pl-6 max-w-md italic loading-skeleton text-sm md:text-base uppercase cursor-pointer"
               >
                 &quot;开源，社区，MC。&quot;
               </p>
@@ -167,7 +167,7 @@ export default function Page() {
                     进入档案馆
                   </h3>
                 </div>
-                <div className="z-10 flex items-center gap-4 text-[10px] md:text-xs tracking-widest text-gray-400 group-hover:text-white transition-colors loading-skeleton">
+                <div className="z-10 flex items-center gap-4 text-[10px] md:text-xs tracking-widest text-gray-500 group-hover:text-white transition-colors loading-skeleton">
                   <span className="truncate uppercase">Initializing_Session</span>
                   <div className="h-px flex-1 bg-white/10 hidden sm:block" />
                   <span className="shrink-0 uppercase">0x801_Deployed</span>
@@ -180,7 +180,7 @@ export default function Page() {
           </div>
 
           <div className="lg:col-span-5 flex flex-col gap-4 md:gap-6">
-            <div className="text-[9px] md:text-[10px] font-bold text-gray-400 tracking-[0.3em] mb-2 loading-skeleton uppercase">
+            <div className="text-[9px] md:text-[10px] font-bold text-gray-800 tracking-[0.3em] mb-2 loading-skeleton uppercase">
               // Auxiliary_Modules
             </div>
 
@@ -189,9 +189,9 @@ export default function Page() {
                 <h4 className="text-base md:text-lg font-bold text-white group-hover:text-[#40B5AD] transition-colors loading-skeleton uppercase">
                   Wiki
                 </h4>
-                <span className="text-gray-400 font-mono text-[10px] md:text-xs loading-skeleton uppercase">01</span>
+                <span className="text-gray-800 font-mono text-[10px] md:text-xs loading-skeleton uppercase">01</span>
               </div>
-              <p className="text-[11px] md:text-xs text-gray-400 mt-4 leading-relaxed loading-skeleton uppercase">
+              <p className="text-[11px] md:text-xs text-gray-600 mt-4 leading-relaxed loading-skeleton uppercase">
                 学习储电知识，社区驱动的大型 Wiki
               </p>
             </a>
@@ -205,9 +205,9 @@ export default function Page() {
                 <h4 className="text-base md:text-lg font-bold text-white group-hover:text-purple-400 transition-colors loading-skeleton uppercase">
                   版本转换 (CONV)
                 </h4>
-                <span className="text-gray-400 font-mono text-[10px] md:text-xs loading-skeleton uppercase">02</span>
+                <span className="text-gray-800 font-mono text-[10px] md:text-xs loading-skeleton uppercase">02</span>
               </div>
-              <p className="text-[11px] md:text-xs text-gray-400 mt-4 leading-relaxed loading-skeleton uppercase">
+              <p className="text-[11px] md:text-xs text-gray-600 mt-4 leading-relaxed loading-skeleton uppercase">
                 跨版本投影转换，支持 MC 1.12 到最新版本
               </p>
             </a>
@@ -221,16 +221,16 @@ export default function Page() {
                 <h4 className="text-base md:text-lg font-bold text-white group-hover:text-orange-400 transition-colors loading-skeleton uppercase">
                   结构预览 (WebGL)
                 </h4>
-                <span className="text-gray-400 font-mono text-[10px] md:text-xs loading-skeleton uppercase">03</span>
+                <span className="text-gray-800 font-mono text-[10px] md:text-xs loading-skeleton uppercase">03</span>
               </div>
-              <p className="text-[11px] md:text-xs text-gray-400 mt-4 leading-relaxed loading-skeleton uppercase">
+              <p className="text-[11px] md:text-xs text-gray-600 mt-4 leading-relaxed loading-skeleton uppercase">
                 3D 预览投影，无需打开游戏即可查看机器细节
               </p>
             </a>
 
             <div className="p-4 md:p-6 border border-white/5 rounded-sm space-y-4">
               <div className="flex justify-between text-[7px] md:text-[8px] tracking-tighter">
-                <span className="text-gray-400 loading-skeleton uppercase">Buffer_Load</span>
+                <span className="text-gray-700 loading-skeleton uppercase">Buffer_Load</span>
                 <span className="text-red-500 loading-skeleton uppercase">Optimal</span>
               </div>
               <div className="flex gap-1">
@@ -244,25 +244,25 @@ export default function Page() {
         </div>
 
         <footer className="mt-24 md:mt-32 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 md:gap-6">
-          <div className="text-[9px] text-gray-400 tracking-[0.2em] md:tracking-[0.5em] uppercase loading-skeleton">
+          <div className="text-[9px] text-gray-700 tracking-[0.2em] md:tracking-[0.5em] uppercase loading-skeleton">
             © 2026 OpenST-mc // Technical Storage Protocol
           </div>
           <div className="flex gap-8">
             <a
               href="https://github.com/OpenST-mc"
-              className="text-[9px] text-gray-400 hover:text-white transition-colors tracking-widest loading-skeleton uppercase"
+              className="text-[9px] text-gray-500 hover:text-white transition-colors tracking-widest loading-skeleton uppercase"
             >
               Github_Repo
             </a>
             <a
               href="https://status.openstmc.com/"
-              className="text-[9px] text-gray-400 hover:text-white transition-colors tracking-widest loading-skeleton uppercase"
+              className="text-[9px] text-gray-500 hover:text-white transition-colors tracking-widest loading-skeleton uppercase"
             >
               ST_Network
             </a>
             <a
               href="https://qm.qq.com/q/XrYt5ObyiQ"
-              className="text-[9px] text-gray-400 hover:text-white transition-colors tracking-widest loading-skeleton uppercase"
+              className="text-[9px] text-gray-500 hover:text-white transition-colors tracking-widest loading-skeleton uppercase"
             >
               QQ_Group
             </a>

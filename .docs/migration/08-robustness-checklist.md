@@ -88,3 +88,4 @@
 - 验证命令：`npm run check:types` · `npm run lint` · `npm run test` · `npm run check:paths` · `npm run build` · `npx playwright test`（含 axe serious/critical 门与 hydration 检查）。
 - 依赖审计：`npm audit` 0 漏洞（vite/dompurify/vue 取补丁版；sharp 0.35.5、esbuild 0.28.2 精确钉版后全量构建通过）。
 - 对比度修复：按 axe 报告统一提升暗底小字号文本（gray-400/slate-400、text-white/60-70），并新增 `:focus-visible` 与 `prefers-reduced-motion` 全局规则。
+- 对比度决策更新（2026-10-12）：M6 期间的全局提亮已按维护者决定回退，保留原暗色视觉层次；`e2e/a11y.spec.ts` 显式豁免 `color-contrast` 规则，其余 axe 规则仍须零 serious/critical。
