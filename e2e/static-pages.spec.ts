@@ -38,3 +38,15 @@ test('upload page gates on GitHub login when unauthenticated', async ({ page }) 
   await expect(page).toHaveTitle('投递新机器 - OpenST');
   await expect(page.getByText('身份验证')).toBeVisible();
 });
+
+test('archive page is server-rendered with cards', async ({ page, request }) => {
+  const res = await request.get('/archive');
+  expect(res.status()).toBe(200);
+  const html = await res.text();
+  expect(html).toContain('贡献你的机器');
+  expect(html).toContain('Archives Found');
+
+  await page.goto('/archive');
+  await expect(page).toHaveTitle('OpenST Archive');
+  await expect(page.getByText('贡献你的机器')).toBeVisible();
+});
