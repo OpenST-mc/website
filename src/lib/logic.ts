@@ -3,8 +3,8 @@
 
 import { TAG_CONFIG, type TagCategoryConfig } from './config.ts';
 
-/** Minimal shape the filter logic relies on. Full domain type lands in T4.1. */
-export interface ArchiveItem {
+/** 过滤逻辑所需的最小字段；完整领域类型见 types.ts 的 ArchiveItem。 */
+export interface FilterableItem {
   sub_id?: string | null;
   id?: string;
   name?: string | null;
@@ -56,7 +56,7 @@ function findContextParent(
 }
 
 // 核心过滤函数
-export function getFilteredList<T extends ArchiveItem>(
+export function getFilteredList<T extends FilterableItem>(
   data: T[] | null | undefined,
   search: string | null | undefined,
   selected: SelectedTags,
@@ -138,7 +138,7 @@ export function getFilteredList<T extends ArchiveItem>(
 }
 
 // 动态标签统计计算：按当前过滤后数据收窄可见标签；数据为空时回退到全量并集
-export function calculateDynamicTags<T extends ArchiveItem>(
+export function calculateDynamicTags<T extends FilterableItem>(
   data: T[] | null | undefined,
   categories: string[],
   selected: SelectedTags,

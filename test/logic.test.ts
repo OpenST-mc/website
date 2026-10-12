@@ -4,7 +4,7 @@ import {
   getFilteredList,
   calculateDynamicTags,
   getSafePath,
-  type ArchiveItem,
+  type FilterableItem,
   type SelectedTags,
 } from '../src/lib/logic.ts';
 import { TAG_CONFIG, CATEGORIES } from '../src/lib/config.ts';
@@ -15,7 +15,7 @@ const emptySelected = (): SelectedTags => ({});
 //   "编码存储科技" (object): { "编码全物品单片": ["常规编码单片", ...], ... }
 //   "生产/合成" (flat array): ["合成站", "合成器相关"]
 //   "版本" (flat array): ["1.21.x", ...]
-const itemA: ArchiveItem = {
+const itemA: FilterableItem = {
   sub_id: 'sub-12',
   id: 'aaa',
   name: '高速编码单片',
@@ -23,7 +23,7 @@ const itemA: ArchiveItem = {
   description: 'A fast encoder slice',
   tags: ['编码全物品单片', '常规编码单片'],
 };
-const itemB: ArchiveItem = {
+const itemB: FilterableItem = {
   sub_id: 'sub-34',
   id: 'bbb',
   name: '矩阵编码单片',
@@ -31,7 +31,7 @@ const itemB: ArchiveItem = {
   description: 'Matrix variant',
   tags: ['编码全物品单片', '矩阵编码单片'],
 };
-const itemLeafOnly: ArchiveItem = {
+const itemLeafOnly: FilterableItem = {
   sub_id: 'sub-56',
   id: 'ccc',
   name: '孤儿叶子',
@@ -39,7 +39,7 @@ const itemLeafOnly: ArchiveItem = {
   description: 'Has leaf tag without its parent',
   tags: ['常规编码单片'],
 };
-const itemC: ArchiveItem = {
+const itemC: FilterableItem = {
   sub_id: 'sub-78',
   id: 'ddd',
   name: '合成站成品',
@@ -47,7 +47,7 @@ const itemC: ArchiveItem = {
   description: 'Crafting station build',
   tags: ['合成站', '1.21.x'],
 };
-const DATA: ArchiveItem[] = [itemA, itemB, itemLeafOnly, itemC];
+const DATA: FilterableItem[] = [itemA, itemB, itemLeafOnly, itemC];
 
 describe('getSafePath', () => {
   it('leaves plain segments untouched and preserves slashes', () => {
