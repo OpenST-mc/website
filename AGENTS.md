@@ -154,3 +154,4 @@ AI must NOT：发明新的路由/目录映射、引入 CDN 或 `public/`、另�
 - Tailwind 三入口以 `@source "../src"` 扫描；新增独立源码目录必须同步三入口，否则类名静默丢失。
 - 构建顺序即 `pnpm run build` 定义（含 `build:static` → `check:build`），不得调换或跳段发版。
 - `content/` 子模块缺失会导致 `data/build.js`、E2E 与构建断言失败；CI 使用 recursive checkout。
+- Vercel Edge Functions（`api/*.ts`）引用 `src/lib` 时**相对导入不得带 `.ts` 扩展名**：Vercel 构建把 TS 编译产物重命名 `.ts→.js` 但不重写 import 说明符，带扩展名会在部署期报 `referencing unsupported modules` 而失败（门：`test/vercel-edge-imports.test.ts`）。

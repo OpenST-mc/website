@@ -1,5 +1,5 @@
-import { PROXY_SIG_HEADER, PROXY_TOKEN_HEADER, PROXY_TS_HEADER, signProxyRequest } from '../src/lib/proxy-sign.ts';
-import { readEdgeSession } from '../src/lib/edge-session.ts';
+import { PROXY_SIG_HEADER, PROXY_TOKEN_HEADER, PROXY_TS_HEADER, signProxyRequest } from '../src/lib/proxy-sign';
+import { readEdgeSession } from '../src/lib/edge-session';
 
 // 方案 B（ADR-005）：任意已登录用户的投稿 Issue 代理。
 // 校验 Auth.js 会话 → 以服务签名 + 会话 ghToken 转发 Worker /api/submit-issue。
