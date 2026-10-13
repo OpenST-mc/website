@@ -107,7 +107,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 md:p-12">
+    <div className="min-h-screen p-4 md:p-12 portal-page">
       {bypassing && <BypassOverlay />}
       <div className="logic-grid fixed inset-0 z-0 pointer-events-none" />
       <div className="rs-wire top-[10%] md:top-[15%]" />

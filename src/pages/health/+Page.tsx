@@ -70,7 +70,7 @@ export default function Page() {
   const cfg = OVERALL[overall];
 
   return (
-    <div className="bg-grid min-h-screen bg-black text-gray-200 font-sans">
+    <div className="bg-grid min-h-screen bg-black text-gray-200 font-sans portal-page">
       <div className="max-w-3xl mx-auto px-6 py-12">
         <header className="flex justify-between items-center mb-12 backdrop-blur-sm bg-black/40 p-4 rounded-xl border border-white/5">
           <div>

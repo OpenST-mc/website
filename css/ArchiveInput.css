@@ -4,6 +4,9 @@
 @source "../src";
 
 @theme {
+  /* 恢复 Tailwind 4.2 的默认系统字体栈（4.3 起默认改为 -apple-system…，与旧版观感不一致） */
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
   --color-brand: #40b5ad;
   --color-dark: #1f2223;
   --color-panel: #2a2c2d;

@@ -4,6 +4,9 @@
 @source "../src";
 
 @theme {
+  /* 恢复 Tailwind 4.2 的默认系统字体栈（4.3 起默认改为 -apple-system…，与旧版观感不一致） */
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
   --color-st-cyan: #40b5ad;
   --color-rs-red: #ff4d00;
   --color-logic-bg: #0a0a0b;
@@ -55,14 +58,16 @@
     font-display: swap;
   }
 
-  html {
+  /* 全局元素规则经 :has(.portal-page) 限定在首页/health 挂载期间，
+     客户端路由离开后自动失效，避免字体/字重/背景泄漏到其它页面 */
+  html:has(.portal-page) {
     background-color: var(--color-logic-bg);
     overflow-x: hidden;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
 
-  body {
+  body:has(.portal-page) {
     background-color: var(--color-logic-bg);
     color: #a1a1aa;
     /* 解决中文字体变宋体的问题 */
