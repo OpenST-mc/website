@@ -1,0 +1,6 @@
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+overrides:
+  nanoid: 3.3.18
+  playwright-core: 1.63.0

@@ -4,6 +4,7 @@
   "description": "OpenST 官方网站：React + Vike SSG 门户与存档提交系统",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.24.0",
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
@@ -21,7 +22,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check:paths": "node scripts/check-paths.js",
-    "build": "node data/build.js && npm run build:sitemap && npm run build:ArchiveCSS && npm run build:PortalCSS && npm run build:AdminCSS && npm run build:vendor && vite build && npm run build:static && npm run check:build"
+    "build": "node data/build.js && pnpm run build:sitemap && pnpm run build:ArchiveCSS && pnpm run build:PortalCSS && pnpm run build:AdminCSS && pnpm run build:vendor && vite build && pnpm run build:static && pnpm run check:build"
   },
   "dependencies": {
     "@auth/core": "0.41.3",
@@ -67,9 +68,6 @@
     "vitest": "5.0.3"
   },
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  },
-  "overrides": {
-    "nanoid": "3.3.18"
+    "node": ">=22.12.0"
   }
 }

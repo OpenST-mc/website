@@ -21,26 +21,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
       - name: Type check
-        run: npm run check:types
+        run: pnpm run check:types
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Unit & component tests
-        run: npm run test
+        run: pnpm run test
 
       - name: Path consistency guard
-        run: npm run check:paths
+        run: pnpm run check:paths
 
   build-and-e2e:
     name: Build + E2E
@@ -51,29 +54,32 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Build (SSG + check:build)
-        run: npm run build
+        run: pnpm run build
 
       - name: E2E (preview on dist/client)
-        run: npm run test:e2e
+        run: pnpm run test:e2e
 
       - name: Upload Playwright report on failure
         if: failure()

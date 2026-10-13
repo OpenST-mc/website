@@ -18,10 +18,14 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+          cache: 'pnpm'
 
       - name: Update Submodule Pointer
         run: |
@@ -31,7 +35,7 @@ jobs:
 
       - name: Install Dependencies
         if: env.POINTER_CHANGED == 'yes'
-        run: npm install --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
       - name: Rebuild Database & Sitemap
         if: env.POINTER_CHANGED == 'yes'

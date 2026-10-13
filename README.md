@@ -19,6 +19,8 @@ OpenST的官方网站
 
 ## 部署方法：
 
+> 前置：Node ≥ 22.12（见 `engines`）与 pnpm（`packageManager` 已钉版；`corepack enable` 或全局安装 pnpm 即可）。
+
 1. 初次设置
 
 ```bash
@@ -34,13 +36,13 @@ git submodule update --init --recursive
 ```
 
 ```bash
-npm install
+pnpm install
 ```
 
 2. 启动
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 - vite服务器会自动部署于localhost:4000，并开启局域网内访问功能
@@ -48,8 +50,8 @@ npm run dev
 3. 构建与预览（SSG 产物 `dist/client`，Vercel 构建部署同一产物）
 
 ```bash
-npm run build
-npm run preview
+pnpm run build
+pnpm run preview
 ```
 
 > [OpenST开发文档](https://openst-mc.github.io/OpenST-Docs/#/)

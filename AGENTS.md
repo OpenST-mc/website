@@ -37,16 +37,17 @@ For every request:
 ## 开发命令
 
 ```bash
-npm run dev              # Vite dev server → localhost:4000 (0.0.0.0, CORS 开启)
-npm run build            # 完整构建: data/build.js → sitemap → Tailwind×3 → vendor → Vite/Vike SSG → build:static → check:build
-npm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Vercel 服务同一产物）
+pnpm run dev              # Vite dev server → localhost:4000 (0.0.0.0, CORS 开启)
+pnpm run build            # 完整构建: data/build.js → sitemap → Tailwind×3 → vendor → Vite/Vike SSG → build:static → check:build
+pnpm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Vercel 服务同一产物）
 ```
 
-- `npm run build` 依次执行：`data/build.js`（读子模块 `content/` 生成 `archive/data/database.json`）→ `build:sitemap` → `build:ArchiveCSS` → `build:PortalCSS` → `build:AdminCSS` → `build:vendor` → `vite build`（Vike `prerender: true` 产出 `dist/client`）→ `build:static`（拷贝静态资产进输出）→ `check:build`（路由/SEO/资产/CSP 断言）。
-- 单独构建 CSS：`npm run build:ArchiveCSS` / `build:PortalCSS` / `build:AdminCSS`（生成并提交静态 `css/*Output.css`，用于公开 `/css/*.css` 兼容；页面运行时不再引用它们）。
-- `npm run build:vendor`：从 node_modules 复制第三方 dist 到 `vendor/` 并以 esbuild 打包（含 `packages/js/insights-src.js` → insights.bundle.js）。vendor 已提交，仅升级依赖后需重跑。
-- `npm run doctor`：React Doctor（`react-doctor`，钉版 devDependency）扫描 React 反模式/性能/安全/可维护性（advisory）。
-- CI（GitHub Actions）：`.github/workflows/ci.yml`（`quality`：`check:types`/`lint`/`test`/`check:paths`；`build-and-e2e`：`npm run build` + `npm run test:e2e`）与 `.github/workflows/react-doctor.yml`（PR 增量扫描 + 评论，advisory）。
+- `pnpm run build` 依次执行：`data/build.js`（读子模块 `content/` 生成 `archive/data/database.json`）→ `build:sitemap` → `build:ArchiveCSS` → `build:PortalCSS` → `build:AdminCSS` → `build:vendor` → `vite build`（Vike `prerender: true` 产出 `dist/client`）→ `build:static`（拷贝静态资产进输出）→ `check:build`（路由/SEO/资产/CSP 断言）。
+- 单独构建 CSS：`pnpm run build:ArchiveCSS` / `build:PortalCSS` / `build:AdminCSS`（生成并提交静态 `css/*Output.css`，用于公开 `/css/*.css` 兼容；页面运行时不再引用它们）。
+- `pnpm run build:vendor`：从 node_modules 复制第三方 dist 到 `vendor/` 并以 esbuild 打包（含 `packages/js/insights-src.js` → insights.bundle.js）。vendor 已提交，仅升级依赖后需重跑。
+- `pnpm run doctor`：React Doctor（`react-doctor`，钉版 devDependency）扫描 React 反模式/性能/安全/可维护性（advisory）。
+- CI（GitHub Actions）：`.github/workflows/ci.yml`（`quality`：`check:types`/`lint`/`test`/`check:paths`；`build-and-e2e`：`pnpm run build` + `pnpm run test:e2e`；均 `pnpm install --frozen-lockfile`）与 `.github/workflows/react-doctor.yml`（PR 增量扫描 + 评论，advisory）。
+- 依赖安装：`pnpm install`（CI 用 `--frozen-lockfile`）。Vercel 不覆盖 `installCommand`，按 `pnpm-lock.yaml`（lockfileVersion 9.0）自动选择受支持的 pnpm 安装；子模块更新在 `vercel.json` `buildCommand` 内执行。
 
 ## 稿件数据架构（2026-08 拆分）
 
@@ -58,8 +59,8 @@ npm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Ve
 
 ## 本地开发与生产一致性
 
-- `npm run dev` 的 `vite.config.ts devPublicRewrites` 与 `vercel.json rewrites` 镜像：本地访问 `/fonts/*`、`/images/*`、`/Traditional-Simplefild/*`、`/Extra-Function/*`（静态资源）行为与生产一致；页面路由由 Vike 直接接管（`/`、`/archive`、`/upload`、`/admin_tools`、`/health`、`/profile/april/december`、`/Extra-Function/*`），**请勿**用物理路径（如 `/apps/extra/`）判断线上表现。
-- `npm run preview` 服务的是 SSG 生产产物 `dist/client`（Playwright E2E 基座）；页面 HTML 均为构建期预渲染，不存在「预览 ≠ 生产形态」的差异。
+- `pnpm run dev` 的 `vite.config.ts devPublicRewrites` 与 `vercel.json rewrites` 镜像：本地访问 `/fonts/*`、`/images/*`、`/Traditional-Simplefild/*`、`/Extra-Function/*`（静态资源）行为与生产一致；页面路由由 Vike 直接接管（`/`、`/archive`、`/upload`、`/admin_tools`、`/health`、`/profile/april/december`、`/Extra-Function/*`），**请勿**用物理路径（如 `/apps/extra/`）判断线上表现。
+- `pnpm run preview` 服务的是 SSG 生产产物 `dist/client`（Playwright E2E 基座）；页面 HTML 均为构建期预渲染，不存在「预览 ≠ 生产形态」的差异。
 - Tailwind 三入口（`css/{input,ArchiveInput,AdminInput}.css`）由页面 `import` 进入 Vite 模块图：dev 下由 `@tailwindcss/vite` 编译并 HMR，构建期产出哈希资源注入各页 HTML；三入口统一 `source(none)` + `@source "../src"`（只扫 `src/`）。新增独立源码目录时必须同步加入三入口的 @source，否则类名静默丢失。
 
 ## 目录结构
@@ -81,14 +82,14 @@ npm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Ve
 
 - 页面路由：Vike 文件式路由（`src/pages/**/+Page.tsx`）构建期预渲染为静态 HTML；特殊 URL 由 `+route.ts` 声明（`/Extra-Function/litematic-*`、`/profile/april/december`）。
 - 静态兼容：`vercel.json rewrites` 仅保留 `/fonts→assets/fonts`、`/images→assets/images`、`/Traditional-Simplefild→assets/s2t`、`/Extra-Function→apps/extra`（页面预渲染 HTML 优先命中，资源回退物理目录）、`/favicon.ico`、`/profile/april/december/credits.html`（旧链接）、`/share/:subid→/api/share?id=:subid`。
-- `npm run check:paths` 守卫 `vercel.json` 与 `vite.config.ts PUBLIC_ALIASES` 双侧一致；新增映射必须两侧同步并过门。
+- `pnpm run check:paths` 守卫 `vercel.json` 与 `vite.config.ts PUBLIC_ALIASES` 双侧一致；新增映射必须两侧同步并过门。
 
 ## 前端要点
 
 - React 19 函数组件 + Vike SSG（`prerender: true`），应用代码全部 `.ts/.tsx`；文件式路由，不引入 Router。
-- 第三方库自托管于 `vendor/`，禁止外链 CDN；`vendor/` 由 `npm run build:vendor` 从 node_modules 生成并已提交。
+- 第三方库自托管于 `vendor/`，禁止外链 CDN；`vendor/` 由 `pnpm run build:vendor` 从 node_modules 生成并已提交。
 - 模块引用用相对路径或别名 `@/*`；运行时公开资源一律以根绝对路径字面量出现（如 `/vendor/deepslate.umd.js`）。
-- CSS：`css/{input,ArchiveInput,AdminInput}.css` 是唯一样式源（Tailwind v4，`source(none)` + `@source ../src`），页面通过相对路径 `import` 引入；dev HMR、构建产出哈希资源。`npm run build:*CSS` 仍生成并提交静态 `css/*Output.css`（公开路径兼容）。
+- CSS：`css/{input,ArchiveInput,AdminInput}.css` 是唯一样式源（Tailwind v4，`source(none)` + `@source ../src`），页面通过相对路径 `import` 引入；dev HMR、构建产出哈希资源。`pnpm run build:*CSS` 仍生成并提交静态 `css/*Output.css`（公开路径兼容）。
 - **注意**：不能使用 `public/` 目录——静态资产由 `build:static` 显式拷贝进 `dist/client`。
 
 ## 安全头与认证
@@ -124,7 +125,7 @@ Vercel 侧同源端点 `/api/auth/*`、`/api/admin/*`、`/api/submit-issue` 走�
 
 ## Tech Stack
 
-- Node `^20.19.0 || >=22.12.0`（以 `engines` 为准）；`react ^19` + `vike`/`vike-react`（SSG），不引入 Router/CLI；`vite ^7`；`tailwindcss ^4`；构建期 `sharp`、`esbuild`（精确钉版）；计数 `Upstash Redis`；埋点仅 Vercel 官方二件。
+- Node `>=22.12.0`（以 `engines` 为准）；包管理 `pnpm@11`（`package.json` `packageManager` 钉版；`overrides`/`allowBuilds` 配置在 `pnpm-workspace.yaml`，勿写回 package.json）；`react ^19` + `vike`/`vike-react`（SSG），不引入 Router/CLI；`vite ^7`；`tailwindcss ^4`；构建期 `sharp`、`esbuild`（精确钉版）；计数 `Upstash Redis`；埋点仅 Vercel 官方二件。
 - 第三方库自托管于 `vendor/`（已提交），禁止外链 CDN。禁止新建 `public/`。
 
 ## Quality Gates
@@ -148,7 +149,7 @@ AI must NOT：发明新的路由/目录映射、引入 CDN 或 `public/`、另�
 
 ## Gotchas
 
-- `npm run preview` 即 SSG 生产产物 `dist/client`（E2E 基座）；页面为构建期预渲染 HTML。
+- `pnpm run preview` 即 SSG 生产产物 `dist/client`（E2E 基座）；页面为构建期预渲染 HTML。
 - Tailwind 三入口以 `@source "../src"` 扫描；新增独立源码目录必须同步三入口，否则类名静默丢失。
-- 构建顺序即 `npm run build` 定义（含 `build:static` → `check:build`），不得调换或跳段发版。
+- 构建顺序即 `pnpm run build` 定义（含 `build:static` → `check:build`），不得调换或跳段发版。
 - `content/` 子模块缺失会导致 `data/build.js`、E2E 与构建断言失败；CI 使用 recursive checkout。

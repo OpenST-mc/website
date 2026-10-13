@@ -1,7 +1,6 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "git submodule update --init --recursive && pnpm run build",
   "outputDirectory": "dist/client",
-  "installCommand": "git submodule update --init --recursive && npm install",
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
