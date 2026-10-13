@@ -1,5 +1,5 @@
 import GitHub from '@auth/core/providers/github';
-import type { AuthConfig } from '@auth/core';
+import { Auth, type AuthConfig } from '@auth/core';
 
 const GH_REPO = process.env.GH_REPO ?? 'OpenST-mc/website';
 
@@ -52,3 +52,8 @@ export const authConfig: AuthConfig = {
     },
   },
 };
+
+// api/auth/** 显式路由共用入口（Vercel 对裸 api/ 的 [...catchall] 仅匹配单段路径，须逐路由建文件）。
+export function authHandler(request: Request): Promise<Response> {
+  return Auth(request, authConfig);
+}

@@ -30,3 +30,31 @@ describe('api/** 导入约束（Vercel Edge）', () => {
     expect(offenders).toEqual([]);
   });
 });
+
+// Vercel 对裸 api/ 的 [...catchall] 只匹配单段路径（实测多段直接平台 404），
+// Auth.js 路由必须显式建文件。
+const REQUIRED_AUTH_ROUTES = [
+  'session.ts',
+  'csrf.ts',
+  'providers.ts',
+  'signin.ts',
+  'signout.ts',
+  'error.ts',
+  'verify-request.ts',
+  'signin/[provider].ts',
+  'callback/[provider].ts',
+];
+
+describe('api/auth 路由（单段 catch-all 限制）', () => {
+  it('Auth.js 每条路由都有显式文件', () => {
+    for (const rel of REQUIRED_AUTH_ROUTES) {
+      const file = path.join(apiDir, 'auth', ...rel.split('/'));
+      expect(fs.existsSync(file), `缺少显式路由: api/auth/${rel}`).toBe(true);
+    }
+  });
+
+  it('不再使用 [...catchall] 形态', () => {
+    const entries = fs.readdirSync(path.join(apiDir, 'auth'));
+    expect(entries.filter((name) => name.includes('[...'))).toEqual([]);
+  });
+});
