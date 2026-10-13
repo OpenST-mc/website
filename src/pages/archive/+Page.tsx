@@ -244,7 +244,11 @@ export default function Page() {
             {pagedList.map((item) => (
               <ArchiveCard
                 key={item.id}
-                item={{ ...item, preview: getSafePath(item.preview) }}
+                item={{
+                  ...item,
+                  preview: getSafePath(item.preview),
+                  thumb: getSafePath(item.thumb),
+                }}
                 isAdmin={isAdmin}
                 isFav={favorites.includes(item.id)}
                 onOpen={() => openDetail(item)}
@@ -327,7 +331,12 @@ export default function Page() {
       {detailItem ? (
         <ErrorBoundary>
           <DetailModal
-            item={{ ...detailItem, preview: getSafePath(detailItem.preview) }}
+            item={{
+              ...detailItem,
+              preview: getSafePath(detailItem.preview),
+              display: getSafePath(detailItem.display),
+              thumb: getSafePath(detailItem.thumb),
+            }}
             isAdmin={isAdmin}
             useProxy={useProxy}
             onToggleProxy={setUseProxy}

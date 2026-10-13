@@ -30,12 +30,13 @@ export function DetailModal({
 }: DetailModalProps) {
   const [downloadCount, setDownloadCount] = useState<number | null>(null);
   const [previewFailed, setPreviewFailed] = useState(false);
+  const previewSrc = item.display || item.preview;
   const titleId = useId();
   const dialogRef = useDialog<HTMLDivElement>(true, onClose);
 
   useEffect(() => {
     setPreviewFailed(false);
-  }, [item.preview]);
+  }, [previewSrc]);
 
   const renderedDescription = useMemo(() => {
     if (!item.description) return '<p class="italic opacity-50 text-gray-600">作者没留下任何简介，一定是大佬吧！</p>';
@@ -120,9 +121,9 @@ export function DetailModal({
 
         <div className="flex flex-col md:flex-row w-full overflow-y-auto md:overflow-visible">
           <div className="w-full md:w-3/5 bg-black/20 flex items-center justify-center border-b md:border-b-0 md:border-r border-white/5 p-4 md:p-10 md:sticky md:top-0 h-auto md:h-[90vh]">
-            {item.preview && !previewFailed ? (
+            {previewSrc && !previewFailed ? (
               <img
-                src={item.preview}
+                src={previewSrc}
                 alt={item.name}
                 onClick={(e) => {
                   e.stopPropagation();

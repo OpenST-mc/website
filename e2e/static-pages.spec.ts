@@ -49,4 +49,8 @@ test('archive page is server-rendered with cards', async ({ page, request }) => 
   await page.goto('/archive');
   await expect(page).toHaveTitle('OpenST Archive');
   await expect(page.getByText('贡献你的机器')).toBeVisible();
+
+  const thumb = page.locator('img[src*="thumb.webp"]').first();
+  await expect(thumb).toBeVisible();
+  await expect.poll(() => thumb.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
 });

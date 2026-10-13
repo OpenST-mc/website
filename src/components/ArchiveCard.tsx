@@ -3,7 +3,7 @@ import { useLazyImage } from '../hooks/useLazyImage';
 import type { ArchiveItem } from '../lib/types';
 
 interface ArchiveCardProps {
-  item: Pick<ArchiveItem, 'id' | 'name' | 'author' | 'tags' | 'preview'>;
+  item: Pick<ArchiveItem, 'id' | 'name' | 'author' | 'tags' | 'preview' | 'thumb'>;
   isAdmin: boolean;
   isFav: boolean;
   onOpen: () => void;
@@ -12,12 +12,16 @@ interface ArchiveCardProps {
 }
 
 export function ArchiveCard({ item, isAdmin, isFav, onOpen, onEdit, onToggleFav }: ArchiveCardProps) {
-  const { ref, src, visible } = useLazyImage(item.preview);
+  const fallbackSrc = item.preview;
+  const [useFallback, setUseFallback] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
+  const activeSrc = useFallback ? fallbackSrc : item.thumb || fallbackSrc;
+  const { ref, src, visible } = useLazyImage(activeSrc);
 
   useEffect(() => {
     setImgFailed(false);
-  }, [item.preview]);
+    setUseFallback(false);
+  }, [item.preview, item.thumb]);
 
   return (
     <div className="group bg-panel rounded-[20px] overflow-hidden border border-white/5 hover:border-brand/40 active:scale-[0.98] transition-all duration-300 shadow-lg flex flex-col h-full relative">
@@ -80,7 +84,10 @@ export function ArchiveCard({ item, isAdmin, isFav, onOpen, onEdit, onToggleFav 
             alt={item.name}
             loading="lazy"
             decoding="async"
-            onError={() => setImgFailed(true)}
+            onError={() => {
+              if (!useFallback && activeSrc !== fallbackSrc) setUseFallback(true);
+              else setImgFailed(true);
+            }}
             className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-500 ${visible ? 'opacity-100' : 'opacity-0'}`}
           />
         )}

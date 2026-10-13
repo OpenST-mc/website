@@ -56,6 +56,7 @@ pnpm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；V
 - **子模块接入**：website 以 `git submodule add … content` 挂载于 `content/`，站点直接静态服务 `/content/<一级>[/<二级>]/<id>/…`（immutable 缓存）。
 - **自动同步**：`.github/workflows/sync-archive.yml` 接收 dispatch → `submodule update --remote` → 生成 `archive/data/database.json` + sitemap → 提交推送触发 Vercel 部署。`main.yml` 仅保留手动全量重建入口。
 - **数据库 category 字段**：值为稿件的相对父路径（如 `潜影盒处理/潜影盒打包机` 或单段 `其他杂物`），前端直链、api/download.js 与 Worker 定位逻辑均按 `[category, id, filename]` 拼接，层级数无关。
+- **预览图派生（FDT）**：website `data/build.js` 构建期在稿件目录内生成 `thumb.webp`（≤640px，卡片用）与按需 `display.webp`（≤1000px，详情/放大用），数据库条目以 `thumb/display` 字段引用；原始 `preview.webp` 仅保留为派生源与后台编辑语义。派生文件不进 archive 库（未跟踪，`.gitmodules` 设 `ignore = untracked`），由构建命令随时重算；`check:build` 断言全部条目的 thumb 已产出。
 
 ## 本地开发与生产一致性
 

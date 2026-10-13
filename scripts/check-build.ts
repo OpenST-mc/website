@@ -64,6 +64,24 @@ for (const rel of REQUIRED_ASSETS) {
   if (!fs.existsSync(path.join(out, rel))) fail(`缺少静态资产: ${rel}`);
 }
 
+// FDT 守卫：database.json 引用的预览图与缩略图必须已随构建产出（thumb 全量要求）。
+const dbFile = path.join(out, 'archive', 'data', 'database.json');
+if (!fs.existsSync(dbFile)) {
+  fail('缺少 archive/data/database.json');
+} else {
+  const items = JSON.parse(fs.readFileSync(dbFile, 'utf-8')) as Array<Record<string, unknown>>;
+  if (!Array.isArray(items) || items.length === 0) fail('database.json 为空或不是数组');
+  for (const item of items) {
+    const id = String(item.id ?? '?');
+    if (typeof item.thumb !== 'string' || !item.thumb) fail(`稿件 ${id} 缺少构建期缩略图`);
+    for (const field of ['preview', 'display', 'thumb'] as const) {
+      const rel = item[field];
+      if (typeof rel !== 'string' || !rel) continue;
+      if (!fs.existsSync(path.join(out, rel.replace(/^\//, '')))) fail(`database.json 引用的图片缺失: ${rel}`);
+    }
+  }
+}
+
 // CSP 断言 + 静态资产缓存头断言
 const vercel = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf-8')) as {
   headers?: Array<{ source?: string; headers?: Array<{ key: string; value: string }> }>;

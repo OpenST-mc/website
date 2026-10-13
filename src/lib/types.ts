@@ -9,6 +9,10 @@ export interface ArchiveItem {
   description: string;
   category: string;
   preview: string;
+  /** 详情大图：构建期按需重编码的有界版本；空串表示直接使用 preview。 */
+  display?: string;
+  /** 卡片缩略图：构建期生成；空串表示回退 preview。 */
+  thumb?: string;
   filename: string;
   sub_id: string;
 }

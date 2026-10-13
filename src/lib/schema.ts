@@ -23,6 +23,8 @@ export function isArchiveItem(v: unknown): v is ArchiveItem {
     typeof o.description === 'string' &&
     typeof o.category === 'string' &&
     typeof o.preview === 'string' &&
+    (o.display === undefined || typeof o.display === 'string') &&
+    (o.thumb === undefined || typeof o.thumb === 'string') &&
     typeof o.filename === 'string' &&
     typeof o.sub_id === 'string'
   );

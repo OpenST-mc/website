@@ -61,6 +61,35 @@ describe('ArchiveCard', () => {
     fireEvent.click(screen.getByLabelText('查看 测试机器'));
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
+
+  it('prefers the build-time thumb and falls back to the preview on error', () => {
+    class FiringObserver {
+      private cb: (entries: Array<{ isIntersecting: boolean; target: Element }>) => void;
+      constructor(cb: (entries: Array<{ isIntersecting: boolean; target: Element }>) => void) {
+        this.cb = cb;
+      }
+      observe(el: Element): void {
+        this.cb([{ isIntersecting: true, target: el }]);
+      }
+      unobserve(): void {}
+      disconnect(): void {}
+    }
+    vi.stubGlobal('IntersectionObserver', FiringObserver);
+    render(
+      <ArchiveCard
+        item={{ ...item, thumb: '/content/x/thumb.webp' }}
+        isAdmin={false}
+        isFav={false}
+        onOpen={() => {}}
+        onEdit={() => {}}
+        onToggleFav={() => {}}
+      />,
+    );
+    const img = screen.getByAltText('测试机器') as HTMLImageElement;
+    expect(img.src).toContain('/content/x/thumb.webp');
+    fireEvent.error(img);
+    expect(img.src).toContain('/content/x/preview.webp');
+  });
 });
 
 describe('SideBar', () => {
@@ -107,5 +136,21 @@ describe('DetailModal', () => {
     expect(document.body.innerHTML).not.toContain('<script>alert');
     expect(screen.getByText('bold')).toBeTruthy();
     expect(screen.getByText('下载文件').closest('a')?.getAttribute('href')).toBe('/api/download?id=sub-1');
+  });
+
+  it('prefers the optimized display image when present', () => {
+    render(
+      <DetailModal
+        item={{ ...item, display: '/content/x/display.webp' }}
+        isAdmin={false}
+        useProxy
+        onToggleProxy={() => {}}
+        onClose={() => {}}
+        onEdit={() => {}}
+        on3DPreview={() => {}}
+        onImageZoom={() => {}}
+      />,
+    );
+    expect((screen.getByAltText('测试机器') as HTMLImageElement).src).toContain('/content/x/display.webp');
   });
 });

@@ -39,6 +39,13 @@ describe('isArchiveItem / parseDatabase', () => {
     expect(parseDatabase('nope')).toEqual([]);
     expect(parseDatabase(undefined)).toEqual([]);
   });
+
+  it('accepts optional thumb/display strings and rejects wrong types', () => {
+    expect(isArchiveItem(good)).toBe(true);
+    expect(isArchiveItem({ ...good, display: '/content/x/display.webp', thumb: '/content/x/thumb.webp' })).toBe(true);
+    expect(isArchiveItem({ ...good, display: 42 })).toBe(false);
+    expect(isArchiveItem({ ...good, thumb: null })).toBe(false);
+  });
 });
 
 describe('parseS2T', () => {
