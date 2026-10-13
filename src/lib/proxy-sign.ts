@@ -55,6 +55,46 @@ export async function signProxyRequest(
   return hmacHex(secret, canonicalPayload(timestamp, bodyHash, ghToken));
 }
 
+// --- 投稿上传令牌（Vercel /api/upload-token 签发 → Worker /api/archive-upload 校验）---
+// 浏览器 → Worker 直传（≤50MB，不经 Vercel 体积限制），令牌把「已登录」带给 Worker。
+export const UPLOAD_TOKEN_TTL_SEC = 600;
+
+/** 上传令牌签名载荷。域分隔前缀防止与代理签名跨用。 */
+export function uploadTokenPayload(exp: string, login: string): string {
+  return `upload\n${exp}\n${login}`;
+}
+
+/** 签发上传令牌：`<exp>.<hmac>`；exp 为 Unix 秒。 */
+export async function signUploadToken(
+  secret: string,
+  login: string,
+  nowMs: number = Date.now(),
+): Promise<{ token: string; exp: number }> {
+  const exp = Math.floor(nowMs / 1000) + UPLOAD_TOKEN_TTL_SEC;
+  const signature = await hmacHex(secret, uploadTokenPayload(String(exp), login));
+  return { token: `${exp}.${signature}`, exp };
+}
+
+/** 校验上传令牌并检查有效期（供 Worker 复用，逻辑与 signUploadToken 对称）。 */
+export async function verifyUploadToken(
+  secret: string,
+  token: string,
+  login: string,
+  nowMs: number = Date.now(),
+  maxTtlSec: number = UPLOAD_TOKEN_TTL_SEC,
+): Promise<boolean> {
+  const dot = token.indexOf('.');
+  if (dot <= 0) return false;
+  const expStr = token.slice(0, dot);
+  const signature = token.slice(dot + 1);
+  const exp = Number(expStr);
+  if (!Number.isInteger(exp)) return false;
+  const now = Math.floor(nowMs / 1000);
+  if (exp < now || exp > now + maxTtlSec) return false;
+  const expected = await hmacHex(secret, uploadTokenPayload(expStr, login));
+  return timingSafeEqualHex(expected, signature);
+}
+
 /** 校验代理签名并检查时间窗（供 Worker 复用，逻辑与 signProxyRequest 对称）。 */
 export async function verifyProxyRequest(
   secret: string,

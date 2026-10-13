@@ -6,7 +6,7 @@ import { TAG_CONFIG } from '../../lib/config';
 import { previewFileName } from '../../lib/packer';
 import { submitIssue } from '../../lib/api';
 import { httpFetch, readJsonSafe } from '../../lib/http';
-import { parseWorkerUpload, sanitizeGithubUrl } from '../../lib/schema';
+import { parseWorkerUpload, parseUploadToken, sanitizeGithubUrl } from '../../lib/schema';
 import { notify } from '../../lib/notify';
 import { IMAGE_EXTENSIONS, SUBMISSION_ARCHIVE_EXTENSIONS, validateUploadFile } from '../../lib/upload';
 import { signIn, signOut } from '../../lib/auth';
@@ -140,9 +140,24 @@ export default function Page() {
       fd.append('zip', zipBlob, `submission_${safeFolderName}.zip`);
       fd.append('preview', previewFile);
 
+      // 先经同源 /api/upload-token 校验登录态并获取短时上传令牌（Worker 强制校验）
+      const tokenRes = await httpFetch('/api/upload-token', {
+        method: 'POST',
+        credentials: 'include',
+        timeoutMs: 20_000,
+      });
+      if (tokenRes.status === 401) throw new Error('登录已失效，请重新登录后再提交');
+      if (!tokenRes.ok) throw new Error(`上传授权失败（HTTP ${tokenRes.status}）`);
+      const uploadToken = parseUploadToken(await readJsonSafe(tokenRes));
+      if (!uploadToken) throw new Error('上传授权响应异常，请刷新后重试');
+
       const workerRes = await httpFetch(`${WORKER_URL}/api/archive-upload`, {
         method: 'POST',
         body: fd,
+        headers: {
+          'x-openst-upload-token': uploadToken.token,
+          'x-openst-upload-user': uploadToken.login,
+        },
         timeoutMs: 120_000,
       });
       if (!workerRes.ok) throw new Error(`Worker 文件中继失败（HTTP ${workerRes.status}）`);

@@ -103,7 +103,7 @@ pnpm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；V
 
 - CF Workers：`https://api.openstmc.com`，源码 `workers/workers 2.js`（env 注入密钥）。
 - `GH_REPO`（权限校验/会话）与 `ARCHIVE_REPO`（稿件内容增删改）分离；管理员端点经 `_meta/index-by-id.json` 定位真实路径（10 分钟 Cache API 缓存）。
-- 上传走 Telegram 中继（≤50MB），wiki 提交建 issue 于 `OpenST-mc/Submissions`。
+- 上传：浏览器经同源 `api/upload-token`（校验 Auth.js 会话）取短时 HMAC 上传令牌后直连 Worker `/api/archive-upload`（Telegram 中继，≤50MB；Worker 强制校验令牌，匿名请求一律 401）；wiki 提交建 issue 于 `OpenST-mc/Submissions`。
 - 会话：Worker 提供 exchange-token / resolveSession（两级缓存，10 分钟）；站点前端会话统一走 Auth.js `/api/auth/session`，不再使用 localStorage 缓存。
 - `/dl/*` Telegram 文件代理；share/download 依赖 Upstash Redis env。
 
@@ -113,7 +113,7 @@ api.openstmc.com 采用「端点白名单 + Managed Challenge」，新增 API �
 否则 fetch 得到 403 且无 CORS 头。现役端点：`/api/session`、`/api/logout`、`/api/check-admin`、
 `/api/exchange-token`、`/api/submit-issue`、`/api/archive-upload`、`/api/admin/*`（update-info /
 update-preview / replace-litematic / delete-archive）、`/api/wiki/submit-archive`、`/dl/*`、`/health`。
-Vercel 侧同源端点 `/api/auth/*`、`/api/admin/*`、`/api/submit-issue` 走服务签名转发（ADR-005 方案 B），
+Vercel 侧同源端点 `/api/auth/*`、`/api/admin/*`、`/api/submit-issue`、`/api/upload-token` 走服务签名/令牌（ADR-005 方案 B），
 不经浏览器直连 Worker，无需额外 WAF 白名单。
 
 ## 数据流水线

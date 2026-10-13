@@ -141,6 +141,20 @@ export function parseWorkerUpload(raw: unknown): WorkerUploadResponse | null {
   return out;
 }
 
+/** /api/upload-token 响应：短时上传令牌（缺失/畸形按未授权处理）。 */
+export interface UploadToken {
+  token: string;
+  login: string;
+}
+
+export function parseUploadToken(raw: unknown): UploadToken | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const o = raw as Record<string, unknown>;
+  if (typeof o.token !== 'string' || o.token.length === 0) return null;
+  if (typeof o.login !== 'string' || o.login.length === 0) return null;
+  return { token: o.token, login: o.login };
+}
+
 /** 校验 /api/stats 下载计数：仅接受有限非负数字。 */
 export function parseDownloadStats(raw: unknown): number | null {
   if (!raw || typeof raw !== 'object') return null;

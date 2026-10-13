@@ -589,14 +589,19 @@ export default {
         });
       }
 
-      // --- [4] 投稿中继 ---
+      // --- [4] 投稿中继（需登录：Vercel /api/upload-token 签发的短时令牌）---
       if (
         request.method === 'POST' &&
         (url.pathname === '/api/archive-upload' || url.pathname === '/api/archive-upload/')
       ) {
+        const uploader = await verifyUploadToken(request, env);
+        if (!uploader) {
+          return new Response('Unauthorized', { status: 401, headers: getCORSHeaders(request) });
+        }
+
         const csrf = checkCSRF(request);
         if (csrf) return csrf;
-        if (isRateLimited(request, 'archive-upload')) {
+        if (isRateLimited(request, 'archive-upload') || hitRateBucket(`upload-user:${uploader.login}`)) {
           return new Response('Too Many Requests', { status: 429, headers: getCORSHeaders(request) });
         }
 
@@ -863,7 +868,7 @@ function getCORSHeaders(request) {
   return {
     'Access-Control-Allow-Origin': headerOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-openst-upload-token, x-openst-upload-user',
     'Access-Control-Allow-Credentials': 'true',
   };
 }
@@ -1021,9 +1026,8 @@ const RATE_LIMIT_WINDOW = 60 * 1000;
 const RATE_LIMIT_MAX = 30;
 const rateBuckets = new Map();
 
-function isRateLimited(request, key) {
-  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-  const bucketKey = `${ip}:${key}`;
+// 命中一次限流桶；返回是否超限。
+function hitRateBucket(bucketKey) {
   const now = Date.now();
 
   let bucket = rateBuckets.get(bucketKey);
@@ -1041,6 +1045,11 @@ function isRateLimited(request, key) {
   }
 
   return bucket.count > RATE_LIMIT_MAX;
+}
+
+function isRateLimited(request, key) {
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  return hitRateBucket(`${ip}:${key}`);
 }
 
 // 校验稿件文件夹名，防止路径穿越
@@ -1104,4 +1113,30 @@ async function verifyWorkerProxy(request, env) {
   const expected = await hmacHex(secret, `${ts}\n${bodyHash}\n${ghToken}`);
   if (!timingSafeEqualHex(expected, sig)) return null;
   return { token: ghToken };
+}
+
+// --- 投稿上传令牌校验：Vercel /api/upload-token 在会话校验后签发（与 src/lib/proxy-sign.ts 对称）---
+const UPLOAD_TOKEN_TTL_SEC = 600;
+
+// 校验 x-openst-upload-token（`<exp>.<hmac>`）；有效返回 { login }，否则 null。
+async function verifyUploadToken(request, env) {
+  const secret = env.WORKER_PROXY_SECRET;
+  if (!secret) return null;
+  const token = request.headers.get('x-openst-upload-token');
+  const login = request.headers.get('x-openst-upload-user');
+  if (!token || !login || login.length > 100) return null;
+
+  const dot = token.indexOf('.');
+  if (dot <= 0) return null;
+  const expStr = token.slice(0, dot);
+  const sig = token.slice(dot + 1);
+  const exp = Number(expStr);
+  if (!Number.isInteger(exp)) return null;
+
+  const now = Math.floor(Date.now() / 1000);
+  if (exp < now || exp > now + UPLOAD_TOKEN_TTL_SEC) return null;
+
+  const expected = await hmacHex(secret, `upload\n${expStr}\n${login}`);
+  if (!timingSafeEqualHex(expected, sig)) return null;
+  return { login };
 }

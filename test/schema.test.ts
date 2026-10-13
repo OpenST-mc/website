@@ -8,6 +8,7 @@ import {
   parseSubIdFromSearch,
   sanitizeQueryParam,
   parseWorkerUpload,
+  parseUploadToken,
   parseDownloadStats,
   parseHealthExtra,
   parseFavoriteIds,
@@ -135,6 +136,25 @@ describe('parseWorkerUpload / parseDownloadStats', () => {
     expect(parseDownloadStats({ count: -1 })).toBeNull();
     expect(parseDownloadStats({ count: '12' })).toBeNull();
     expect(parseDownloadStats(null)).toBeNull();
+  });
+});
+
+describe('parseUploadToken', () => {
+  it('accepts a well-formed token response', () => {
+    expect(parseUploadToken({ token: '1700000600.abcd', login: 'octocat' })).toEqual({
+      token: '1700000600.abcd',
+      login: 'octocat',
+    });
+  });
+
+  it('rejects malformed responses instead of trusting them', () => {
+    expect(parseUploadToken({ token: 'x' })).toBeNull();
+    expect(parseUploadToken({ login: 'octocat' })).toBeNull();
+    expect(parseUploadToken({ token: '', login: 'octocat' })).toBeNull();
+    expect(parseUploadToken({ token: 42, login: 'octocat' })).toBeNull();
+    expect(parseUploadToken('nope')).toBeNull();
+    expect(parseUploadToken(null)).toBeNull();
+    expect(parseUploadToken(['x'])).toBeNull();
   });
 });
 
