@@ -136,6 +136,6 @@ M0 评估 / 决策 / 分支 / 测试策略
 **任务**：T8.1 … T8.3。详见 `07-branch-workflow.md`。
 
 ### Checkpoint M8 · 完成
-- [ ] `main` 含全部重构；`refactor/react-ssg` 已推送
-- [ ] `origin/main` 与本地一致
-- [ ] 发布后生产 URL 全部可达且行为对等
+- [x] `main` 含全部重构；`refactor/react-ssg` 已推送
+- [x] `origin/main` 与本地一致
+- [x] 发布后生产 URL 全部可达且行为对等

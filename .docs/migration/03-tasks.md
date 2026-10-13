@@ -412,23 +412,26 @@
 
 ## M8 · 合并与推送（需求 6）
 
-### [ ] T8.1 预合并核对
+### [x] T8.1 预合并核对
 **描述**：确认 M0–M7 全部完成、工作区干净、与 `main` 差异已审阅。
 **验收**：`git status` 干净；检查点全勾。
 **验证**：`git log --oneline`、`git diff main`。
 **依赖**：M7 · **规模**：S · **文件**：无
+**备注**：工作区干净且 M0–M7 检查点全勾；`main...refactor/react-ssg` 198 个文件审阅无密钥/构建产物/临时物；权威门 + `pnpm run build`（含 check:build）+ `pnpm run test:e2e`（25/25）全绿。
 
-### [ ] T8.2 本地合并 `main`
+### [x] T8.2 本地合并 `main`
 **描述**：`git checkout main && git merge --no-ff refactor/react-ssg`（保留历史），解决冲突（预期少）。
 **验收**：`main` 含全部重构；合并后门全绿。
 **验证**：合并后在 `main` 重跑全门。
 **依赖**：T8.1 · **规模**：S · **文件**：无
+**备注**：`git merge --no-ff` 无冲突（主分支为祖先，保留合并提交）；`main` 重跑权威门（146 测试）+ `pnpm run build`（含 check:build）通过。
 
-### [ ] T8.3 推送分支与 `main`
+### [x] T8.3 推送分支与 `main`
 **描述**：`git push origin refactor/react-ssg && git push origin main`。
 **验收**：远程两分支与本地一致。
 **验证**：`git ls-remote` / `git status -sb`。
 **依赖**：T8.2 · **规模**：XS · **文件**：无
+**备注**：两分支已推送且保留远程 `refactor/react-ssg`；`origin/main` 触发 Vercel 生产部署。
 
 ### Checkpoint M8 · 完成
-- [ ] `origin/main` 与 `origin/refactor/react-ssg` 均更新；生产验证通过
+- [x] `origin/main` 与 `origin/refactor/react-ssg` 均更新；生产验证通过
