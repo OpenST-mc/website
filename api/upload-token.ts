@@ -1,5 +1,5 @@
-import { readEdgeSession } from '../src/lib/edge-session.ts';
-import { signUploadToken } from '../src/lib/proxy-sign.ts';
+import { readEdgeSession } from '../src/lib/edge-session';
+import { signUploadToken } from '../src/lib/proxy-sign';
 
 // 方案 B 扩展（ADR-005）：投稿上传授权。
 // 浏览器 → Worker 直传（≤50MB，不经 Vercel Edge 体积限制），
