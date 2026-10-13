@@ -1,0 +1,200 @@
+/* Litematic Preview 页样式（对齐旧 apps/extra/litematic-preview）。
+   全局元素规则经 :has(.preview-page) 限定在本页挂载期间，避免客户端路由后泄漏。 */
+
+.preview-page {
+  --primary: #40b5ad;
+  --bg-dark: #0c0c0c;
+  --panel-bg: rgba(20, 20, 20, 0.85);
+}
+
+.preview-page,
+.preview-page *,
+.preview-page *::before,
+.preview-page *::after {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+html:has(.preview-page),
+body:has(.preview-page) {
+  background-color: #0c0c0c;
+  color: #e0e0e0;
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* 3D 背景层 */
+#viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+}
+
+/* 玻璃拟态面板 */
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  transition: all 0.5s ease;
+}
+
+#drop-zone {
+  display: block;
+  border: 2px dashed rgba(64, 181, 173, 0.3);
+  border-radius: 20px;
+  padding: 40px 20px;
+  transition: all 0.3s;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+#drop-zone:hover {
+  border-color: var(--primary);
+  background: rgba(64, 181, 173, 0.05);
+  transform: translateY(-2px);
+}
+
+#settings-panel {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  right: 0;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  overflow-x: hidden;
+  transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 1px solid rgba(64, 181, 173, 0.2);
+}
+
+/* 隐藏滚动条 */
+#settings-material-list::-webkit-scrollbar {
+  width: 4px;
+}
+#settings-material-list::-webkit-scrollbar-thumb {
+  background: var(--primary);
+}
+
+.count-item {
+  background: rgba(0, 0, 0, 0.6) !important;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  border-left: 2px solid var(--primary);
+  font-size: 12px;
+  padding: 6px 12px !important;
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  z-index: 50;
+}
+#vertical-controls {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 200;
+}
+#vertical-controls.hidden {
+  display: none;
+}
+#vertical-controls button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(128, 0, 255, 0.3);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(128, 0, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  touch-action: none;
+}
+#vertical-controls button:active {
+  background: rgba(128, 0, 255, 0.6);
+  box-shadow: 0 0 20px rgba(128, 0, 255, 0.5);
+}
+#vertical-controls button i {
+  color: white;
+  font-size: 28px;
+}
+/* 首次触摸后消退引导色，保留可用按钮 */
+#vertical-controls.fade-guide button {
+  background: rgba(128, 0, 255, 0.15);
+  border-color: rgba(128, 0, 255, 0.2);
+}
+#vertical-controls.fade-guide button:active {
+  background: rgba(128, 0, 255, 0.4);
+  box-shadow: none;
+}
+/* 镜像开关 */
+#mirror-toggle:checked + div {
+  background: rgba(64, 181, 173, 0.2);
+  border-color: var(--primary);
+}
+#mirror-toggle:checked + div > div {
+  transform: translateX(20px);
+  background: var(--primary);
+}
+
+/* 移动端操作提示 */
+#touch-hints {
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 190;
+}
+#touch-hints .hint-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(135deg, rgba(0, 200, 0, 0.15) 0%, transparent 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#touch-hints .hint-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 40%;
+  background: linear-gradient(225deg, rgba(255, 50, 50, 0.1) 0%, transparent 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#touch-hints .hint-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+  text-align: center;
+  pointer-events: none;
+}
+#touch-hints .hint-icon {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 6px;
+}
+#touch-hints .hint-left .hint-text {
+  color: rgba(100, 255, 100, 0.8);
+}
+#touch-hints .hint-right .hint-text {
+  color: rgba(255, 100, 100, 0.8);
+}

@@ -1,13 +1,12 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
 
-/* 显式扫描范围：Archive SPA 及使用本产物值的页面/工具脚本 */
-@source "../apps/portal";
-@source "../apps/upload";
-@source "../apps/admin";
-@source "../apps/extra";
-@source "../packages/js";
+/* 显式扫描范围：使用本产物的页面（archive/upload/admin/extra）React 源码 */
+@source "../src";
 
 @theme {
+  /* 恢复 Tailwind 4.2 的默认系统字体栈（4.3 起默认改为 -apple-system…，与旧版观感不一致） */
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
   --color-brand: #40b5ad;
   --color-dark: #1f2223;
   --color-panel: #2a2c2d;
@@ -17,6 +16,20 @@
   --brand: #40b5ad;
 }
 
-[v-cloak] {
-  display: none !important;
+/* M6 �� ���̿ɼ����㣨unlayered ���������� Tailwind �ֲ㹤���࣬���� outline-none�� */
+:focus-visible {
+  outline: 2px solid #40b5ad;
+  outline-offset: 2px;
+}
+
+/* M6 �� ����ϵͳ���ٶ�Чƫ�� */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

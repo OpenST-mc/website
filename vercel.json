@@ -1,4 +1,6 @@
 {
+  "buildCommand": "git submodule update --init --recursive && pnpm run build",
+  "outputDirectory": "dist/client",
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
@@ -50,25 +52,18 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://va.vercel-scripts.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         }
       ]
     }
   ],
   "rewrites": [
     { "source": "/favicon.ico", "destination": "/images/favicon-2.png" },
-    { "source": "/", "destination": "/pages/home/index.html" },
-    { "source": "/index", "destination": "/pages/home/index.html" },
-    { "source": "/js/:path*", "destination": "/packages/js/:path*" },
+    { "source": "/index", "destination": "/index.html" },
     { "source": "/fonts/:path*", "destination": "/assets/fonts/:path*" },
     { "source": "/images/:path*", "destination": "/assets/images/:path*" },
     { "source": "/Traditional-Simplefild/:path*", "destination": "/assets/s2t/:path*" },
-    { "source": "/archive/:path*", "destination": "/apps/portal/:path*" },
-    { "source": "/upload/:path*", "destination": "/apps/upload/:path*" },
-    { "source": "/auth/:path*", "destination": "/apps/auth/:path*" },
-    { "source": "/admin_tools/:path*", "destination": "/apps/admin/:path*" },
-    { "source": "/health/:path*", "destination": "/apps/health/:path*" },
-    { "source": "/profile/april/december/:path*", "destination": "/apps/credits/:path*" },
+    { "source": "/profile/april/december/credits.html", "destination": "/profile/april/december" },
     { "source": "/Extra-Function/:path*", "destination": "/apps/extra/:path*" },
     {
       "source": "/share/:subid",

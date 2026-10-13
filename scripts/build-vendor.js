@@ -10,7 +10,6 @@ const root = path.resolve(__dirname, '..');
 const outDir = path.join(root, 'vendor');
 
 const copies = [
-  { from: 'node_modules/vue/dist/vue.global.prod.js', to: 'vue.global.prod.js' },
   { from: 'node_modules/jszip/dist/jszip.min.js', to: 'jszip.min.js' },
   { from: 'node_modules/dompurify/dist/purify.min.js', to: 'purify.min.js' },
   { from: 'node_modules/pako/dist/browser/pako.umd.min.js', to: 'pako.min.js' },

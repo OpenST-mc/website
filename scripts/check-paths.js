@@ -29,10 +29,10 @@ function loadVercel() {
 }
 
 function loadAliases() {
-  const text = fs.readFileSync(path.join(ROOT, 'vite.config.js'), 'utf8');
-  const block = text.match(/PUBLIC_ALIASES\s*=\s*\{([\s\S]*?)\}/);
+  const text = fs.readFileSync(path.join(ROOT, 'vite.config.ts'), 'utf8');
+  const block = text.match(/PUBLIC_ALIASES(?::[^=]+)?\s*=\s*\{([\s\S]*?)\}/);
   if (!block) {
-    fails.push('FAIL vite PUBLIC_ALIASES block not found (vite.config.js:1)');
+    fails.push('FAIL vite PUBLIC_ALIASES block not found (vite.config.ts:1)');
     return new Map();
   }
   const map = new Map();
@@ -56,8 +56,8 @@ function checkMaps(vercel, aliases) {
   }
 }
 
-const SCAN_ROOTS = ['apps', 'pages', 'packages/js'];
-const EXTS = new Set(['.html', '.js', '.css', '.vue']);
+const SCAN_ROOTS = ['apps', 'src'];
+const EXTS = new Set(['.html', '.js', '.css', '.ts', '.tsx']);
 const PHYS_RE = /["'(]\/(apps|packages)\//g;
 const STALE_RE = /(?<![\w/])data\/database\.json/g;
 
@@ -111,7 +111,7 @@ function grepSources() {
   try {
     aliases = loadAliases();
   } catch (e) {
-    fails.push(`FAIL vite.config.js unreadable: ${e.message}`);
+    fails.push(`FAIL vite.config.ts unreadable: ${e.message}`);
     aliases = new Map();
   }
   checkMaps(vercel, aliases);

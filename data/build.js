@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { ensureDerivatives } from './archive-images.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,6 +56,20 @@ function publicPrefix(category, folder) {
   return category ? `/content/${category}/${folder}` : `/content/${folder}`;
 }
 
+// 限制并发：防止 sharp 同时解码多张大图造成内存峰值
+async function mapLimit(items, limit, fn) {
+  const results = new Array(items.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) {
+      const index = next++;
+      results[index] = await fn(items[index]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
 async function processItem(item) {
   const { category, folder, itemPath } = item;
   try {
@@ -95,6 +110,20 @@ async function processItem(item) {
       }
     }
 
+    // 卡片缩略图 / 详情图重编码（FDT：首屏与详情不再直出原始大图）
+    let display = '';
+    let thumb = '';
+    if (finalPreview) {
+      try {
+        const derived = await ensureDerivatives({ dir: itemPath, sourceFile: path.posix.basename(finalPreview) });
+        const base = publicPrefix(category, folder);
+        if (derived.display) display = `${base}/${derived.display}`;
+        if (derived.thumb) thumb = `${base}/${derived.thumb}`;
+      } catch (err) {
+        console.warn(`派生图生成失败 ${category}/${folder}: ${err.message}`);
+      }
+    }
+
     // 查找存档文件
     const archiveFile = files.find((f) => ['.litematic', '.zip', '.rar'].some((ext) => f.toLowerCase().endsWith(ext)));
 
@@ -111,6 +140,8 @@ async function processItem(item) {
       description: info.description || '',
       category,
       preview: finalPreview,
+      display,
+      thumb,
       filename: archiveFile || '',
       sub_id: info.id || '',
     };
@@ -126,17 +157,13 @@ async function build() {
 
   try {
     const items = await collectItems();
-    // 并发处理所有稿件
-    const results = await Promise.all(items.map(processItem));
+    // 并发处理所有稿件（限流保护 sharp 内存峰值）
+    const results = await mapLimit(items, 4, processItem);
     const database = results.filter((item) => item !== null);
 
     const dataDir = path.dirname(OUTPUT_FILE);
     await fs.mkdir(dataDir, { recursive: true });
     await fs.writeFile(OUTPUT_FILE, JSON.stringify(database, null, 4));
-
-    // 根级 index.html 与 pages/home 保持同步（Vercel cleanUrls 下根 rewrite 不生效，
-    // 需物理文件承接 "/" 访问）
-    await fs.copyFile(path.join(root, 'pages/home/index.html'), path.join(root, 'index.html'));
 
     console.log(`\n构建成功！共发现 ${database.length} 个稿件。`);
     console.timeEnd('构建耗时');

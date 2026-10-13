@@ -1,0 +1,175 @@
+/* 档案页排版对齐旧站 css/style.css（旧站该文件仅由 /archive 加载）。
+   所有规则限定在 .archive-page 根节点内，避免客户端路由后残留样式泄漏到其它页面；
+   [v-cloak]/Vue 过渡等已废弃规则不迁。 */
+
+.archive-page {
+  background-color: #1f2223;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+}
+
+.archive-page .text-\[10px\] {
+  font-size: 0.85rem !important;
+}
+
+.archive-page .text-xs {
+  font-size: 0.9rem !important;
+}
+
+.archive-page .text-sm {
+  font-size: 1.1rem !important;
+}
+
+.archive-page #main-content {
+  position: relative;
+  padding-bottom: 0;
+}
+
+/* iOS Safari 动态底栏补偿（仅触摸设备） */
+@media (pointer: coarse) {
+  @supports (-webkit-touch-callout: none) {
+    .archive-page #main-content::after {
+      content: '';
+      display: block;
+      height: calc(env(safe-area-inset-bottom, 20px) + 120px);
+      width: 100%;
+      pointer-events: none;
+    }
+  }
+}
+
+.archive-page .grid > a,
+.archive-page .grid > div {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 320px;
+}
+
+.archive-page ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.archive-page ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+
+.archive-page ::-webkit-scrollbar-thumb {
+  background: rgba(64, 181, 173, 0.2);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.archive-page ::-webkit-scrollbar-thumb:hover {
+  background: #40b5ad;
+  box-shadow: 0 0 8px rgba(64, 181, 173, 0.4);
+}
+
+.archive-page .markdown-body {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+.archive-page .markdown-body pre {
+  overflow-x: auto;
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 0.75rem;
+}
+
+.archive-page .markdown-body h1 {
+  font-size: 1.5rem;
+  color: #fff;
+  border-bottom: 2px solid #40b5ad;
+  padding-bottom: 0.3rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.archive-page .markdown-body h2 {
+  font-size: 1.25rem;
+  border-left: 4px solid #40b5ad;
+  padding-left: 0.75rem;
+  margin: 1.2rem 0 0.8rem;
+}
+
+.archive-page .markdown-body h3 {
+  font-size: 1.1rem;
+  color: #40b5ad;
+  margin: 1rem 0 0.5rem;
+  font-weight: bold;
+}
+
+.archive-page .markdown-body ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.archive-page .markdown-body ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.archive-page .markdown-body input[type='checkbox'] {
+  accent-color: #40b5ad;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.archive-page .markdown-body strong {
+  color: #fff;
+  font-weight: bold;
+}
+
+.archive-page .markdown-body del {
+  color: #555;
+  text-decoration: line-through;
+}
+
+.archive-page .markdown-body blockquote {
+  border-left: 4px solid #2a6a65;
+  padding: 8px 16px;
+  color: #888;
+  background: rgba(64, 181, 173, 0.05);
+  border-radius: 0 8px 8px 0;
+}
+
+.archive-page .markdown-body a {
+  color: #40b5ad;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.archive-page .markdown-body a:hover {
+  filter: brightness(1.2);
+}
+
+.archive-page .markdown-body code {
+  background: rgba(64, 181, 173, 0.15);
+  color: #40b5ad;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.archive-page .markdown-body img {
+  border-radius: 0.5rem;
+  cursor: zoom-in;
+  transition: transform 0.2s;
+}
+
+.archive-page .markdown-body img:active {
+  transform: scale(0.98);
+}
+
+.archive-page img:not(nav img):not(button img) {
+  cursor: zoom-in;
+}

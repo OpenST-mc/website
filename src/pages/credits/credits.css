@@ -1,0 +1,160 @@
+/* Credits 页样式（对齐旧 apps/credits）。
+   全局元素规则经 :has(.credits-page) 限定在本页挂载期间，
+   客户端路由离开后自动失效，避免泄漏到其它页面。 */
+
+.credits-page {
+  --brand: #ffffff;
+  --text-secondary: #86868b;
+}
+
+html:has(.credits-page),
+body:has(.credits-page) {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body:has(.credits-page)::-webkit-scrollbar {
+  display: none;
+}
+
+#starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, transparent 10%, #000 100%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+#credits-wrap {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 50vh;
+  padding-bottom: 30vh;
+}
+
+.credits-page a {
+  text-decoration: none;
+  color: var(--brand);
+}
+
+.credits-page .markdown-body {
+  color: var(--text-secondary);
+  line-height: 2;
+  width: 100%;
+}
+.credits-page .markdown-body h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  margin: 40px 0 20px 0;
+}
+.credits-page .markdown-body h3 {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  color: #444;
+  text-transform: uppercase;
+  margin-top: 25vh;
+}
+.credits-page .markdown-body p {
+  font-size: 16px;
+  margin-bottom: 30px;
+  padding: 0 10px;
+}
+.credits-page .markdown-body ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+.credits-page .markdown-body li {
+  font-size: 20px;
+  color: #fff;
+  font-weight: 300;
+  word-break: break-word;
+}
+.credits-page .markdown-body strong {
+  display: block;
+  margin-top: 30vh;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 768px) {
+  #credits-wrap {
+    width: 92%;
+    padding-top: 40vh;
+  }
+  .credits-page .markdown-body h2 {
+    font-size: 26px;
+  }
+  .credits-page .markdown-body p {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .credits-page .markdown-body li {
+    font-size: 18px;
+  }
+  .credits-page .markdown-body h3 {
+    margin-top: 15vh;
+  }
+  .credits-page .markdown-body strong {
+    margin-top: 20vh;
+    font-size: 16px;
+  }
+}
+
+#portal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 1s;
+}
+.credits-page .portal-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 15px 30px;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+.credits-page .back-home {
+  display: inline-block;
+  margin-top: 15vh;
+  font-size: 11px;
+  color: #333;
+  text-decoration: none;
+  letter-spacing: 2px;
+  transition: 0.3s;
+}
+.credits-page .back-home:hover {
+  color: #fff;
+}

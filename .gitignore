@@ -35,7 +35,14 @@ coverage
 # Vitest
 __screenshots__/
 
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+
 # Vite
 *.timestamp-*-*.mjs
 
 temp-opencode/
+/.agents/
+/data/skills/

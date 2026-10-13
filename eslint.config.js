@@ -1,4 +1,7 @@
-// Minimal lint gate: no-undef focus only. Keep thin on purpose.
+import tseslint from 'typescript-eslint';
+import reactHooks from 'eslint-plugin-react-hooks';
+
+// Browser globals (new TS/TSX app code).
 const browserGlobals = {
   window: 'readonly',
   document: 'readonly',
@@ -41,32 +44,6 @@ const browserGlobals = {
   ResizeObserver: 'readonly',
 };
 
-// Legacy classic-script sharing (vendor libs + cross-file functions loaded
-// via plain <script> tags, no modules). Grandfathered: no new entries.
-const vendorGlobals = {
-  Vue: 'readonly',
-  marked: 'readonly',
-  DOMPurify: 'readonly',
-  JSZip: 'readonly',
-  pako: 'readonly',
-  deepslate: 'readonly',
-  assets: 'readonly',
-  glMatrix: 'readonly',
-  OPAQUE_BLOCKS: 'readonly',
-  NON_SELF_CULLING: 'readonly',
-  TRANSPARENT_BLOCKS: 'readonly',
-  deepslateResources: 'writable',
-  hideLoading: 'readonly',
-  loadAndProcessFile: 'readonly',
-  loadDeepslateResources: 'readonly',
-  openSettings: 'readonly',
-  closeSettings: 'readonly',
-  readLitematicFromNBTData: 'readonly',
-  structuresFromLitematic: 'readonly',
-  iterateRegionBlocks: 'readonly',
-  getMaterialList: 'readonly',
-};
-
 const nodeGlobals = {
   process: 'readonly',
   Buffer: 'readonly',
@@ -107,15 +84,53 @@ const workerGlobals = {
   removeEventListener: 'readonly',
 };
 
-export default [
+export default tseslint.config(
   {
-    ignores: ['vendor/', 'dist/', 'node_modules/', 'css/*Output.css', '**/*.min.js', 'resource/assets.js'],
+    ignores: [
+      'vendor/',
+      'dist/',
+      'node_modules/',
+      'css/*Output.css',
+      '**/*.min.js',
+      '**/resource/assets.js',
+      '.docs/',
+      '.agents/',
+      'temp-opencode/',
+      'test-results/',
+      'playwright-report/',
+      'blob-report/',
+    ],
   },
+  // TypeScript / TSX application code.
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    extends: [...tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: { ...browserGlobals, ...nodeGlobals, ...workerGlobals, ...vendorGlobals },
+      globals: { ...browserGlobals, ...nodeGlobals },
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+    },
+  },
+  // React Hooks rules for JSX/TSX.
+  {
+    files: ['**/*.tsx', '**/*.jsx'],
+    plugins: { 'react-hooks': reactHooks },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+    },
+  },
+  // Classic / Node JS（构建脚本、api functions、Worker、insights 打包源码、
+  // litematic 运行时资源）：同一套最小门。
+  {
+    files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { ...browserGlobals, ...nodeGlobals, ...workerGlobals },
     },
     rules: {
       'no-undef': 'error',
@@ -124,4 +139,4 @@ export default [
       eqeqeq: ['warn', 'smart'],
     },
   },
-];
+);

@@ -1,11 +1,12 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
 
-/* 显式扫描范围：门户首页与使用本产物的页面 */
-@source "../pages/home";
-@source "../apps/health";
-@source "../packages/js";
+/* 显式扫描范围：使用本产物的页面（首页/health）与 React 源码 */
+@source "../src";
 
 @theme {
+  /* 恢复 Tailwind 4.2 的默认系统字体栈（4.3 起默认改为 -apple-system…，与旧版观感不一致） */
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
   --color-st-cyan: #40b5ad;
   --color-rs-red: #ff4d00;
   --color-logic-bg: #0a0a0b;
@@ -41,21 +42,32 @@
   --animate-marquee: marquee 180s linear infinite; /* 超长周期，线性速度 */
 }
 
+@keyframes scan {
+  0% {
+    top: 0%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
 @layer base {
   @font-face {
     font-family: 'JetBrains Mono';
-    src: url('../fonts/JetBrainsMono-Bold.woff2') format('woff2');
+    src: url('/fonts/JetBrainsMono-Bold.woff2') format('woff2');
     font-display: swap;
   }
 
-  html {
+  /* 全局元素规则经 :has(.portal-page) 限定在首页/health 挂载期间，
+     客户端路由离开后自动失效，避免字体/字重/背景泄漏到其它页面 */
+  html:has(.portal-page) {
     background-color: var(--color-logic-bg);
     overflow-x: hidden;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
 
-  body {
+  body:has(.portal-page) {
     background-color: var(--color-logic-bg);
     color: #a1a1aa;
     /* 解决中文字体变宋体的问题 */
@@ -138,8 +150,36 @@
     background-size: 40px 40px;
     background-attachment: fixed;
   }
+
+  .scan-line {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #40b5ad, transparent);
+    position: fixed;
+    top: 0;
+    z-index: 10000;
+    animation: scan 2s linear infinite;
+  }
+
+  .brand-shadow {
+    text-shadow: 0 0 20px rgba(64, 181, 173, 0.5);
+  }
 }
 
-[v-cloak] {
-  display: none !important;
+/* M6 �� ���̿ɼ����㣨unlayered ���������� Tailwind �ֲ㹤���࣬���� outline-none�� */
+:focus-visible {
+  outline: 2px solid #40b5ad;
+  outline-offset: 2px;
+}
+
+/* M6 �� ����ϵͳ���ٶ�Чƫ�� */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
