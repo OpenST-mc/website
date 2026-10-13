@@ -156,3 +156,4 @@ AI must NOT：发明新的路由/目录映射、引入 CDN 或 `public/`、另�
 - `content/` 子模块缺失会导致 `data/build.js`、E2E 与构建断言失败；CI 使用 recursive checkout。
 - Vercel Edge Functions（`api/*.ts`）引用 `src/lib` 时**相对导入不得带 `.ts` 扩展名**：Vercel 构建把 TS 编译产物重命名 `.ts→.js` 但不重写 import 说明符，带扩展名会在部署期报 `referencing unsupported modules` 而失败（门：`test/vercel-edge-imports.test.ts`）。
 - Vercel 对裸 `api/` 目录的 `[...catchall]` 只匹配**单段**路径（多段直接平台 404）：Auth.js 路由须在 `api/auth/` 显式建文件（含 `signin/[provider].ts`、`callback/[provider].ts`），不得用 catch-all（门：`test/vercel-edge-imports.test.ts`）。
+- 登录/登出跳转不得用表单 POST：OAuth 302 到 github.com 会被 CSP `form-action 'self'` 拦截；`src/lib/auth.ts` 走 Auth.js `X-Auth-Return-Redirect` JSON 模式 + `location.assign`（门：`test/auth-flow.test.ts`）。

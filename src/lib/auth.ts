@@ -1,7 +1,8 @@
 // Auth.js 前端薄客户端。会话 Cookie 为 HttpOnly，此处只读非敏感资料。
-import { fetchJson } from './http.ts';
+import { fetchJson, HttpError } from './http.ts';
 import { parseSession } from './schema.ts';
 import type { Session } from './types.ts';
+import { notify } from './notify.ts';
 
 export async function getSession(): Promise<Session | null> {
   const { data, response } = await fetchJson<unknown>('/api/auth/session', {
@@ -31,27 +32,51 @@ export function sanitizeCallbackUrl(url: unknown): string {
   return url;
 }
 
-function submitForm(action: string, fields: Record<string, string>): void {
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = action;
-  for (const [name, value] of Object.entries(fields)) {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = name;
-    input.value = value;
-    form.appendChild(input);
+// Auth.js `X-Auth-Return-Redirect` 响应校验：仅接受 http(s) 跳转（防 javascript:/data: 注入）。
+export function parseAuthRedirect(raw: unknown, base: string): string | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const url = (raw as { url?: unknown }).url;
+  if (typeof url !== 'string' || url.length === 0) return null;
+  try {
+    const parsed = new URL(url, base);
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return null;
+    return parsed.href;
+  } catch {
+    return null;
   }
-  document.body.appendChild(form);
-  form.submit();
+}
+
+// 不用表单 POST：OAuth 302 到 github.com 会被 CSP `form-action 'self'` 拦截；
+// 改走 Auth.js JSON 模式（X-Auth-Return-Redirect）后由 JS 导航。
+async function postAuthAction(action: string, fields: Record<string, string>): Promise<void> {
+  const { data } = await fetchJson(action, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'content-type': 'application/x-www-form-urlencoded', 'x-auth-return-redirect': '1' },
+    body: new URLSearchParams(fields).toString(),
+    timeoutMs: 10_000,
+  });
+  const target = parseAuthRedirect(data, window.location.origin);
+  if (!target) throw new HttpError('认证跳转响应异常', { code: 'invalid-json', url: action, status: 200 });
+  window.location.assign(target);
 }
 
 export async function signIn(provider = 'github', callbackUrl = '/'): Promise<void> {
-  const csrfToken = await getCsrfToken();
-  submitForm(`/api/auth/signin/${provider}`, { csrfToken, callbackUrl: sanitizeCallbackUrl(callbackUrl) });
+  try {
+    const csrfToken = await getCsrfToken();
+    await postAuthAction(`/api/auth/signin/${provider}`, { csrfToken, callbackUrl: sanitizeCallbackUrl(callbackUrl) });
+  } catch (error) {
+    console.error('登录失败:', error);
+    notify('error', '登录失败，请检查网络后重试');
+  }
 }
 
 export async function signOut(callbackUrl = '/'): Promise<void> {
-  const csrfToken = await getCsrfToken();
-  submitForm('/api/auth/signout', { csrfToken, callbackUrl: sanitizeCallbackUrl(callbackUrl) });
+  try {
+    const csrfToken = await getCsrfToken();
+    await postAuthAction('/api/auth/signout', { csrfToken, callbackUrl: sanitizeCallbackUrl(callbackUrl) });
+  } catch (error) {
+    console.error('登出失败:', error);
+    notify('error', '登出失败，请检查网络后重试');
+  }
 }
