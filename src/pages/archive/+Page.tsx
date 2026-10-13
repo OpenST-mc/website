@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useData } from 'vike-react/useData';
 import { CATEGORIES } from '../../lib/config';
-import { calculateDynamicTags, getFilteredList, getSafePath, type SelectedTags } from '../../lib/logic';
+import { calculateDynamicTags, getFilteredList, getSafePath, getArchiveFileUrl, type SelectedTags } from '../../lib/logic';
 import type { ArchiveData, ArchiveItem } from '../../lib/types';
 import { parseFavoriteIds, parseSubIdFromSearch, toJsonLd } from '../../lib/schema';
 import { useSession } from '../../hooks/useSession';
@@ -154,14 +154,10 @@ export default function Page() {
     window.location.href = `/admin_tools/admin_edit?folder=${encodeURIComponent(item.id.trim())}`;
   };
 
-  const downloadLink = (item: ArchiveItem): string => {
-    const id = item.sub_id || item.id;
-    return id ? `/api/download?id=${encodeURIComponent(id)}` : '';
-  };
-
   const open3DPreview = (item: ArchiveItem) => {
-    const fileUrl = downloadLink(item);
-    if (fileUrl) window.open(`/Extra-Function/litematic-preview#${fileUrl}`, '_blank');
+    const fileUrl = getArchiveFileUrl(item.preview, item.filename);
+    // 预览页仅接受以 http 开头的哈希；直链走同源静态 /content/**（免跳转/免 CORS）。
+    if (fileUrl) window.open(`/Extra-Function/litematic-preview#${window.location.origin}${fileUrl}`, '_blank');
   };
 
   const handleImageZoom = (url: string, name: string) => {

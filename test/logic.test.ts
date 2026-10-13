@@ -4,6 +4,7 @@ import {
   getFilteredList,
   calculateDynamicTags,
   getSafePath,
+  getArchiveFileUrl,
   type FilterableItem,
   type SelectedTags,
 } from '../src/lib/logic.ts';
@@ -164,6 +165,25 @@ describe('calculateDynamicTags', () => {
     const groups = calculateDynamicTags([itemC], cats, { '生产/合成': ['合成器相关'] });
     expect(groups['生产/合成']?.has('合成器相关')).toBe(true); // absent from data, kept via selection
     expect(groups['生产/合成']?.has('合成站')).toBe(true); // present in data
+  });
+});
+
+describe('getArchiveFileUrl', () => {
+  it('builds an encoded same-origin content URL next to the preview', () => {
+    const url = getArchiveFileUrl('/content/其他杂物/仓库成品/CMIS-V5/preview.webp', 'CMIS-V5.0.litematic');
+    expect(decodeURIComponent(url)).toBe('/content/其他杂物/仓库成品/CMIS-V5/CMIS-V5.0.litematic');
+    expect(url.startsWith('/content/')).toBe(true);
+  });
+
+  it('encodes spaces and special characters per path segment', () => {
+    expect(getArchiveFileUrl('/content/A B/preview.webp', 'x y#1.litematic')).toBe('/content/A%20B/x%20y%231.litematic');
+  });
+
+  it('returns empty for missing parts or non-content previews', () => {
+    expect(getArchiveFileUrl('', 'a.litematic')).toBe('');
+    expect(getArchiveFileUrl('/content/x/preview.webp', '')).toBe('');
+    expect(getArchiveFileUrl('https://cdn.example.com/preview.webp', 'a.litematic')).toBe('');
+    expect(getArchiveFileUrl('preview.webp', 'a.litematic')).toBe('');
   });
 });
 

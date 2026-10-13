@@ -205,3 +205,12 @@ export function getSafePath(path: string | null | undefined): string {
     .map((segment) => encodeURIComponent(segment))
     .join('/');
 }
+
+// 预览页直链：与 preview 同目录的存档文件（站点静态服务 /content/**，同源、无跳转依赖）。
+export function getArchiveFileUrl(preview: string | null | undefined, filename: string | null | undefined): string {
+  if (!preview || !filename) return '';
+  const slash = preview.lastIndexOf('/');
+  const dir = slash > 0 ? preview.slice(0, slash) : '';
+  if (!dir.startsWith('/content/')) return '';
+  return getSafePath(`${dir}/${filename}`);
+}

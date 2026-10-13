@@ -112,6 +112,25 @@ test('preview decodes an uploaded litematic into the material list', async ({ pa
   await expect(page.locator('#cancel-preview-btn')).not.toHaveClass(/hidden/);
 });
 
+test('archive 3D preview opens the viewer with the projection loaded', async ({ page, request }) => {
+  const res = await request.get('/archive/data/database.json');
+  const db = (await res.json()) as Array<{ sub_id: string; filename: string }>;
+  const item = db.find((i) => i.sub_id && i.filename.endsWith('.litematic'));
+  if (!item) throw new Error('database has no .litematic item to preview');
+
+  await page.goto(`/archive?${item.sub_id}`);
+  const popupPromise = page.waitForEvent('popup');
+  await page.getByRole('button', { name: '投影预览' }).click();
+  const popup = await popupPromise;
+
+  // 直链必须是同源 /content/**（预览页只接受 http(s) 开头的哈希）。
+  expect(popup.url()).toContain('/Extra-Function/litematic-preview#');
+  expect(popup.url()).toContain('/content/');
+  await expect(popup.locator('#viewer canvas')).toBeAttached({ timeout: 15_000 });
+  await expect(popup.locator('#settings-material-list')).toContainText('Material List', { timeout: 30_000 });
+  await expect(popup.locator('#cancel-preview-btn')).not.toHaveClass(/hidden/);
+});
+
 test('preview settings panel opens/closes and mirror setting persists', async ({ page }) => {
   await page.goto('/Extra-Function/litematic-preview');
   await expect(page.locator('#viewer canvas')).toBeAttached({ timeout: 15_000 });
