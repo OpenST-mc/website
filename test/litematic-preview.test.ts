@@ -1,11 +1,16 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { Identifier } from 'deepslate';
+import type { BlockModel, TextureAtlasProvider } from 'deepslate';
 import {
   getMaterialList,
   iterateRegionBlocks,
   readLitematicFromNBTData,
   stripNBTTyping,
 } from '../src/pages/litematic-preview/litematic-utils';
-import { structuresFromLitematic } from '../src/pages/litematic-preview/deepslate-helpers';
+import {
+  loadDeepslateResources,
+  structuresFromLitematic,
+} from '../src/pages/litematic-preview/deepslate-helpers';
 import type { LitematicRegion } from '../src/pages/litematic-preview/types';
 
 function tag(type: string, value: unknown) {
@@ -146,6 +151,51 @@ describe('stripNBTTyping', () => {
   it('passes through non-tagged values', () => {
     expect(stripNBTTyping(42)).toBe(42);
     expect(stripNBTTyping({ plain: 'x' })).toEqual({ plain: 'x' });
+  });
+});
+
+describe('loadDeepslateResources', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('serves texture UVs to deepslate block models (Identifier in, no re-parse)', async () => {
+    vi.stubGlobal('deepslate', await import('deepslate'));
+    vi.stubGlobal('assets', {
+      blockstates: {},
+      models: {
+        'block/test_textured': {
+          textures: { all: 'block/test_textured' },
+          elements: [{ from: [0, 0, 0], to: [16, 16, 16], faces: { up: { texture: '#all' } } }],
+        },
+      },
+      textures: { 'block/test_textured': [0, 0, 16, 16] },
+    });
+
+    const atlasData = { width: 16, height: 16 } as ImageData;
+    vi.stubGlobal('document', {
+      createElement: () => ({
+        width: 0,
+        height: 0,
+        getContext: () => ({ drawImage: () => undefined, getImageData: () => atlasData }),
+      }),
+    });
+
+    const resources = loadDeepslateResources(atlasData as unknown as HTMLImageElement);
+    expect(resources.getTextureUV(Identifier.parse('minecraft:block/test_textured'))).toEqual([
+      0, 0, 1, 1,
+    ]);
+
+    const model = resources.getBlockModel('minecraft:block/test_textured') as BlockModel;
+    const buffers = model.getBuffers(
+      Identifier.parse('minecraft:test_textured'),
+      {},
+      resources as unknown as TextureAtlasProvider,
+      0,
+      { up: false, down: false, east: false, west: false, north: false, south: false }
+    );
+    expect(buffers.texCoord).toHaveLength(8);
   });
 });
 

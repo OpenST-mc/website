@@ -118,7 +118,6 @@ export default function Page() {
       const now = new Date();
       const originalFileName = litematicFile.name;
       const infoJson = {
-        id: `sub-${now.getTime()}`,
         name,
         author: author || '匿名',
         tags,

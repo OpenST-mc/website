@@ -40,7 +40,7 @@ jobs:
       - name: Rebuild Database & Sitemap
         if: env.POINTER_CHANGED == 'yes'
         run: |
-          node data/build.js
+          node data/build.ts
           node data/sitemap.js
 
       - name: Commit and Push

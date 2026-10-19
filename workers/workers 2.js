@@ -975,8 +975,8 @@ async function resolveSession(token, ghRepo) {
   return payload;
 }
 
-// 稿件定位表缓存（稿件库 _meta/index-by-id.json，10 分钟）
-const ITEM_INDEX_URL = 'https://api.openstmc.com/__archive_item_index';
+// 稿件定位表缓存（稿件库 data/index.json，10 分钟）
+const ITEM_INDEX_URL = 'https://api.openstmc.com/__archive_item_index_v2';
 
 async function fetchItemIndex(archiveRepo) {
   try {
@@ -986,9 +986,26 @@ async function fetchItemIndex(archiveRepo) {
     /* 缓存读失败则回源 */
   }
 
-  const res = await fetch(`https://raw.githubusercontent.com/${archiveRepo}/main/_meta/index-by-id.json`);
+  // data/index.json 同时含稳定 id（entry.id）与真实文件夹（preview 路径倒数第二段），
+  // 两种键都登记，兼容深链 sub-id 与管理员沿用的 folder 参数。
+  const res = await fetch(`https://raw.githubusercontent.com/${archiveRepo}/main/data/index.json`);
   if (!res.ok) return null;
-  const index = await res.json();
+  const entries = await res.json();
+  const index = {};
+  if (Array.isArray(entries)) {
+    for (const entry of entries) {
+      if (!entry || typeof entry !== 'object') continue;
+      const category = typeof entry.category === 'string' ? entry.category : '';
+      const preview = typeof entry.preview === 'string' ? entry.preview : '';
+      if (!preview.startsWith('/content/') || category.includes('..') || category.includes('\\')) continue;
+      const parts = preview.split('/');
+      const folder = parts.length >= 2 ? parts[parts.length - 2] : '';
+      if (!folder || folder === '.' || folder === '..') continue;
+      const location = { category, folder };
+      if (typeof entry.id === 'string' && entry.id) index[entry.id] = location;
+      index[folder] = location;
+    }
+  }
   try {
     await caches.default.put(
       ITEM_INDEX_URL,
@@ -1005,11 +1022,12 @@ async function fetchItemIndex(archiveRepo) {
   return index;
 }
 
-// 由稿件 id 解析真实相对路径前缀（<分类>/<id>），找不到返回 null
-async function resolveItemPrefix(token, archiveRepo, folder) {
+// 由稳定 sub-id 或稿件文件夹名解析真实相对路径前缀（<分类>/<文件夹>），找不到返回 null
+async function resolveItemPrefix(token, archiveRepo, key) {
   const index = await fetchItemIndex(archiveRepo);
-  const entry = index && index[folder];
-  return entry ? `${entry.category}/${folder}` : null;
+  const entry = index && index[key];
+  if (!entry) return null;
+  return entry.category ? `${entry.category}/${entry.folder}` : entry.folder;
 }
 
 // CSRF 校验：浏览器请求必须携带合法 Origin（非浏览器请求无 Origin，放行）

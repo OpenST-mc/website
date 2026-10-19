@@ -1,5 +1,6 @@
 // litematic-preview 自有最小类型：与 deepslate/WebGL 核心的「类型化边界」。
 // 不引入 React 状态；命令式模块共享这些结构。
+import type { Identifier } from 'deepslate';
 
 export interface NbtTag {
   type: string;
@@ -48,7 +49,8 @@ export interface LitematicAssets {
 export interface DeepslateResources {
   getBlockDefinition(id: string): unknown;
   getBlockModel(id: string): unknown;
-  getTextureUV(id: string): unknown;
+  // deepslate 渲染器传入的已是 Identifier（BlockModel.getTexture 的产物），不得二次解析。
+  getTextureUV(id: Identifier): unknown;
   getTextureAtlas(): ImageData;
   getBlockFlags(id: string): {
     opaque: boolean;

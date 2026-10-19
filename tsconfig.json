@@ -31,6 +31,7 @@
     "src/**/*.tsx",
     "test/**/*.ts",
     "test/**/*.tsx",
+    "data/**/*.ts",
     "scripts/**/*.ts",
     "api/**/*.ts",
     "e2e/**/*.ts",

@@ -74,7 +74,7 @@ export function loadDeepslateResources(textureImage: HTMLImageElement): Deepslat
       return blockModels[id];
     },
     getTextureUV(id) {
-      return textureAtlas.getTextureUV(deepslate.Identifier.parse(id));
+      return textureAtlas.getTextureUV(id);
     },
     getTextureAtlas() {
       return textureAtlas.getTextureAtlas();

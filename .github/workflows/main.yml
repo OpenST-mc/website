@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Build Script
         run: |
-          node data/build.js
+          node data/build.ts
           node data/sitemap.js
 
       - name: Commit and Push Changes

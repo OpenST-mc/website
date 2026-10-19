@@ -22,7 +22,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check:paths": "node scripts/check-paths.js",
-    "build": "node data/build.js && pnpm run build:sitemap && pnpm run build:ArchiveCSS && pnpm run build:PortalCSS && pnpm run build:AdminCSS && pnpm run build:vendor && vite build && pnpm run build:static && pnpm run check:build"
+    "build": "node data/build.ts && pnpm run build:sitemap && pnpm run build:ArchiveCSS && pnpm run build:PortalCSS && pnpm run build:AdminCSS && pnpm run build:vendor && vite build && pnpm run build:static && pnpm run check:build"
   },
   "dependencies": {
     "@auth/core": "0.41.3",
