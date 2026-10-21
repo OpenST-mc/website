@@ -365,14 +365,14 @@
         "author": "awszqsedxzaw",
         "tags": [
             "二进制",
-            "编码器",
+            "解码器",
             "1.16+"
         ],
         "description": "### 🚀 机器概览（示例）\n- **核心功能**: 适用于编码大宗解码器\n- **适用版本**: 1.16+\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n2.该解码车头最多拓展到8位",
-        "category": "编码存储科技/编码器/二进制",
-        "preview": "/content/编码存储科技/编码器/二进制/6位crain解码车头/preview.webp",
-        "display": "/content/编码存储科技/编码器/二进制/6位crain解码车头/preview.webp",
-        "thumb": "/content/编码存储科技/编码器/二进制/6位crain解码车头/thumb.webp",
+        "category": "编码存储科技/解码器/二进制",
+        "preview": "/content/编码存储科技/解码器/二进制/6位crain解码车头/preview.webp",
+        "display": "/content/编码存储科技/解码器/二进制/6位crain解码车头/preview.webp",
+        "thumb": "/content/编码存储科技/解码器/二进制/6位crain解码车头/thumb.webp",
         "filename": "6位crain解码器 by awszqsedxzaw.litematic",
         "sub_id": "sub-1792611782831"
     },
