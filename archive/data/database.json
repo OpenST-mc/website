@@ -360,6 +360,23 @@
         "sub_id": "sub-1772667666907"
     },
     {
+        "id": "6位crain解码车头",
+        "name": "6位crain解码车头",
+        "author": "awszqsedxzaw",
+        "tags": [
+            "二进制",
+            "编码器",
+            "1.16+"
+        ],
+        "description": "### 🚀 机器概览（示例）\n- **核心功能**: 适用于编码大宗解码器\n- **适用版本**: 1.16+\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n2.该解码车头最多拓展到8位",
+        "category": "编码存储科技/编码器/二进制",
+        "preview": "/content/编码存储科技/编码器/二进制/6位crain解码车头/preview.webp",
+        "display": "/content/编码存储科技/编码器/二进制/6位crain解码车头/preview.webp",
+        "thumb": "/content/编码存储科技/编码器/二进制/6位crain解码车头/thumb.webp",
+        "filename": "6位crain解码器 by awszqsedxzaw.litematic",
+        "sub_id": "sub-1792611782831"
+    },
+    {
         "id": "6bit 6code二进制移位寄存器shift_register_6bit_6codes",
         "name": "6bit 6code二进制移位寄存器",
         "author": "Obi",
@@ -806,6 +823,23 @@
         "sub_id": "sub-1778344851181-487"
     },
     {
+        "id": "可双轴扩展单片快速解锁大宗V1.1",
+        "name": "可双轴扩展单片快速解锁大宗V1.1",
+        "author": "mitiska233",
+        "tags": [
+            "盒分大宗",
+            "大宗仓库",
+            "1.16+"
+        ],
+        "description": "### 🚀 机器概览\n- **核心功能**:  \n将盒子分类进单独的单片，并在单片末箱展示  \n- **借物表**：  \n  1. 盒子分类 by 金合欢\n  \n- **适用版本**: Java 1.17+\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n2. 盒子分类请按照以下顺序填充：  \n**分类物-命名物品-命名物品-命名物品-命名物品**  \n\n> 提示：本机器单片支持横向堆叠以及竖向扩展。",
+        "category": "非编码存储科技/大宗仓库/盒分大宗",
+        "preview": "/content/非编码存储科技/大宗仓库/盒分大宗/可双轴扩展单片快速解锁大宗V1.1/preview.webp",
+        "display": "/content/非编码存储科技/大宗仓库/盒分大宗/可双轴扩展单片快速解锁大宗V1.1/preview.webp",
+        "thumb": "/content/非编码存储科技/大宗仓库/盒分大宗/可双轴扩展单片快速解锁大宗V1.1/thumb.webp",
+        "filename": "可双轴扩展单片快速解锁大宗V1.1.litematic",
+        "sub_id": "sub-1792611783500"
+    },
+    {
         "id": "矿车自适应权重分流器",
         "name": "【1.19+】矿车自适应权重分流器",
         "author": "wreg",
@@ -1036,9 +1070,27 @@
         "sub_id": "sub-1778344851169-799"
     },
     {
+        "id": "四边形大宗 by Lirrum",
+        "name": "四边形大宗 by Lirrum",
+        "author": "Lirrum",
+        "tags": [
+            "盒分大宗",
+            "大宗仓库",
+            "四边形大宗",
+            "1.19+"
+        ],
+        "description": "### 🚀 机器概览\n- **核心功能**: 分类储存大宗物品盒\n- **适用版本**: Java 1.19+\n- **投影创建者名称**：Lirrum\n- **投影创建时间**：2026-07-26\n\n### 📖 使用说明\n1. 在非原版特性端使用时，请先测试机器能否正常工作后再进行实装\n2. 可自行扩片，注意顶部盒分类是2wABt的，中间的锁线和传输线需要灵活扩展\n\n### 借物表与致谢\n盒分类 来自 金合欢（acaciachan）\n底部箱盒展示 来自 77（Beggar_Boss）和汞宝（bbhg_）\n感谢 骨粉（Gufenjava）对修改盒分类和测试提供的帮助",
+        "category": "非编码存储科技/大宗仓库/盒分大宗",
+        "preview": "/content/非编码存储科技/大宗仓库/盒分大宗/四边形大宗 by Lirrum/preview.webp",
+        "display": "/content/非编码存储科技/大宗仓库/盒分大宗/四边形大宗 by Lirrum/preview.webp",
+        "thumb": "/content/非编码存储科技/大宗仓库/盒分大宗/四边形大宗 by Lirrum/thumb.webp",
+        "filename": "四边形大宗.litematic",
+        "sub_id": "sub-1792611783054"
+    },
+    {
         "id": "投掷器轮询主控",
         "name": "投掷器轮询主控",
-        "author": "Unknow",
+        "author": "Unknown",
         "tags": [
             "逻辑电路",
             "逻辑/传输"
