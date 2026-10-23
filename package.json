@@ -15,10 +15,15 @@
     "build:vendor": "node scripts/build-vendor.js",
     "build:static": "node scripts/build-static.ts",
     "check:build": "node scripts/check-build.ts",
+    "worker:dev": "wrangler dev --config wrangler.jsonc",
+    "worker:check": "wrangler deploy --dry-run --outdir workers/dist --config wrangler.jsonc",
+    "worker:deploy": "wrangler deploy --config wrangler.jsonc",
     "lint": "eslint .",
     "check:types": "tsc --noEmit",
     "doctor": "react-doctor",
+    "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "check:emoji": "node scripts/emoji-guard.ts",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check:paths": "node scripts/check-paths.js",
@@ -65,7 +70,8 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.0",
     "vite": "^7.3.1",
-    "vitest": "5.0.3"
+    "vitest": "5.0.3",
+    "wrangler": "4.152.0"
   },
   "engines": {
     "node": ">=24.22.1"

@@ -43,6 +43,11 @@ blob-report/
 # Vite
 *.timestamp-*-*.mjs
 
+workers/dist/
+.wrangler/
+.dev.vars
+.dev.vars.*
+
 temp-opencode/
 /.agents/
 /data/skills/

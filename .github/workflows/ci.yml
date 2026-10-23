@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   quality:
-    name: Lint / Types / Unit / Paths
+    name: Format / Lint / Emoji / Worker / Types / Unit / Paths
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -36,8 +36,17 @@ jobs:
       - name: Type check
         run: pnpm run check:types
 
+      - name: Format check
+        run: pnpm run format:check
+
       - name: Lint
         run: pnpm run lint
+
+      - name: Emoji guard
+        run: pnpm run check:emoji
+
+      - name: Worker bundle check
+        run: pnpm run worker:check
 
       - name: Unit & component tests
         run: pnpm run test
@@ -60,7 +69,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
