@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Worker 名称与现有 Cloudflare Worker 一致。
+  // keep_vars 保留 Dashboard 里已有的变量，避免部署时被清空。
+  "name": "openst-api",
+  "main": "workers/src/index.js",
+  "compatibility_date": "2026-02-06",
+  "workers_dev": true,
+  "preview_urls": false,
+  "keep_vars": true,
+  "observability": {
+    "enabled": true,
+  },
+  "vars": {
+    "GH_REPO": "OpenST-mc/website",
+    "ARCHIVE_REPO": "OpenST-mc/archive",
+    "BLACKLIST_ASNS": "132203,133478",
+  },
+  "routes": [
+    {
+      "pattern": "api.openstmc.com",
+      "zone_name": "openstmc.com",
+      "custom_domain": true,
+      "enabled": true,
+      "previews_enabled": false,
+    },
+  ],
+}

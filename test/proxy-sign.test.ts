@@ -18,7 +18,7 @@ const TS_MS = 1700000000_000;
 const GH = 'gho_dummy_token';
 const BODY = new TextEncoder().encode('{"folder":"abc","name":"x"}');
 
-// Mirror of workers/workers 2.js helper to prove cross-implementation parity.
+// Mirrors workers/src/lib/crypto.js helper; proves cross-impl parity.
 async function workerExpected(secret: string, ts: string, body: Uint8Array, ghToken: string): Promise<string> {
   const bodyHash = await sha256Hex(body);
   return hmacHex(secret, `${ts}\n${bodyHash}\n${ghToken}`);
@@ -65,7 +65,7 @@ describe('proxy-sign (方案 B)', () => {
 describe('upload token (投稿上传授权)', () => {
   const LOGIN = 'octocat';
 
-  // Mirror of workers/workers 2.js verifyUploadToken to prove cross-implementation parity.
+  // Mirrors crypto.js verifyUploadToken; proves parity.
   async function workerVerifyUpload(secret: string, token: string, login: string, nowMs: number): Promise<boolean> {
     const dot = token.indexOf('.');
     if (dot <= 0) return false;
