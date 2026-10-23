@@ -1,23 +1,17 @@
-// URL-builder tests for api/download.js + api/share.js (pure parts only, Vitest).
+// URL-builder tests for api/download.js + api/share.js.
 //
-// NOTE (skip rationale): apps/extra/litematic-converter/index.js was NOT tested
-// because it is not importable in node — it has zero exports and touches
-// `document` at module top level (throws ReferenceError outside a browser).
-// Per task instructions the source was left untouched; instead this file tests
-// the download/share URL builders with inline fixtures mirroring api/*.js.
+// litematic-converter/index.js is not importable: zero exports,
+// top-level `document`. This file tests URL builders with fixtures.
 
 import { describe, it, expect } from 'vitest';
 
-// --- Inline fixtures mirroring source (kept in sync by hand, no imports) ---
+// --- Inline fixtures mirroring source; kept in sync by hand ---
 
 // Mirrors api/share.js: /^sub-\d+(-\d+)?$/
 const SUB_ID_RE = /^sub-\d+(-\d+)?$/;
 const isSafeSubId = (v: unknown) => typeof v === 'string' && SUB_ID_RE.test(v);
 
-// Mirrors api/download.js repoPath builder:
-//   [item.category, item.id, item.filename]
-//     .map(part => String(part).split('/').map(encodeURIComponent).join('/'))
-//     .join('/')
+// Mirrors api/download.js repoPath builder (each segment encoded).
 const buildRepoPath = (category: unknown, id: unknown, filename: unknown) =>
   [category, id, filename].map((part) => String(part).split('/').map(encodeURIComponent).join('/')).join('/');
 
@@ -68,7 +62,7 @@ describe('repoPath builder (api/download.js)', () => {
   });
 
   it('keeps nested category slashes as separators', () => {
-    // category itself may contain "/" (two-level hierarchy); slashes survive
+    // category may contain "/" (two-level hierarchy); slashes survive
     // because each slash-split chunk is encoded independently.
     expect(buildRepoPath('a/b', 'c', 'd')).toBe('a/b/c/d');
   });

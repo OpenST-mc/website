@@ -89,10 +89,7 @@ export default function Page() {
         </button>
       </div>
 
-      <div
-        id="loading-overlay"
-        className="fixed inset-0 z-[999] bg-black/80 flex justify-center items-center hidden"
-      >
+      <div id="loading-overlay" className="fixed inset-0 z-[999] bg-black/80 flex justify-center items-center hidden">
         <div className="flex flex-col items-center">
           <div className="spinner border-4 border-t-[#40B5AD] border-white/20 rounded-full w-12 h-12 animate-spin mb-4"></div>
           <p className="text-[#40B5AD] font-mono text-xs tracking-widest">DECODING_NBT...</p>
@@ -113,9 +110,7 @@ export default function Page() {
       >
         <div className="glass-panel max-w-2xl w-full p-10 text-center">
           <h1 className="text-3xl font-black tracking-tighter mb-2 text-[#40B5AD] italic">投影预览系统</h1>
-          <p className="text-xs font-mono text-white/60 mb-10 uppercase tracking-[0.3em]">
-            Litematic Preview
-          </p>
+          <p className="text-xs font-mono text-white/60 mb-10 uppercase tracking-[0.3em]">Litematic Preview</p>
 
           <div id="file-loader-panel">
             <input id="file-upload" type="file" hidden />
@@ -159,12 +154,7 @@ export default function Page() {
           <div id="settings-sliders" className="mb-8 space-y-3"></div>
           {/* 镜像模式 */}
           <label className="flex items-center gap-3 mb-8 cursor-pointer">
-            <input
-              type="checkbox"
-              id="mirror-toggle"
-              className="sr-only setting"
-              data-setting="mirrorMode"
-            />
+            <input type="checkbox" id="mirror-toggle" className="sr-only setting" data-setting="mirrorMode" />
             <div className="w-10 h-5 rounded-full bg-white/10 border border-white/20 transition-colors relative">
               <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#40B5AD] transition-transform"></div>
             </div>

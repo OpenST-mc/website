@@ -126,11 +126,7 @@ export default function Page() {
             </p>
           </div>
 
-          <div
-            id="credits-trigger"
-            onClick={registerClick}
-            className="group cursor-pointer text-right hidden sm:block"
-          >
+          <div id="credits-trigger" onClick={registerClick} className="group cursor-pointer text-right hidden sm:block">
             <div className="text-[10px] text-gray-700 group-hover:text-cyan-500 transition-colors tracking-widest loading-skeleton">
               ACCESS_KEY: CREDITS
             </div>

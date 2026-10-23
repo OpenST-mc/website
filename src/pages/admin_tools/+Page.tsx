@@ -122,7 +122,7 @@ export default function Page() {
           </div>
           {isProcessing ? (
             <div className="flex items-center gap-2 text-[#40B5AD] bg-[#40B5AD]/10 px-4 py-2 rounded-full border border-[#40B5AD]/20">
-              <span className="animate-spin">⚙️</span>
+              <span className="material-icons animate-spin">settings</span>
               <span className="text-xs font-bold uppercase">Packing &amp; Downloading...</span>
             </div>
           ) : null}
@@ -132,8 +132,10 @@ export default function Page() {
           <div className="space-y-6 order-1">
             <div className="grid grid-cols-2 gap-4">
               <label className="border-2 border-dashed border-slate-700 p-4 rounded-2xl text-center cursor-pointer hover:border-[#40B5AD]/50 hover:bg-[#40B5AD]/5 transition-all peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[#40B5AD]">
-                <span className="block text-2xl mb-1">🖼️</span>
-                <p className={`text-[10px] font-bold uppercase truncate px-2 ${previewFile ? 'text-[#40B5AD]' : 'text-slate-500'}`}>
+                <span className="material-icons block text-2xl mb-1">image</span>
+                <p
+                  className={`text-[10px] font-bold uppercase truncate px-2 ${previewFile ? 'text-[#40B5AD]' : 'text-slate-500'}`}
+                >
                   {previewFile ? previewFile.name : 'Image'}
                 </p>
                 <input
@@ -145,7 +147,7 @@ export default function Page() {
                 />
               </label>
               <label className="border-2 border-dashed border-slate-700 p-4 rounded-2xl text-center cursor-pointer hover:border-[#40B5AD]/50 hover:bg-[#40B5AD]/5 transition-all peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[#40B5AD]">
-                <span className="block text-2xl mb-1">📦</span>
+                <span className="material-icons block text-2xl mb-1">inventory_2</span>
                 <p
                   className={`text-[10px] font-bold uppercase truncate px-2 ${litematicFile ? 'text-[#40B5AD]' : 'text-slate-500'}`}
                 >

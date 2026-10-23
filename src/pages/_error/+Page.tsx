@@ -50,7 +50,10 @@ export default function Page() {
           </div>
         </div>
 
-        <div id="error-box" className={showError ? 'space-y-8 max-w-lg animate-in fade-in zoom-in duration-500' : 'hidden'}>
+        <div
+          id="error-box"
+          className={showError ? 'space-y-8 max-w-lg animate-in fade-in zoom-in duration-500' : 'hidden'}
+        >
           <div className="space-y-4">
             <h1 className="text-9xl font-black text-white/5 tracking-tighter relative">
               404
@@ -60,7 +63,11 @@ export default function Page() {
             </h1>
             <div className="h-px w-24 bg-[#40B5AD]/30 mx-auto" />
             <p className="text-white/50 leading-relaxed text-sm">
-              页面 <span id="error-id" className="text-[#40B5AD] font-mono">{targetPath || 'null'}</span> 可能是无效的。
+              页面{' '}
+              <span id="error-id" className="text-[#40B5AD] font-mono">
+                {targetPath || 'null'}
+              </span>{' '}
+              可能是无效的。
             </p>
           </div>
 

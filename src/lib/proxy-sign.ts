@@ -22,13 +22,9 @@ export async function sha256Hex(data: ArrayBuffer | Uint8Array): Promise<string>
 }
 
 export async function hmacHex(secret: string, message: string): Promise<string> {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  );
+  const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [
+    'sign',
+  ]);
   const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(message));
   return toHex(signature);
 }
@@ -55,7 +51,8 @@ export async function signProxyRequest(
   return hmacHex(secret, canonicalPayload(timestamp, bodyHash, ghToken));
 }
 
-// --- 投稿上传令牌（Vercel /api/upload-token 签发 → Worker /api/archive-upload 校验）---
+// --- 投稿上传令牌：Vercel /api/upload-token 签发
+// → Worker /api/archive-upload 校验 ---
 // 浏览器 → Worker 直传（≤50MB，不经 Vercel 体积限制），令牌把「已登录」带给 Worker。
 export const UPLOAD_TOKEN_TTL_SEC = 600;
 

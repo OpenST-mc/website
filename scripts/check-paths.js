@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Path-consistency guard: vercel.json rewrites <-> vite PUBLIC_ALIASES + no physical refs.
-// Usage: node scripts/check-paths.js (exit 0 consistent, 1 drifted). No dependencies.
+// Path guard: vercel.json rewrites <-> vite PUBLIC_ALIASES;
+// no physical refs.
+// Usage: node scripts/check-paths.js (0 ok, 1 drifted).
 import fs from 'node:fs';
 import path from 'node:path';
 

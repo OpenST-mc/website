@@ -1,4 +1,4 @@
-// Example component test — proves Vitest + Testing Library + jsdom wiring.
+// Example component test: Vitest + Testing Library + jsdom wiring.
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Page from '../src/pages/index/+Page.tsx';

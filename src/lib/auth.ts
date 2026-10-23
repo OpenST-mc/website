@@ -32,7 +32,8 @@ export function sanitizeCallbackUrl(url: unknown): string {
   return url;
 }
 
-// Auth.js `X-Auth-Return-Redirect` 响应校验：仅接受 http(s) 跳转（防 javascript:/data: 注入）。
+// Auth.js `X-Auth-Return-Redirect` 响应校验：仅接受 http(s) 跳转，
+// 防止 javascript:/data: 注入。
 export function parseAuthRedirect(raw: unknown, base: string): string | null {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   const url = (raw as { url?: unknown }).url;

@@ -1,10 +1,4 @@
-import type {
-  ArchiveItem,
-  ArchiveDict,
-  Session,
-  SessionUser,
-  WorkerUploadResponse,
-} from './types.ts';
+import type { ArchiveItem, ArchiveDict, Session, SessionUser, WorkerUploadResponse } from './types.ts';
 
 // 轻量 runtime 校验（不新增依赖；schema 库论证见 T6.1）。
 

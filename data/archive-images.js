@@ -17,7 +17,8 @@ async function isStale(sourcePath, outPath) {
   return !out || source.mtimeMs > out.mtimeMs;
 }
 
-// FDT：详情图按需产出 display.webp（≤1000px webp），卡片统一产出 thumb.webp（≤640px webp）。
+// FDT：详情图按需产出 display.webp（≤1000px），
+// 卡片统一产出 thumb.webp（≤640px）。
 export async function ensureDerivatives({ dir, sourceFile }) {
   const sourcePath = path.join(dir, sourceFile);
   const meta = await sharp(sourcePath).metadata();

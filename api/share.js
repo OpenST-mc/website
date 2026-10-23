@@ -50,7 +50,7 @@ export default async function handler(req, res) {
         .replace(/[#*`>!-]/g, '')
         .replace(/\s+/g, ' ')
         .trim()
-        .slice(0, 150)
+        .slice(0, 150),
     );
     const image = escapeHtml(`https://openstmc.com/${String(item.preview || '').replace(/^\//, '')}`);
     const finalUrl = escapeHtml(`https://openstmc.com/archive?${safeSubId}`);

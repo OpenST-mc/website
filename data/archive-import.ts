@@ -159,23 +159,20 @@ export function buildFolderMap(records: FolderRecord[]): Map<string, FolderLocat
 }
 
 function contentBase(location: FolderLocation): string {
-  return location.category
-    ? `/content/${location.category}/${location.folder}`
-    : `/content/${location.folder}`;
+  return location.category ? `/content/${location.category}/${location.folder}` : `/content/${location.folder}`;
 }
 
 /**
  * 合并 archive 索引与文件夹映射，生成站点数据库。
  * id=文件夹名（供下载/编辑/收藏），sub_id=archive CI 稳定 id（供深链/分享）。
  */
-export function mapArchiveDatabase(
-  index: ArchiveIndexEntry[],
-  folders: Map<string, FolderLocation>,
-): ArchiveItem[] {
+export function mapArchiveDatabase(index: ArchiveIndexEntry[], folders: Map<string, FolderLocation>): ArchiveItem[] {
   if (folders.size > index.length) {
     const known = new Set(index.map((entry) => entry.id));
     const extra = [...folders.keys()].filter((id) => !known.has(id));
-    fail(`content/_meta 中存在未进入 data/index.json 的稿件: ${extra.join(', ') || `${folders.size} vs ${index.length}`}`);
+    fail(
+      `content/_meta 中存在未进入 data/index.json 的稿件: ${extra.join(', ') || `${folders.size} vs ${index.length}`}`,
+    );
   }
 
   const seenFolders = new Set<string>();
@@ -213,10 +210,7 @@ export function mapArchiveDatabase(
 }
 
 /** 交叉校验 data/index.json 与 _meta/index-by-id.json。 */
-export function verifyMetaIndex(
-  index: ArchiveIndexEntry[],
-  meta: Map<string, MetaIndexEntry>,
-): void {
+export function verifyMetaIndex(index: ArchiveIndexEntry[], meta: Map<string, MetaIndexEntry>): void {
   if (meta.size !== index.length) {
     fail(`content/_meta/index-by-id.json 与 data/index.json 数量不一致: ${meta.size} vs ${index.length}`);
   }

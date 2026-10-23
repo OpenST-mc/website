@@ -9,7 +9,7 @@ const tmp = () => fs.mkdtemp(path.join(os.tmpdir(), 'openst-img-'));
 const exists = async (p: string): Promise<boolean> =>
   fs.access(p).then(
     () => true,
-    () => false
+    () => false,
   );
 
 describe('needsDisplay', () => {

@@ -176,7 +176,9 @@ describe('getArchiveFileUrl', () => {
   });
 
   it('encodes spaces and special characters per path segment', () => {
-    expect(getArchiveFileUrl('/content/A B/preview.webp', 'x y#1.litematic')).toBe('/content/A%20B/x%20y%231.litematic');
+    expect(getArchiveFileUrl('/content/A B/preview.webp', 'x y#1.litematic')).toBe(
+      '/content/A%20B/x%20y%231.litematic',
+    );
   });
 
   it('returns empty for missing parts or non-content previews', () => {

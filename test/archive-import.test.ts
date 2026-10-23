@@ -54,12 +54,9 @@ describe('buildFolderMap', () => {
 
   it('rejects duplicate stable ids and duplicate folder ids', () => {
     expect(() => buildFolderMap([folderRecord, folderRecord])).toThrow('重复稳定 id');
-    expect(() =>
-      buildFolderMap([
-        folderRecord,
-        { ...folderRecord, id: 'sub-1', category: '其他杂物' },
-      ]),
-    ).toThrow('重复文件夹 id');
+    expect(() => buildFolderMap([folderRecord, { ...folderRecord, id: 'sub-1', category: '其他杂物' }])).toThrow(
+      '重复文件夹 id',
+    );
   });
 
   it('rejects invalid stable ids', () => {
@@ -88,12 +85,10 @@ describe('mapArchiveDatabase', () => {
 
   it('fails when a stable id has no folder, an extra folder, or a drifted category', () => {
     expect(() => mapArchiveDatabase([entry], new Map())).toThrow('缺少文件夹映射');
-    expect(() =>
-      mapArchiveDatabase([], buildFolderMap([folderRecord])),
-    ).toThrow('未进入 data/index.json');
-    expect(() =>
-      mapArchiveDatabase([entry], buildFolderMap([{ ...folderRecord, category: '其他杂物' }])),
-    ).toThrow('category 不一致');
+    expect(() => mapArchiveDatabase([], buildFolderMap([folderRecord]))).toThrow('未进入 data/index.json');
+    expect(() => mapArchiveDatabase([entry], buildFolderMap([{ ...folderRecord, category: '其他杂物' }]))).toThrow(
+      'category 不一致',
+    );
   });
 
   it('fails when preview/thumb do not belong to the item folder', () => {

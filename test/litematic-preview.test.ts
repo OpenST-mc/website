@@ -7,10 +7,7 @@ import {
   readLitematicFromNBTData,
   stripNBTTyping,
 } from '../src/pages/litematic-preview/litematic-utils';
-import {
-  loadDeepslateResources,
-  structuresFromLitematic,
-} from '../src/pages/litematic-preview/deepslate-helpers';
+import { loadDeepslateResources, structuresFromLitematic } from '../src/pages/litematic-preview/deepslate-helpers';
 import type { LitematicRegion } from '../src/pages/litematic-preview/types';
 
 function tag(type: string, value: unknown) {
@@ -66,7 +63,7 @@ describe('readLitematicFromNBTData', () => {
           ],
         }),
         BlockStates: tag('longArray', [[0, 57]]),
-      })
+      }),
     );
 
     expect(litematic.regions).toHaveLength(1);
@@ -93,7 +90,7 @@ describe('readLitematicFromNBTData', () => {
           value: [{ Name: tag('string', 'minecraft:air') }, { Name: tag('string', 'minecraft:stone') }],
         }),
         BlockStates: tag('longArray', [[0, 0]]),
-      })
+      }),
     );
 
     expect(litematic.regions[0]?.position).toEqual([0, 0, 0]);
@@ -183,9 +180,7 @@ describe('loadDeepslateResources', () => {
     });
 
     const resources = loadDeepslateResources(atlasData as unknown as HTMLImageElement);
-    expect(resources.getTextureUV(Identifier.parse('minecraft:block/test_textured'))).toEqual([
-      0, 0, 1, 1,
-    ]);
+    expect(resources.getTextureUV(Identifier.parse('minecraft:block/test_textured'))).toEqual([0, 0, 1, 1]);
 
     const model = resources.getBlockModel('minecraft:block/test_textured') as BlockModel;
     const buffers = model.getBuffers(
@@ -193,7 +188,7 @@ describe('loadDeepslateResources', () => {
       {},
       resources as unknown as TextureAtlasProvider,
       0,
-      { up: false, down: false, east: false, west: false, north: false, south: false }
+      { up: false, down: false, east: false, west: false, north: false, south: false },
     );
     expect(buffers.texCoord).toHaveLength(8);
   });

@@ -2,6 +2,7 @@ import { TAG_CONFIG, type TagCategoryConfig } from './config.ts';
 
 // 打包器纯逻辑（与旧 apps/admin/admin_tools.js 语义对等，便于单测）。
 
+// 输入框默认文案：emoji 规则的唯一例外。
 export const DEFAULT_DESC =
   '### 🚀 机器概览\n- **核心功能**: \n- **适用版本**: Java 1.20.x\n\n### 📖 使用说明\n1. \n\n> 提示：';
 

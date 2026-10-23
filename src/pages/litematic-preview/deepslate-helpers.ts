@@ -37,13 +37,11 @@ export function loadDeepslateResources(textureImage: HTMLImageElement): Deepslat
     if (model === undefined) return;
     blockModels['minecraft:' + id] = deepslate.BlockModel.fromJson(id, model);
   });
-  Object.values(blockModels).forEach((m) =>
-    m.flatten({ getBlockModel: (id) => blockModels[id.toString()] ?? null })
-  );
+  Object.values(blockModels).forEach((m) => m.flatten({ getBlockModel: (id) => blockModels[id.toString()] ?? null }));
 
   const atlasCanvas = document.createElement('canvas');
   const atlasSize = upperPowerOfTwo(
-    textureImage.width >= textureImage.height ? textureImage.width : textureImage.height
+    textureImage.width >= textureImage.height ? textureImage.width : textureImage.height,
   );
   atlasCanvas.width = textureImage.width;
   atlasCanvas.height = textureImage.height;
@@ -98,11 +96,7 @@ export function loadDeepslateResources(textureImage: HTMLImageElement): Deepslat
   return resources;
 }
 
-export function structuresFromLitematic(
-  litematic: Litematic,
-  yMin = 0,
-  yMax = -1
-): StructurePlacement[] {
+export function structuresFromLitematic(litematic: Litematic, yMin = 0, yMax = -1): StructurePlacement[] {
   const regions = litematic.regions;
   const result: StructurePlacement[] = [];
   let totalBlocks = 0;

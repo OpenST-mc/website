@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useData } from 'vike-react/useData';
 import { CATEGORIES } from '../../lib/config';
-import { calculateDynamicTags, getFilteredList, getSafePath, getArchiveFileUrl, type SelectedTags } from '../../lib/logic';
+import {
+  calculateDynamicTags,
+  getFilteredList,
+  getSafePath,
+  getArchiveFileUrl,
+  type SelectedTags,
+} from '../../lib/logic';
 import type { ArchiveData, ArchiveItem } from '../../lib/types';
 import { parseFavoriteIds, parseSubIdFromSearch, toJsonLd } from '../../lib/schema';
 import { useSession } from '../../hooks/useSession';
@@ -74,10 +80,7 @@ export default function Page() {
     () => fullFilteredList.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
     [fullFilteredList, currentPage],
   );
-  const dynamicTagGroups = useMemo(
-    () => calculateDynamicTags(items, CATEGORIES, selectedTags),
-    [items, selectedTags],
-  );
+  const dynamicTagGroups = useMemo(() => calculateDynamicTags(items, CATEGORIES, selectedTags), [items, selectedTags]);
 
   useEffect(() => setCurrentPage(1), [selectedTags, searchQuery, showOnlyFavs]);
 
@@ -224,7 +227,7 @@ export default function Page() {
             >
               <div className="flex flex-col lg:flex-row xl:flex-col items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
-                  🚀
+                  <span className="material-icons">rocket_launch</span>
                 </div>
                 <div className="text-center lg:text-left xl:text-center">
                   <h3 className="text-lg font-bold text-white tracking-tight">贡献你的机器</h3>
@@ -261,7 +264,9 @@ export default function Page() {
                 <div className="flex flex-col items-center gap-1">
                   <span className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">Discovery</span>
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl font-black text-white leading-none tracking-tighter">{fullFilteredList.length}</span>
+                    <span className="text-2xl font-black text-white leading-none tracking-tighter">
+                      {fullFilteredList.length}
+                    </span>
                     <span className="text-[10px] text-brand font-bold uppercase tracking-wider">Archives Found</span>
                   </div>
                 </div>
@@ -307,7 +312,9 @@ export default function Page() {
                       ›
                     </button>
                   </div>
-                  <span className="text-[9px] text-gray-700 font-bold uppercase tracking-[0.4em] ml-1">Navigate System</span>
+                  <span className="text-[9px] text-gray-700 font-bold uppercase tracking-[0.4em] ml-1">
+                    Navigate System
+                  </span>
                 </div>
               ) : null}
             </div>

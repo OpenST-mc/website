@@ -1,6 +1,7 @@
 // 下载计数 + 302 跳转
 // GET /api/download?id=<sub_id 或稿件文件夹名>
-// 依赖 Upstash Redis（UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN）；
+// 依赖 Upstash Redis
+// （UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN）；
 // 未配置时仅跳转不计数
 import { Redis } from '@upstash/redis';
 import crypto from 'node:crypto';

@@ -9,7 +9,7 @@ import { notify } from '../../lib/notify';
 function handleHashRoute(): void {
   const hash = window.location.hash.substring(1); // 去掉开头的 #
   if (hash && hash.startsWith('http')) {
-    console.log(`🚀 发现哈希路由: ${hash}`);
+    console.log(`发现哈希路由: ${hash}`);
 
     // 同步显示到输入框（视觉反馈）
     const urlInput = document.getElementById('remote-url-input') as HTMLInputElement | null;
@@ -94,7 +94,12 @@ function applyMirrorLayout(mirror: boolean): void {
   };
 
   if (mirror) {
-    setHint(leftHint, 'rotate_right', '单指旋转', 'linear-gradient(135deg, rgba(255, 50, 50, 0.10) 0%, transparent 100%)');
+    setHint(
+      leftHint,
+      'rotate_right',
+      '单指旋转',
+      'linear-gradient(135deg, rgba(255, 50, 50, 0.10) 0%, transparent 100%)',
+    );
     setHint(rightHint, 'touch_app', '单指移动', 'linear-gradient(225deg, rgba(0, 200, 0, 0.15) 0%, transparent 100%)');
     if (vCtrl) {
       vCtrl.style.right = 'auto';

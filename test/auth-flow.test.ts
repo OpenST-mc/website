@@ -1,7 +1,8 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
 
-// Handler 级验证 Auth.js JSON 重定向模式（src/lib/auth.ts 依赖 X-Auth-Return-Redirect 返回 { url }）。
+// Handler 级验证 Auth.js JSON 重定向模式
+// （src/lib/auth.ts 依赖 X-Auth-Return-Redirect 返回 { url }）。
 // 必须 node 环境：jsdom 的 Headers 按 Fetch 规范屏蔽 Set-Cookie 读取。
 const BASE = 'https://openstmc.com';
 

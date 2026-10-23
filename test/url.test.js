@@ -1,25 +1,19 @@
-// URL-builder tests for api/download.js + api/share.js (pure parts only).
-// Run: node --test test/   (zero new deps: node:test + node:assert/strict only)
+// URL-builder tests for api/download.js + api/share.js.
+// Run: node --test test/
 //
-// NOTE (skip rationale): apps/extra/litematic-converter/index.js was NOT tested
-// because it is not importable in node — it has zero exports and touches
-// `document` at module top level (throws ReferenceError outside a browser).
-// Per task instructions the source was left untouched; instead this file tests
-// the download/share URL builders with inline fixtures mirroring api/*.js.
+// litematic-converter/index.js is not importable: zero exports,
+// top-level `document`. This file tests URL builders with fixtures.
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-// --- Inline fixtures mirroring source (kept in sync by hand, no imports) ---
+// --- Inline fixtures mirroring source; kept in sync by hand ---
 
 // Mirrors api/share.js: /^sub-\d+(-\d+)?$/
 const SUB_ID_RE = /^sub-\d+(-\d+)?$/;
 const isSafeSubId = (v) => typeof v === 'string' && SUB_ID_RE.test(v);
 
-// Mirrors api/download.js repoPath builder:
-//   [item.category, item.id, item.filename]
-//     .map(part => String(part).split('/').map(encodeURIComponent).join('/'))
-//     .join('/')
+// Mirrors api/download.js repoPath builder (each segment encoded).
 const buildRepoPath = (category, id, filename) =>
   [category, id, filename].map((part) => String(part).split('/').map(encodeURIComponent).join('/')).join('/');
 
@@ -60,19 +54,19 @@ describe('repoPath builder (api/download.js)', () => {
   it('joins [category, id, filename] with / and encodes each segment', () => {
     assert.equal(
       buildRepoPath('潜影盒处理/潜影盒打包机', 'abc123', 'file.litematic'),
-      `${encodeURIComponent('潜影盒处理')}/${encodeURIComponent('潜影盒打包机')}/abc123/file.litematic`
+      `${encodeURIComponent('潜影盒处理')}/${encodeURIComponent('潜影盒打包机')}/abc123/file.litematic`,
     );
   });
 
   it('encodes 中文 and spaces but preserves / separators', () => {
     assert.equal(
       buildRepoPath('编码存储科技', 'id 1', '我的 存档.litematic'),
-      `${encodeURIComponent('编码存储科技')}/id%201/${encodeURIComponent('我的 存档.litematic')}`
+      `${encodeURIComponent('编码存储科技')}/id%201/${encodeURIComponent('我的 存档.litematic')}`,
     );
   });
 
   it('keeps nested category slashes as separators', () => {
-    // category itself may contain "/" (two-level hierarchy); slashes survive
+    // category may contain "/" (two-level hierarchy); slashes survive
     // because each slash-split chunk is encoded independently.
     const p = buildRepoPath('a/b', 'c', 'd');
     assert.equal(p, 'a/b/c/d');

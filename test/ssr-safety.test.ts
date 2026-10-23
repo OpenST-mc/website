@@ -1,6 +1,7 @@
 // @vitest-environment node
 // SSR/水合安全门：在纯 Node（无 jsdom 全局）下渲染页面与组件。
-// 任何渲染期访问 window/document/localStorage/navigator 都会在此抛 ReferenceError。
+// 任何渲染期访问 window/document/localStorage/navigator
+// 都会在此抛 ReferenceError。
 import { describe, it, expect } from 'vitest';
 import { createElement, type ComponentType } from 'react';
 import { renderToString } from 'react-dom/server';
@@ -58,13 +59,17 @@ describe('SSR without browser globals', () => {
   it('renders global components without browser globals', () => {
     expect(
       renderToString(
-        createElement(ErrorBoundary, null, createElement(NavBar, {
-          user: null,
-          isAdmin: false,
-          onLogin: noop,
-          onLogout: noop,
-          onOpenMenu: noop,
-        })),
+        createElement(
+          ErrorBoundary,
+          null,
+          createElement(NavBar, {
+            user: null,
+            isAdmin: false,
+            onLogin: noop,
+            onLogout: noop,
+            onOpenMenu: noop,
+          }),
+        ),
       ),
     ).toContain('GitHub 登录');
 

@@ -21,7 +21,10 @@ export function loadAndProcessFile(file: File | Blob): void {
 
   const fileName = isFile(file) && file.name ? file.name.toLowerCase() : '';
   if (fileName && !fileName.endsWith('.litematic')) {
-    notify('error', `检测到非投影文件: ${isFile(file) ? file.name : ''}，系统目前仅支持 .litematic 格式，请解压后再试。`);
+    notify(
+      'error',
+      `检测到非投影文件: ${isFile(file) ? file.name : ''}，系统目前仅支持 .litematic 格式，请解压后再试。`,
+    );
     hideLoading();
     // 恢复 UI
     const mainUI = document.getElementById('main-content');
@@ -52,8 +55,8 @@ export function loadAndProcessFile(file: File | Blob): void {
       // 释放 NBT 包装数据，仅保留 packedData（原实现同）
       (nbtdata as unknown as { value: NbtCompound | null }).value = null;
 
-      // 计算所有 Region 合并后的总包围盒和 max_y
-      let max_y = 256;
+      // 计算所有 Region 合并后的总包围盒和 maxHeight
+      let maxHeight = 256;
       let totalSize: [number, number, number] = [0, 0, 0];
       if (structureLitematic.regions && structureLitematic.regions.length > 0) {
         let minY = 0,
@@ -69,7 +72,7 @@ export function loadAndProcessFile(file: File | Blob): void {
           const s = r.size || [r.width, r.height, r.depth];
           const rh = r.height || s[1];
 
-          if (rh > max_y) max_y = rh;
+          if (rh > maxHeight) maxHeight = rh;
 
           if (first) {
             minX = pos[0];
@@ -97,15 +100,10 @@ export function loadAndProcessFile(file: File | Blob): void {
         engine.setStructures(structures);
 
         // 自动将相机移动到合并模型的中心
-        glMatrix.vec3.set(
-          engine.camera.pos,
-          -totalSize[0] / 2,
-          -totalSize[1] / 2,
-          -totalSize[2] / 2
-        );
+        glMatrix.vec3.set(engine.camera.pos, -totalSize[0] / 2, -totalSize[1] / 2, -totalSize[2] / 2);
       }
 
-      createRangeSliders(max_y);
+      createRangeSliders(maxHeight);
       const blockCounts = getMaterialList(structureLitematic);
       createMaterialsList(blockCounts);
       const cancelBtn = document.getElementById('cancel-preview-btn');
@@ -159,8 +157,7 @@ export function createMaterialsList(blockCounts: Record<string, number>): void {
     });
 
   const downloadBtn = document.createElement('button');
-  downloadBtn.innerHTML =
-    '<i class="material-icons" style="font-size:16px;vertical-align:middle">download</i> CSV';
+  downloadBtn.innerHTML = '<i class="material-icons" style="font-size:16px;vertical-align:middle">download</i> CSV';
   downloadBtn.className =
     'w-full mt-2 py-1.5 border border-[#40B5AD]/30 hover:bg-[#40B5AD]/10 text-[#40B5AD] transition-all rounded text-xs font-mono uppercase';
   downloadBtn.onclick = function () {
@@ -182,7 +179,7 @@ export function createMaterialsList(blockCounts: Record<string, number>): void {
   materialList.appendChild(downloadBtn);
 }
 
-export function createRangeSliders(max_y: number): void {
+export function createRangeSliders(maxHeight: number): void {
   const slidersDiv = document.getElementById('settings-sliders');
   if (!slidersDiv) return;
 
@@ -199,7 +196,7 @@ export function createRangeSliders(max_y: number): void {
   const minSlider = document.createElement('input');
   minSlider.type = 'range';
   minSlider.min = '0';
-  minSlider.max = String(max_y);
+  minSlider.max = String(maxHeight);
   minSlider.value = '0';
   createStyling(minSlider);
 
@@ -210,12 +207,12 @@ export function createRangeSliders(max_y: number): void {
   const maxSlider = document.createElement('input');
   maxSlider.type = 'range';
   maxSlider.min = '0';
-  maxSlider.max = String(max_y);
-  maxSlider.value = String(max_y);
+  maxSlider.max = String(maxHeight);
+  maxSlider.value = String(maxHeight);
   createStyling(maxSlider);
 
-  let y_min = 0;
-  let y_max = max_y;
+  let yMin = 0;
+  let yMax = maxHeight;
   let updateScheduled = false;
 
   const updateView = () => {
@@ -225,8 +222,8 @@ export function createRangeSliders(max_y: number): void {
       updateScheduled = false;
       const engine = getEngine();
       if (engine && structureLitematic) {
-        const actualMin = Math.min(y_min, y_max);
-        const actualMax = Math.max(y_min, y_max);
+        const actualMin = Math.min(yMin, yMax);
+        const actualMax = Math.max(yMin, yMax);
         const structures = structuresFromLitematic(structureLitematic, actualMin, actualMax);
         engine.setStructures(structures);
       }
@@ -235,12 +232,12 @@ export function createRangeSliders(max_y: number): void {
 
   // 使用 oninput 实现实时预览，而非 onchange
   minSlider.oninput = (e) => {
-    y_min = parseInt((e.target as HTMLInputElement).value, 10);
+    yMin = parseInt((e.target as HTMLInputElement).value, 10);
     updateView();
   };
 
   maxSlider.oninput = (e) => {
-    y_max = parseInt((e.target as HTMLInputElement).value, 10);
+    yMax = parseInt((e.target as HTMLInputElement).value, 10);
     updateView();
   };
 

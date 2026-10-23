@@ -7,7 +7,11 @@ const GH_REPO = process.env.GH_REPO ?? 'OpenST-mc/website';
 async function hasRepoPush(ghToken: string): Promise<boolean> {
   try {
     const res = await fetch(`https://api.github.com/repos/${GH_REPO}`, {
-      headers: { Authorization: `token ${ghToken}`, 'User-Agent': 'OpenST-Portal', Accept: 'application/vnd.github+json' },
+      headers: {
+        Authorization: `token ${ghToken}`,
+        'User-Agent': 'OpenST-Portal',
+        Accept: 'application/vnd.github+json',
+      },
     });
     if (!res.ok) return false;
     const data = (await res.json()) as { permissions?: { push?: boolean } };
@@ -53,7 +57,8 @@ export const authConfig: AuthConfig = {
   },
 };
 
-// api/auth/** 显式路由共用入口（Vercel 对裸 api/ 的 [...catchall] 仅匹配单段路径，须逐路由建文件）。
+// api/auth/** 显式路由共用入口。Vercel 对裸 api/ 的 [...catchall]
+// 仅匹配单段路径，须逐路由建文件。
 export function authHandler(request: Request): Promise<Response> {
   return Auth(request, authConfig);
 }

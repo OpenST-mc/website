@@ -114,7 +114,12 @@ export function DetailModal({
           aria-label="关闭"
           className="absolute top-6 right-6 z-30 bg-black/50 hover:bg-brand text-white w-10 h-10 rounded-full flex items-center justify-center transition-all group"
         >
-          <svg className="w-6 h-6 group-hover:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-6 h-6 group-hover:rotate-90 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path d="M6 18L18 6M6 6l12 12" strokeWidth="2.5" />
           </svg>
         </button>
@@ -154,7 +159,9 @@ export function DetailModal({
                   className="group self-start flex items-center gap-2 bg-white/5 hover:bg-brand/10 border border-white/5 hover:border-brand/30 px-3 py-1.5 rounded-xl cursor-pointer transition-all active:scale-95"
                 >
                   <span className="text-[10px] text-gray-500 font-mono tracking-tighter uppercase">ID:</span>
-                  <span className="text-xs font-mono text-gray-400 group-hover:text-brand transition-colors">{item.sub_id}</span>
+                  <span className="text-xs font-mono text-gray-400 group-hover:text-brand transition-colors">
+                    {item.sub_id}
+                  </span>
                 </button>
               </div>
             </div>
@@ -171,7 +178,9 @@ export function DetailModal({
             </div>
 
             <div className="flex-1">
-              <h4 className="text-[10px] text-brand font-bold mb-3 uppercase tracking-widest opacity-80">Description</h4>
+              <h4 className="text-[10px] text-brand font-bold mb-3 uppercase tracking-widest opacity-80">
+                Description
+              </h4>
               <div className="markdown-body text-sm leading-relaxed" onClick={handleMdClick}>
                 <div dangerouslySetInnerHTML={{ __html: renderedDescription }} />
               </div>

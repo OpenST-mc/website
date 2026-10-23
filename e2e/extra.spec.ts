@@ -59,7 +59,8 @@ test('preview decodes an uploaded litematic into the material list', async ({ pa
   await page.goto('/Extra-Function/litematic-preview');
   await expect(page.locator('#viewer canvas')).toBeAttached({ timeout: 15_000 });
 
-  // 2x1x2 区域，palette=[air, stone, oak_planks]，nbits=2，块序列 [1, 2, 2, 0]。
+  // 2x1x2 区域，palette=[air, stone, oak_planks]，nbits=2，
+  // 块序列 [1, 2, 2, 0]。
   const root: NbtRoot = {
     name: '',
     type: 'compound',
@@ -144,7 +145,5 @@ test('preview settings panel opens/closes and mirror setting persists', async ({
 
   await page.locator('#settings-close').click();
   // 折叠后仅剩 1px 左边框（border-box），轮询确认动画收敛。
-  await expect
-    .poll(() => panel.evaluate((el) => parseFloat(getComputedStyle(el).width)))
-    .toBeLessThan(2);
+  await expect.poll(() => panel.evaluate((el) => parseFloat(getComputedStyle(el).width))).toBeLessThan(2);
 });

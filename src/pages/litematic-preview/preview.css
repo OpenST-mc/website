@@ -21,7 +21,10 @@ html:has(.preview-page),
 body:has(.preview-page) {
   background-color: #0c0c0c;
   color: #e0e0e0;
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    sans-serif;
   overflow: hidden;
   margin: 0;
 }

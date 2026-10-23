@@ -1,10 +1,5 @@
 import { useRef, type FormEvent } from 'react';
-import {
-  convertLitematic,
-  gzipNbt,
-  inflateNbt,
-  requiresLegacyWarning,
-} from '../../lib/litematic/convert';
+import { convertLitematic, gzipNbt, inflateNbt, requiresLegacyWarning } from '../../lib/litematic/convert';
 import { parseNbtRoot } from '../../lib/litematic/nbt';
 import { notify } from '../../lib/notify';
 import '../../../css/ArchiveInput.css';
@@ -47,7 +42,7 @@ export default function Page() {
 
       if (requiresLegacyWarning(targetVersion)) {
         const userConfirmed = confirm(
-          'Warning: Converting to versions 1.19 or lower may result in corrupted files or unconverted NBT tags. Do you wish to continue?'
+          'Warning: Converting to versions 1.19 or lower may result in corrupted files or unconverted NBT tags. Do you wish to continue?',
         );
         if (!userConfirmed) {
           notify('info', '已取消转换');

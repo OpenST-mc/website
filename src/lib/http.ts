@@ -8,10 +8,7 @@ export class HttpError extends Error {
   readonly status: number;
   readonly url: string;
 
-  constructor(
-    message: string,
-    options: { code: HttpErrorCode; url: string; status?: number; cause?: unknown },
-  ) {
+  constructor(message: string, options: { code: HttpErrorCode; url: string; status?: number; cause?: unknown }) {
     super(message, { cause: options.cause });
     this.name = 'HttpError';
     this.code = options.code;

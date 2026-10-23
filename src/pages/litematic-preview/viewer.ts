@@ -175,13 +175,10 @@ export class LitematicEngine {
           const cx = (first.clientX + second.clientX) / 2;
           const cy = (first.clientY + second.clientY) / 2;
           this.touchState.lastPos = [cx, cy];
-          this.touchState.lastPinchDist = Math.hypot(
-            first.clientX - second.clientX,
-            first.clientY - second.clientY
-          );
+          this.touchState.lastPinchDist = Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
         }
       },
-      { passive: false }
+      { passive: false },
     );
 
     this.canvas.addEventListener(
@@ -236,7 +233,7 @@ export class LitematicEngine {
           this.requestRender();
         }
       },
-      { passive: false }
+      { passive: false },
     );
 
     this.canvas.addEventListener('touchend', () => {
@@ -287,7 +284,7 @@ export class LitematicEngine {
           }
         }
       },
-      { threshold: 0 }
+      { threshold: 0 },
     );
     if (this.container) observer.observe(this.container);
   }
@@ -338,7 +335,7 @@ export class LitematicEngine {
         this.gl!,
         s.structure as Structure,
         this.resources as unknown as Resources,
-        { chunkSize: 16 }
+        { chunkSize: 16 },
       ),
       position: s.position || [0, 0, 0],
     }));
@@ -400,7 +397,7 @@ export class LitematicEngine {
         }, 500);
         if (vControls) vControls.classList.add('fade-guide');
       },
-      { once: true }
+      { once: true },
     );
   }
 

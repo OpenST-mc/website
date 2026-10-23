@@ -24,7 +24,9 @@ export function NavBar({ user, isAdmin, onLogin, onLogout, onOpenMenu }: NavBarP
         </button>
         <div className="font-bold tracking-tighter text-brand text-xl">
           <a href="https://github.com/OpenST-mc/website">OpenST档案馆</a>{' '}
-          <span className="hidden sm:inline text-white/40 text-xs tracking-normal ml-1 font-normal uppercase">v4.5</span>
+          <span className="hidden sm:inline text-white/40 text-xs tracking-normal ml-1 font-normal uppercase">
+            v4.5
+          </span>
         </div>
       </div>
 
@@ -36,7 +38,9 @@ export function NavBar({ user, isAdmin, onLogin, onLogout, onOpenMenu }: NavBarP
                 <span className="text-xs font-bold text-white">{user.name}</span>
                 {isAdmin ? <span className="text-[9px] bg-brand/20 text-brand px-1 rounded">STAFF</span> : null}
               </div>
-              {user.image ? <img src={user.image} alt="" className="w-8 h-8 rounded-full border border-white/10" /> : null}
+              {user.image ? (
+                <img src={user.image} alt="" className="w-8 h-8 rounded-full border border-white/10" />
+              ) : null}
               <button
                 type="button"
                 onClick={onLogout}

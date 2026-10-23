@@ -1,7 +1,7 @@
 import type { Config } from 'vike/types';
 import vikeReact from 'vike-react/config';
 
-// Global Vike config (site-wide defaults). Page-level `+config.ts` files can
+// Global Vike config (site-wide defaults). Page-level configs can
 // override these. SSG: every page is pre-rendered at build time.
 export default {
   extends: [vikeReact],

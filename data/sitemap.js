@@ -25,7 +25,7 @@ function formatFullDate(dateStr) {
 }
 
 async function generate() {
-  console.log('📡 正在生成旗舰级 Sitemap & Robots...');
+  console.log('正在生成 Sitemap & Robots...');
 
   try {
     // 1. 读取数据
@@ -83,13 +83,13 @@ Sitemap: ${CONFIG.BASE_URL}sitemap.xml
     await fs.writeFile(CONFIG.ROBOTS_PATH, robotsContent);
 
     console.log('------------------------------------');
-    console.log(`✅ 成功！已生成 ${database.length + 2} 条链接`);
-    console.log(`🌐 当前域名: ${CONFIG.BASE_URL}`);
-    console.log(`📄 站点地图: ${CONFIG.SITEMAP_PATH}`);
-    console.log(`🤖 机器人文件: ${CONFIG.ROBOTS_PATH}`);
+    console.log(`成功！已生成 ${database.length + 2} 条链接`);
+    console.log(`当前域名: ${CONFIG.BASE_URL}`);
+    console.log(`站点地图: ${CONFIG.SITEMAP_PATH}`);
+    console.log(`机器人文件: ${CONFIG.ROBOTS_PATH}`);
     console.log('------------------------------------');
   } catch (err) {
-    console.error('❌ 生成失败:', err.message);
+    console.error('生成失败:', err.message);
     process.exit(1);
   }
 }

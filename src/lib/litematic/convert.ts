@@ -1,4 +1,5 @@
-// litematic 版本转换（自 apps/extra/litematic-converter/index.js 迁移，行为逐条对等）。
+// litematic 版本转换（自 apps/extra/litematic-converter/index.js 迁移，
+// 行为逐条对等）。
 // 纯逻辑：不触 DOM；UI 表单与下载在 +Page.tsx。
 import { gzip, inflate } from 'pako';
 import type { NbtList, NbtRoot, NbtTag } from './nbt';
@@ -54,9 +55,7 @@ export function convertSignTags(obj: unknown): void {
 
   for (const key in obj) {
     if ((SIGN_TEXT_KEYS as readonly string[]).includes(key)) {
-      const messages = SIGN_TEXT_KEYS.map((textKey) =>
-        obj[textKey] ? (obj[textKey] as NbtTag).value : '{"text":""}'
-      );
+      const messages = SIGN_TEXT_KEYS.map((textKey) => (obj[textKey] ? (obj[textKey] as NbtTag).value : '{"text":""}'));
       const glowing = obj['GlowingText'] ? (obj['GlowingText'] as NbtTag).value : 0;
       const color = obj['Color'] ? (obj['Color'] as NbtTag).value : 'black';
 

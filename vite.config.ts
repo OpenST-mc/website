@@ -6,9 +6,10 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
-// 公开 URL 根 -> 物理目录（与 vercel.json rewrites 一一对应，check-paths 守卫；页面路由由 Vike 接管）
+// 公开 URL 根 -> 物理目录（与 vercel.json rewrites 一一对应，
+// check-paths 守卫；页面路由由 Vike 接管）
 const PUBLIC_ALIASES: Record<string, string> = {
   '/fonts/': 'assets/fonts/',
   '/images/': 'assets/images/',
@@ -53,7 +54,7 @@ function devPublicRewrites(): Plugin {
 // /images 等公开路径映射到输出内的物理目录，便于对构建产物做 E2E（生产由 Vercel 应用同一映射）。
 // 与 Vercel 一致：静态文件优先，命中输出文件时不 rewrite（如 Vike 预渲染页面）。
 function publicRewritesPreview(): Plugin {
-  const outDir = path.join(__dirname, 'dist', 'client');
+  const outDir = path.join(rootDir, 'dist', 'client');
   const existsAsStatic = (pathname: string): boolean => {
     const abs = path.join(outDir, pathname.replace(/^\//, ''));
     return fs.existsSync(abs) || fs.existsSync(abs + '.html') || fs.existsSync(path.join(abs, 'index.html'));
@@ -86,7 +87,7 @@ export default defineConfig({
   resolve: {
     alias: Object.entries(PUBLIC_ALIASES).map(([pub, phys]) => ({
       find: new RegExp('^' + pub.replace(/\//g, '\\/')),
-      replacement: path.resolve(__dirname, phys) + '/',
+      replacement: path.resolve(rootDir, phys) + '/',
     })),
   },
   server: {

@@ -18,6 +18,7 @@ export default function ArchiveHead() {
       <meta itemProp="image" content="https://openstmc.com/images/favicon-1.png" />
       <meta name="twitter:image" content="https://openstmc.com/images/favicon-1.png" />
       <meta property="twitter:card" content="summary_large_image" />
+      <link rel="stylesheet" href="/vendor/material-icons.css" />
       <script src="/vendor/insights.bundle.js" defer></script>
     </>
   );

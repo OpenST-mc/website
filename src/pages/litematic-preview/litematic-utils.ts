@@ -1,4 +1,5 @@
-// litematic NBT → 结构数据（自 apps/extra/litematic-preview/src/litematic-utils.js 迁移）。
+// litematic NBT → 结构数据
+// （自 apps/extra/litematic-preview/src/litematic-utils.js 迁移）。
 import type { Litematic, LitematicRegion, NbtCompound, NbtTag, RawLitematicNbt } from './types';
 
 export type BlockVisitor = (x: number, y: number, z: number, blockID: number) => void;
@@ -53,11 +54,7 @@ export function readLitematicFromNBTData(nbtdata: RawLitematicNbt): Litematic {
     // 解析子投影的世界坐标偏移量
     if (region['Position']) {
       const position = asCompound(region['Position']);
-      litematicRegion.position = [
-        asNumber(position['x']),
-        asNumber(position['y']),
-        asNumber(position['z']),
-      ];
+      litematicRegion.position = [asNumber(position['x']), asNumber(position['y']), asNumber(position['z'])];
     }
 
     litematic.regions.push(litematicRegion);
@@ -67,57 +64,52 @@ export function readLitematicFromNBTData(nbtdata: RawLitematicNbt): Litematic {
 }
 
 // 按需解码：从 packed bit 数据中解码指定 Y 范围，回调仅对非空气方块触发
-export function iterateRegionBlocks(
-  region: LitematicRegion,
-  y_min: number,
-  y_max: number,
-  callback: BlockVisitor
-): void {
+export function iterateRegionBlocks(region: LitematicRegion, yMin: number, yMax: number, callback: BlockVisitor): void {
   const packedData = region.packedData;
   const nbits = region.nbits;
   const w = region.width;
   const h = region.height;
   const d = region.depth;
 
-  const effectiveMax = y_max === -1 ? h : Math.min(y_max, h);
-  if (y_min >= h) return;
+  const effectiveMax = yMax === -1 ? h : Math.min(yMax, h);
+  if (yMin >= h) return;
 
   const mask = (1 << nbits) - 1;
   const wd = w * d;
   const packedLen = packedData.length;
 
   for (let x = 0; x < w; x++) {
-    for (let y = y_min; y < effectiveMax; y++) {
+    for (let y = yMin; y < effectiveMax; y++) {
       const baseIdx = y * wd + x;
       for (let z = 0; z < d; z++) {
         const linearIdx = baseIdx + z * w;
 
-        const start_offset = linearIdx * nbits;
-        const start_arr_index = start_offset >>> 5;
-        const end_arr_index = ((linearIdx + 1) * nbits - 1) >>> 5;
-        const start_bit_offset = start_offset & 0x1f;
+        const startOffset = linearIdx * nbits;
+        const startArrIndex = startOffset >>> 5;
+        const endArrIndex = ((linearIdx + 1) * nbits - 1) >>> 5;
+        const startBitOffset = startOffset & 0x1f;
 
-        const half_ind = start_arr_index >>> 1;
+        const halfIndex = startArrIndex >>> 1;
         let blockStart: number;
         let blockEnd: number;
-        if ((start_arr_index & 0x1) === 0) {
-          blockStart = packedData[half_ind]![1];
-          blockEnd = packedData[half_ind]![0];
+        if ((startArrIndex & 0x1) === 0) {
+          blockStart = packedData[halfIndex]![1];
+          blockEnd = packedData[halfIndex]![0];
         } else {
-          blockStart = packedData[half_ind]![0];
-          if (half_ind + 1 < packedLen) {
-            blockEnd = packedData[half_ind + 1]![1];
+          blockStart = packedData[halfIndex]![0];
+          if (halfIndex + 1 < packedLen) {
+            blockEnd = packedData[halfIndex + 1]![1];
           } else {
             blockEnd = 0;
           }
         }
 
         let blockID: number;
-        if (start_arr_index === end_arr_index) {
-          blockID = (blockStart >>> start_bit_offset) & mask;
+        if (startArrIndex === endArrIndex) {
+          blockID = (blockStart >>> startBitOffset) & mask;
         } else {
-          const end_offset = 32 - start_bit_offset;
-          blockID = ((blockStart >>> start_bit_offset) & mask) | ((blockEnd << end_offset) & mask);
+          const endOffset = 32 - startBitOffset;
+          blockID = ((blockStart >>> startBitOffset) & mask) | ((blockEnd << endOffset) & mask);
         }
 
         if (blockID > 0) {

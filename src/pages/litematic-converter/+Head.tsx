@@ -1,4 +1,5 @@
-// 转换器页面级样式 / 脚本（对齐旧 apps/extra/litematic-converter/index.html <head>）。
+// 转换器页面级样式 / 脚本
+// （对齐旧 apps/extra/litematic-converter/index.html <head>）。
 export default function ConverterHead() {
   return (
     <>

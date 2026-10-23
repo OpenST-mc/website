@@ -54,7 +54,8 @@ const OVERALL: Record<OverallStatus, OverallConfig> = {
 };
 
 function dotClass(status: EndpointStatus): string {
-  if (status === 'online') return 'w-2.5 h-2.5 rounded-full bg-green-500 dot-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]';
+  if (status === 'online')
+    return 'w-2.5 h-2.5 rounded-full bg-green-500 dot-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]';
   if (status === 'offline') return 'w-2.5 h-2.5 rounded-full bg-red-600';
   return 'w-2.5 h-2.5 rounded-full bg-gray-600';
 }
@@ -77,7 +78,9 @@ export default function Page() {
             <h1 className="text-2xl font-bold text-white tracking-tight">OpenST System Status</h1>
             <p className="text-gray-500 text-sm mt-1">站点状态</p>
           </div>
-          <div className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${cfg.badge}`}>{cfg.badgeText}</div>
+          <div className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${cfg.badge}`}>
+            {cfg.badgeText}
+          </div>
         </header>
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-10 mb-8 text-center shadow-2xl transition-all duration-500">

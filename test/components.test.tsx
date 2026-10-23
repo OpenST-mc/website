@@ -34,7 +34,14 @@ describe('ArchiveCard', () => {
     const onToggleFav = vi.fn();
     const onOpen = vi.fn();
     render(
-      <ArchiveCard item={item} isAdmin={false} isFav={false} onOpen={onOpen} onEdit={() => {}} onToggleFav={onToggleFav} />,
+      <ArchiveCard
+        item={item}
+        isAdmin={false}
+        isFav={false}
+        onOpen={onOpen}
+        onEdit={() => {}}
+        onToggleFav={onToggleFav}
+      />,
     );
     expect(screen.getByText('测试机器')).toBeTruthy();
     expect(screen.getByText('by Alice')).toBeTruthy();
@@ -57,7 +64,16 @@ describe('ArchiveCard', () => {
 
   it('opens via keyboard-accessible controls (buttons, not clickable divs)', () => {
     const onOpen = vi.fn();
-    render(<ArchiveCard item={item} isAdmin={false} isFav={false} onOpen={onOpen} onEdit={() => {}} onToggleFav={() => {}} />);
+    render(
+      <ArchiveCard
+        item={item}
+        isAdmin={false}
+        isFav={false}
+        onOpen={onOpen}
+        onEdit={() => {}}
+        onToggleFav={() => {}}
+      />,
+    );
     fireEvent.click(screen.getByLabelText('查看 测试机器'));
     expect(onOpen).toHaveBeenCalledTimes(1);
   });

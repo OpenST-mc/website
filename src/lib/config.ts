@@ -1,7 +1,7 @@
 // Tag taxonomy for the archive portal.
-// Two-level categories are expressed as `{ parent: [leaves...] }`; flat
-// categories are plain `string[]`. Kept as the single source of truth for
-// sidebar filtering and dynamic tag narrowing.
+// Two-level categories use `{ parent: [leaves...] }`; flat tags are
+// plain `string[]`. Single source of truth for sidebar filtering and
+// dynamic tag narrowing.
 
 export type TagLeafMap = Record<string, string[]>;
 export type TagCategoryConfig = string[] | TagLeafMap;

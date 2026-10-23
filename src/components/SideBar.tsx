@@ -45,7 +45,11 @@ export function SideBar({
   return (
     <div className="shrink-0 flex text-[16px]">
       {isOpen ? (
-        <div onClick={onClose} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden" aria-hidden="true" />
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden"
+          aria-hidden="true"
+        />
       ) : null}
       <aside
         ref={drawerRef}
@@ -125,71 +129,79 @@ export function SideBar({
               <div key={cat} className="flex flex-col gap-2">
                 <span className="text-[11px] text-gray-600 font-bold uppercase tracking-[0.2em] mb-1">{cat}</span>
                 <div className="flex flex-col text-[14px]">
-                  {flat ? (
-                    Array.from(groups[cat] ?? []).map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        onClick={() => onToggleTag(cat, tag)}
-                        className={`text-left py-2 px-3 rounded-md transition-all flex items-center gap-3 ${
-                          selected[cat]?.includes(tag) ? 'text-brand font-bold bg-brand/5' : 'text-white/60 hover:text-white hover:bg-white/5'
-                        }`}
-                      >
-                        <span className={`w-1.5 h-1.5 rounded-full ${selected[cat]?.includes(tag) ? 'bg-brand' : 'bg-white/10'}`} />
-                        {tag}
-                      </button>
-                    ))
-                  ) : catConfig ? (
-                    Object.entries(catConfig).map(([subCat, subTags]) => {
-                      const hasSubTags = Array.isArray(subTags) && subTags.length > 0;
-                      return (
-                        <div key={subCat} className="mb-1">
-                          <button
-                            type="button"
-                            onClick={() => handleSubCatClick(cat, subCat, hasSubTags)}
-                            className={`w-full text-left py-2 px-3 flex justify-between items-center group transition rounded-md hover:bg-white/5 ${
-                              selected[cat]?.includes(subCat) ? 'bg-brand/10 border-l-2 border-brand text-brand' : 'text-white/80'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              {!hasSubTags ? (
-                                <span
-                                  className={`w-1.5 h-1.5 rounded-full ${selected[cat]?.includes(subCat) ? 'bg-brand' : 'bg-white/10'}`}
-                                />
-                              ) : null}
-                              <span className="font-medium">{subCat}</span>
-                            </div>
-                            {hasSubTags ? (
-                              <span
-                                className={`text-[10px] opacity-40 transition-transform duration-300 ${expandedGroups[subCat] ? 'rotate-180' : ''}`}
+                  {flat
+                    ? Array.from(groups[cat] ?? []).map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => onToggleTag(cat, tag)}
+                          className={`text-left py-2 px-3 rounded-md transition-all flex items-center gap-3 ${
+                            selected[cat]?.includes(tag)
+                              ? 'text-brand font-bold bg-brand/5'
+                              : 'text-white/60 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${selected[cat]?.includes(tag) ? 'bg-brand' : 'bg-white/10'}`}
+                          />
+                          {tag}
+                        </button>
+                      ))
+                    : catConfig
+                      ? Object.entries(catConfig).map(([subCat, subTags]) => {
+                          const hasSubTags = Array.isArray(subTags) && subTags.length > 0;
+                          return (
+                            <div key={subCat} className="mb-1">
+                              <button
+                                type="button"
+                                onClick={() => handleSubCatClick(cat, subCat, hasSubTags)}
+                                className={`w-full text-left py-2 px-3 flex justify-between items-center group transition rounded-md hover:bg-white/5 ${
+                                  selected[cat]?.includes(subCat)
+                                    ? 'bg-brand/10 border-l-2 border-brand text-brand'
+                                    : 'text-white/80'
+                                }`}
                               >
-                                ▼
-                              </span>
-                            ) : null}
-                          </button>
-
-                          {hasSubTags && expandedGroups[subCat] ? (
-                            <div className="flex flex-col gap-1 ml-4 mt-1 mb-2 border-l border-white/5">
-                              {subTags
-                                .filter((tag) => groups[cat]?.has(tag))
-                                .map((tag) => (
-                                  <button
-                                    key={tag}
-                                    type="button"
-                                    onClick={() => onToggleTag(cat, tag)}
-                                    className={`text-left text-[13px] py-1.5 px-4 rounded transition-all ${
-                                      selected[cat]?.includes(tag) ? 'text-brand font-bold bg-brand/5' : 'text-white/50 hover:text-white'
-                                    }`}
+                                <div className="flex items-center gap-3">
+                                  {!hasSubTags ? (
+                                    <span
+                                      className={`w-1.5 h-1.5 rounded-full ${selected[cat]?.includes(subCat) ? 'bg-brand' : 'bg-white/10'}`}
+                                    />
+                                  ) : null}
+                                  <span className="font-medium">{subCat}</span>
+                                </div>
+                                {hasSubTags ? (
+                                  <span
+                                    className={`text-[10px] opacity-40 transition-transform duration-300 ${expandedGroups[subCat] ? 'rotate-180' : ''}`}
                                   >
-                                    {tag}
-                                  </button>
-                                ))}
+                                    ▼
+                                  </span>
+                                ) : null}
+                              </button>
+
+                              {hasSubTags && expandedGroups[subCat] ? (
+                                <div className="flex flex-col gap-1 ml-4 mt-1 mb-2 border-l border-white/5">
+                                  {subTags
+                                    .filter((tag) => groups[cat]?.has(tag))
+                                    .map((tag) => (
+                                      <button
+                                        key={tag}
+                                        type="button"
+                                        onClick={() => onToggleTag(cat, tag)}
+                                        className={`text-left text-[13px] py-1.5 px-4 rounded transition-all ${
+                                          selected[cat]?.includes(tag)
+                                            ? 'text-brand font-bold bg-brand/5'
+                                            : 'text-white/50 hover:text-white'
+                                        }`}
+                                      >
+                                        {tag}
+                                      </button>
+                                    ))}
+                                </div>
+                              ) : null}
                             </div>
-                          ) : null}
-                        </div>
-                      );
-                    })
-                  ) : null}
+                          );
+                        })
+                      : null}
                 </div>
               </div>
             );

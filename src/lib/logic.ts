@@ -1,5 +1,5 @@
 // Pure archive filtering/narrowing logic, framework-agnostic.
-// Migrated 1:1 from apps/portal/scripts/logic.js (behaviour preserved).
+// 1:1 port of apps/portal/scripts/logic.js (behaviour preserved).
 
 import { TAG_CONFIG, type TagCategoryConfig } from './config.ts';
 
@@ -13,7 +13,7 @@ export interface FilterableItem {
   tags?: string[] | null;
 }
 
-/** Selected tags per category; a category with no selection may be absent. */
+/** Selected tags per category; absent means no selection. */
 export type SelectedTags = Record<string, string[] | undefined>;
 
 export type NormalizeFn = (value: string) => string;
