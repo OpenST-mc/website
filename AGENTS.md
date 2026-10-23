@@ -40,13 +40,18 @@ For every request:
 pnpm run dev              # Vite dev server → localhost:4000 (0.0.0.0, CORS 开启)
 pnpm run build            # 完整构建: data/build.ts → sitemap → Tailwind×3 → vendor → Vite/Vike SSG → build:static → check:build
 pnpm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；Vercel 服务同一产物）
+pnpm run worker:dev       # Wrangler 本地运行 workers/src
+pnpm run worker:check     # Wrangler 打包校验（dry-run，不部署）
+pnpm run worker:deploy    # 部署 Worker（先确认 wrangler.jsonc 的 name）
 ```
 
 - `pnpm run build` 依次执行：`data/build.ts`（导入子模块 `content/data/index.json` + `_meta/index-by-id.json`，生成 `archive/data/database.json`）→ `build:sitemap` → `build:ArchiveCSS` → `build:PortalCSS` → `build:AdminCSS` → `build:vendor` → `vite build`（Vike `prerender: true` 产出 `dist/client`）→ `build:static`（拷贝静态资产进输出）→ `check:build`（路由/SEO/资产/CSP 断言）。
 - 单独构建 CSS：`pnpm run build:ArchiveCSS` / `build:PortalCSS` / `build:AdminCSS`（生成并提交静态 `css/*Output.css`，用于公开 `/css/*.css` 兼容；页面运行时不再引用它们）。
 - `pnpm run build:vendor`：从 node_modules 复制第三方 dist 到 `vendor/` 并以 esbuild 打包（含 `packages/js/insights-src.js` → insights.bundle.js）。vendor 已提交，仅升级依赖后需重跑。
 - `pnpm run doctor`：React Doctor（`react-doctor`，钉版 devDependency）扫描 React 反模式/性能/安全/可维护性（advisory）。
-- CI（GitHub Actions）：`.github/workflows/ci.yml`（`quality`：`check:types`/`lint`/`test`/`check:paths`；`build-and-e2e`：`pnpm run build` + `pnpm run test:e2e`；均 `pnpm install --frozen-lockfile`）与 `.github/workflows/react-doctor.yml`（PR 增量扫描 + 评论，advisory）。
+- `pnpm run worker:check` 只做 Wrangler dry-run 打包；`worker:deploy` 需 `CLOUDFLARE_API_TOKEN`（或 `wrangler login`），并先确认 `wrangler.jsonc` 的 `name` / `compatibility_date` 与现有 Worker 一致，保留 `BOT_TOKEN` / `WORKER_PROXY_SECRET` 等 vars/secrets。
+- Worker 部署也可手动触发 `.github/workflows/deploy-worker.yml`（需仓库 secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`）。
+- CI（GitHub Actions）：`.github/workflows/ci.yml`（`quality`：`check:types`/`format:check`/`lint`/`check:emoji`/`worker:check`/`test`/`check:paths`；`build-and-e2e`：`pnpm run build` + `pnpm run test:e2e`；均 `pnpm install --frozen-lockfile`）与 `.github/workflows/react-doctor.yml`（PR 增量扫描 + 评论，advisory）。
 - 依赖安装：`pnpm install`（CI 用 `--frozen-lockfile`）。Vercel 不覆盖 `installCommand`，按 `pnpm-lock.yaml`（lockfileVersion 9.0）自动选择受支持的 pnpm 安装；子模块更新在 `vercel.json` `buildCommand` 内执行。
 
 ## 稿件数据架构（2026-08 拆分）
@@ -66,18 +71,19 @@ pnpm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；V
 
 ## 目录结构
 
-| 路径 | 说明 |
-| ---- | ---- |
-| `src/` | React 19 + Vike SSG 源码：`pages/`（文件式路由 + `+route.ts` 特殊 URL）、`components/`、`hooks/`、`lib/` |
-| `api/` | Vercel Functions：share、download/stats；`auth/*`（Auth.js Edge）、`admin/*` 与 `submit-issue`（服务签名代理 → CF Worker） |
-| `apps/extra/litematic-preview/resource/` | WebGL 预览器运行时资源（经典脚本/贴图），构建期拷入输出；页面本体在 `src/pages/litematic-*` |
-| `packages/js/insights-src.js` | 埋点打包源码（esbuild → `vendor/insights.bundle.js`） |
-| `assets/` | fonts、images、s2t 简繁词典 |
-| `css/` | Tailwind v4 三入口与产物（@source 扫描 `src/`） |
-| `archive/data/database.json` | SSG 构建期数据源（`data/build.ts` 从 `content/` 子模块索引重建） |
-| `scripts/` `data/` | 构建/守卫/生成脚本（`check-paths.js`、`check-build.ts`、`build-static.ts`） |
-| `workers/workers 2.js` | CF Workers 后端唯一源码版（Security Enhanced Edition） |
-| `vendor/` | 自托管第三方运行时（构建期生成、已提交） |
+| 路径                                     | 说明                                                                                                                       |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `src/`                                   | React 19 + Vike SSG 源码：`pages/`（文件式路由 + `+route.ts` 特殊 URL）、`components/`、`hooks/`、`lib/`                   |
+| `api/`                                   | Vercel Functions：share、download/stats；`auth/*`（Auth.js Edge）、`admin/*` 与 `submit-issue`（服务签名代理 → CF Worker） |
+| `apps/extra/litematic-preview/resource/` | WebGL 预览器运行时资源（经典脚本/贴图），构建期拷入输出；页面本体在 `src/pages/litematic-*`                                |
+| `packages/js/insights-src.js`            | 埋点打包源码（esbuild → `vendor/insights.bundle.js`）                                                                      |
+| `assets/`                                | fonts、images、s2t 简繁词典                                                                                                |
+| `css/`                                   | Tailwind v4 三入口与产物（@source 扫描 `src/`）                                                                            |
+| `archive/data/database.json`             | SSG 构建期数据源（`data/build.ts` 从 `content/` 子模块索引重建）                                                           |
+| `scripts/` `data/`                       | 构建/守卫/生成脚本（`check-paths.js`、`check-build.ts`、`build-static.ts`）                                                |
+| `workers/src/`                           | CF Workers 源码（`index.js` + 路由/库模块，Wrangler 打包部署）                                                             |
+| `wrangler.jsonc`                         | Worker 构建/部署配置（`name` 必须与现有 Cloudflare Worker 一致）                                                           |
+| `vendor/`                                | 自托管第三方运行时（构建期生成、已提交）                                                                                   |
 
 ## 公开 URL 兼容
 
@@ -101,7 +107,8 @@ pnpm run preview          # 预览 SSG 生产产物 dist/client（E2E 基座；V
 
 ## 后端
 
-- CF Workers：`https://api.openstmc.com`，源码 `workers/workers 2.js`（env 注入密钥）。
+- CF Workers：`https://api.openstmc.com`，源码 `workers/src/index.js`（Wrangler 打包，env 注入密钥）。
+- Worker env/secrets：`BOT_TOKEN`、`CHAT_ID`、`CLIENT_ID`、`CLIENT_SECRET`、`WORKER_PROXY_SECRET`；`GH_REPO` / `ARCHIVE_REPO` / `BLACKLIST_ASNS` 有默认值。密钥必须用 Secret 类型，明文 Text 变量会在 `wrangler deploy` 的远端配置 diff 中回显。
 - `GH_REPO`（权限校验/会话）与 `ARCHIVE_REPO`（稿件内容增删改）分离；管理员端点经 archive `data/index.json` 定位真实路径（兼容稳定 sub-id 与文件夹名，10 分钟 Cache API 缓存）。
 - 上传：浏览器经同源 `api/upload-token`（校验 Auth.js 会话）取短时 HMAC 上传令牌后直连 Worker `/api/archive-upload`（Telegram 中继，≤50MB；Worker 强制校验令牌，匿名请求一律 401）；wiki 提交建 issue 于 `OpenST-mc/Submissions`。
 - 会话：Worker 提供 exchange-token / resolveSession（两级缓存，10 分钟）；站点前端会话统一走 Auth.js `/api/auth/session`，不再使用 localStorage 缓存。
@@ -126,7 +133,7 @@ Vercel 侧同源端点 `/api/auth/*`、`/api/admin/*`、`/api/submit-issue`、`/
 
 ## Tech Stack
 
-- Node `>=22.12.0`（以 `engines` 为准）；包管理 `pnpm@11`（`package.json` `packageManager` 钉版；`overrides`/`allowBuilds` 配置在 `pnpm-workspace.yaml`，勿写回 package.json）；`react ^19` + `vike`/`vike-react`（SSG），不引入 Router/CLI；`vite ^7`；`tailwindcss ^4`；`sharp`（仅 `data/archive-images` 工具/测试）、`esbuild`（精确钉版）；计数 `Upstash Redis`；埋点仅 Vercel 官方二件。
+- Node `>=24.22.1`（以 `engines` 为准）；包管理 `pnpm@11`（`package.json` `packageManager` 钉版；`overrides`/`allowBuilds` 配置在 `pnpm-workspace.yaml`，勿写回 package.json）；`react ^19` + `vike`/`vike-react`（SSG），不引入 Router/CLI；`vite ^7`；`tailwindcss ^4`；`sharp`（仅 `data/archive-images` 工具/测试）、`esbuild`（精确钉版）；计数 `Upstash Redis`；埋点仅 Vercel 官方二件。
 - 第三方库自托管于 `vendor/`（已提交），禁止外链 CDN。禁止新建 `public/`。
 
 ## Quality Gates
@@ -134,11 +141,10 @@ Vercel 侧同源端点 `/api/auth/*`、`/api/admin/*`、`/api/submit-issue`、`/
 可重复的检查必须由机器守，不靠人眼。门只会变严，不会放宽。
 
 - 风格与静态检查是强制的：格式必须机器统一，不靠 reviewer 肉眼；未定义引用、悬空绑定视为构建失败同级缺陷。
-- 门的定义：`lint` / `test` / `check:paths` 全绿。新增门只加命令，不加叙述；门只增不减。
+- 门的定义：`format:check` / `lint` / `check:emoji` / `check:types` / `check:worker` / `test` / `check:paths` 全绿。新增门只加命令，不加叙述；门只增不减。
 - 构建必须从干净安装可重现：新增构建期工具必须显式声明并钉版，不依赖传递运气。
 - 生成物永远由源码加声明命令重算，不接受手改生成物后直接发版。
 - 解析器、编解码、金额计数这类不可逆逻辑，改动必须附真实输入的往返验证，不接受只看 diff 即合併。
-
 
 ## AI-assisted Development
 
@@ -157,3 +163,15 @@ AI must NOT：发明新的路由/目录映射、引入 CDN 或 `public/`、另�
 - Vercel Edge Functions（`api/*.ts`）引用 `src/lib` 时**相对导入不得带 `.ts` 扩展名**：Vercel 构建把 TS 编译产物重命名 `.ts→.js` 但不重写 import 说明符，带扩展名会在部署期报 `referencing unsupported modules` 而失败（门：`test/vercel-edge-imports.test.ts`）。
 - Vercel 对裸 `api/` 目录的 `[...catchall]` 只匹配**单段**路径（多段直接平台 404）：Auth.js 路由须在 `api/auth/` 显式建文件（含 `signin/[provider].ts`、`callback/[provider].ts`），不得用 catch-all（门：`test/vercel-edge-imports.test.ts`）。
 - 登录/登出跳转不得用表单 POST：OAuth 302 到 github.com 会被 CSP `form-action 'self'` 拦截；`src/lib/auth.ts` 走 Auth.js `X-Auth-Return-Redirect` JSON 模式 + `location.assign`（门：`test/auth-flow.test.ts`）。
+- `wrangler deploy` 的远端配置 diff 会明文回显 Worker 的 Text 变量；密钥必须用 Secret 类型。IDE/非 TTY 终端下覆盖确认可能崩溃，迁移完密钥后再用 `CI=true` 非交互部署，避免再次打印 vars。
+
+## 代码风格
+
+- 使用小驼峰命名法；外部数据字段（`sub_id`、NBT、OAuth）保留源格式
+- 普通注释用 `//`；导出 API 的 JSDoc 用 `/** */`
+- 使用空格缩进（2 空格）
+- 采用 java / K&R 风格的大括号
+- Prettier 统一格式：代码 120 列、注释 70 列（不可拆分的字符串/URL 豁免）；文件不超过 800 行
+- 注释解释意图，不复述代码，保持简洁
+- 禁止 emoji；输入框默认文案（`DEFAULT_DESC`）是唯一例外
+- 格式、行宽、文件行数、命名与 emoji 均由 `format:check` / `lint` / `check:emoji` 守

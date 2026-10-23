@@ -17,7 +17,7 @@ OpenST的官方网站
 
 ## 部署方法：
 
-> 前置：Node ≥ 22.12（见 `engines`）与 pnpm（`packageManager` 已钉版；`corepack enable` 或全局安装 pnpm 即可）。
+> 前置：Node ≥ 24.22.1（见 `engines`）与 pnpm（`packageManager` 已钉版；`corepack enable` 或全局安装 pnpm 即可）。
 
 1. 初次设置
 
@@ -51,5 +51,15 @@ pnpm run dev
 pnpm run build
 pnpm run preview
 ```
+
+4. Worker（Cloudflare）
+
+```bash
+pnpm run worker:check   # dry-run 打包校验
+pnpm run worker:deploy  # 先 wrangler login，或设置 CLOUDFLARE_API_TOKEN
+```
+
+- 也可在 GitHub Actions 手动运行 `Deploy Worker`，需 secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`。
+- 部署前确认 `wrangler.jsonc` 的 `name` 为 `openst-api`，并保留现有 vars/secrets。
 
 > [OpenST开发文档](https://openst-mc.github.io/OpenST-Docs/#/)

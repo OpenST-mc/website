@@ -172,7 +172,7 @@
 **描述**：按 ADR-005 定稿并实现：Worker 校验 Auth.js JWT（`jose`+共享密钥）**或** Vercel 已认证代理。管理员判定写进会话。
 **验收**：管理员判定与旧 Worker 行为等价；令牌不可伪造/过期即失效。
 **验证**：受控端点测试（登录/未登录/越权）。
-**依赖**：T1.7、M2 · **规模**：L · **文件**：`workers/workers 2.js`（或 `api/admin-proxy.ts`）、`src/lib/auth-server.ts`
+**依赖**：T1.7、M2 · **规模**：L · **文件**：`workers/src/index.js`（或 `api/admin-proxy.ts`）、`src/lib/auth-server.ts`
 
 ### [x] T3.2 登录/登出/回调流程
 **描述**：用 Auth.js 端点替换旧回调页；`signIn('github', { callbackUrl })` 的站内跳转白名单。
