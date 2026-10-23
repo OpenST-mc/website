@@ -2,6 +2,7 @@
 // 由代理校验 Auth.js 会话并以服务签名转发 CF Worker。
 
 import { httpFetch } from './http.ts';
+import type { ArchiveInfoPatch } from './archive-info.ts';
 import type { WorkerResponse } from './types.ts';
 
 async function post(path: string, body: BodyInit, isJson: boolean): Promise<WorkerResponse> {
@@ -25,7 +26,8 @@ async function post(path: string, body: BodyInit, isJson: boolean): Promise<Work
   return response.ok ? { ok: true, ...base } : { ok: false, ...base };
 }
 
-export function updateInfo(folder: string, newInfo: unknown): Promise<WorkerResponse> {
+/** 只提交人工维护字段；Worker 读取现有 info.json 后按字段合并。 */
+export function updateInfo(folder: string, newInfo: ArchiveInfoPatch): Promise<WorkerResponse> {
   return post('/api/admin/update-info', JSON.stringify({ folder, newInfo }), true);
 }
 

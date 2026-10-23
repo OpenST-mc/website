@@ -3,10 +3,11 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { TAG_CONFIG } from '../../../lib/config';
 import { deleteArchive, replaceLitematic, updateInfo, updatePreview } from '../../../lib/api';
+import { MAX_PREVIEW_BYTES, PREVIEW_EXTENSIONS, archivePreviewUrl, toInfoPatch } from '../../../lib/archive-info';
 import { fetchJson, HttpError } from '../../../lib/http';
 import { parseDatabase, sanitizeQueryParam } from '../../../lib/schema';
 import { notify } from '../../../lib/notify';
-import { ARCHIVE_EXTENSIONS, IMAGE_EXTENSIONS, validateUploadFile } from '../../../lib/upload';
+import { ARCHIVE_EXTENSIONS, validateUploadFile } from '../../../lib/upload';
 import { useSession } from '../../../hooks/useSession';
 import { AuthButton } from '../../../components/AuthButton';
 import { StatusPanel } from '../../../components/StatusPanel';
@@ -23,7 +24,6 @@ interface EditForm {
   preview: string;
   filename: string;
   folder: string;
-  submitDate: string;
 }
 
 const EMPTY_FORM: EditForm = {
@@ -36,25 +36,7 @@ const EMPTY_FORM: EditForm = {
   preview: '',
   filename: '',
   folder: '',
-  submitDate: '',
 };
-
-function stripPath(s: unknown): string {
-  if (typeof s !== 'string') return '';
-  return s.includes('/') ? (s.split('/').pop() ?? '') : s;
-}
-
-function previewUrl(preview: string): string {
-  if (!preview) return '';
-  if (preview.startsWith('data:image')) return preview;
-  const rawPath = decodeURIComponent(preview);
-  const safePath = rawPath
-    .split('/')
-    .map((s) => encodeURIComponent(s))
-    .join('/')
-    .replace(/^\/+/, '');
-  return `https://cdn.jsdelivr.net/gh/OpenST-mc/archive@main/${safePath}`;
-}
 
 export default function Page() {
   const { isAdmin, status } = useSession();
@@ -62,7 +44,9 @@ export default function Page() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingPreview, setIsUploadingPreview] = useState(false);
   const [isUploadingLitematic, setIsUploadingLitematic] = useState(false);
+  const [previewOverride, setPreviewOverride] = useState('');
   const previewInputRef = useRef<HTMLInputElement>(null);
+  const previewObjectUrlRef = useRef('');
 
   useEffect(() => {
     const folder = sanitizeQueryParam(new URLSearchParams(window.location.search).get('folder'));
@@ -80,7 +64,6 @@ export default function Page() {
           return;
         }
         setForm({ ...EMPTY_FORM, ...item, folder: item.id });
-        console.log('加载成功，当前操作目录:', item.id);
       })
       .catch((error: unknown) => {
         if (error instanceof HttpError && error.code === 'aborted') return;
@@ -92,13 +75,25 @@ export default function Page() {
 
   const previewHtml = useMemo(() => {
     try {
-      return DOMPurify.sanitize(String(marked.parse(form.description || '_等待输入内容..._', { breaks: true, gfm: true })));
+      return DOMPurify.sanitize(
+        String(marked.parse(form.description || '_等待输入内容..._', { breaks: true, gfm: true })),
+      );
     } catch {
       return '';
     }
   }, [form.description]);
 
-  const currentPreviewUrl = useMemo(() => previewUrl(form.preview), [form.preview]);
+  const currentPreviewUrl = useMemo(
+    () => previewOverride || archivePreviewUrl(form.preview),
+    [form.preview, previewOverride],
+  );
+
+  useEffect(
+    () => () => {
+      if (previewObjectUrlRef.current) URL.revokeObjectURL(previewObjectUrlRef.current);
+    },
+    [],
+  );
 
   const toggleTag = (tag: string) =>
     setForm((prev) => ({
@@ -110,21 +105,26 @@ export default function Page() {
     async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      const invalid = validateUploadFile(file, { extensions: IMAGE_EXTENSIONS, label: '预览图' });
+      const invalid = validateUploadFile(file, {
+        extensions: PREVIEW_EXTENSIONS,
+        label: '预览图',
+        maxBytes: MAX_PREVIEW_BYTES,
+      });
       if (invalid) {
         notify('error', invalid);
         e.target.value = '';
         return;
       }
       const folder = form.folder;
-      console.log('当前稿件文件夹:', folder);
       setIsUploadingPreview(true);
       try {
         const res = await updatePreview(file, folder);
         if (res.ok) {
-          const newName = (res.json as { newName?: string } | undefined)?.newName;
-          if (newName) setForm((prev) => ({ ...prev, preview: newName }));
-          notify('success', '预览图更新成功');
+          // archive CI 会重新生成 preview.webp；本地先展示刚选中的源图，避免等待 CDN。
+          if (previewObjectUrlRef.current) URL.revokeObjectURL(previewObjectUrlRef.current);
+          previewObjectUrlRef.current = URL.createObjectURL(file);
+          setPreviewOverride(previewObjectUrlRef.current);
+          notify('success', '预览图上传成功，索引将由 archive CI 自动重建');
         } else if (res.status === 401) {
           notify('error', '认证失效，请重新登录');
         } else {
@@ -177,7 +177,7 @@ export default function Page() {
   );
 
   const handleDeleteArchive = useCallback(async () => {
-    const confirmID = prompt(`⚠️ 危险操作：此操作将永久删除该存档！\n请输入该存档 ID [ ${form.id} ] 以确认：`);
+    const confirmID = prompt(`危险操作：此操作将永久删除该存档！\n请输入该存档 ID [ ${form.id} ] 以确认：`);
     if (confirmID !== form.id) {
       if (confirmID !== null) notify('error', 'ID 输入错误');
       return;
@@ -197,27 +197,26 @@ export default function Page() {
 
   const submitSave = useCallback(async () => {
     if (isSaving) return;
+    if (!form.id) {
+      notify('error', '稿件尚未加载完成');
+      return;
+    }
+    const patch = toInfoPatch(form);
+    if (!patch.name) {
+      notify('error', '作品名称不能为空');
+      return;
+    }
     setIsSaving(true);
-    const source = form;
-    const finalInfoJson = {
-      id: source.sub_id || source.id,
-      name: source.name,
-      author: source.author || '匿名',
-      tags: Array.isArray(source.tags) ? source.tags : [],
-      description: source.description,
-      folder: source.folder || source.name.replace(/[#\\/:*?"<>|]/g, '_'),
-      preview: stripPath(source.preview) || 'preview.png',
-      filename: stripPath(source.filename),
-      submitDate: source.submitDate || new Date().toISOString(),
-    };
     try {
-      const res = await updateInfo(source.id, finalInfoJson);
+      const res = await updateInfo(form.id, patch);
       if (res.status === 401) {
         notify('error', '认证失效，请先登录');
         window.location.href = '/archive/';
       } else if (res.ok) {
-        notify('success', '信息修改成功！');
-        window.location.href = '/archive/';
+        notify('success', '信息已提交，archive CI 重建索引后自动生效');
+        window.setTimeout(() => {
+          window.location.href = '/archive/';
+        }, 1200);
       } else {
         notify('error', `提交失败（HTTP ${res.status}）`);
       }
@@ -398,7 +397,9 @@ export default function Page() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white/5 border border-white/10 p-5 rounded-3xl flex items-center justify-between group relative overflow-hidden">
                   <div className="flex items-center gap-3 truncate">
-                    <div className="p-2.5 rounded-xl bg-[#40B5AD]/10 text-[#40B5AD]">📄</div>
+                    <div className="p-2.5 rounded-xl bg-[#40B5AD]/10 text-[#40B5AD]">
+                      <span className="material-icons">description</span>
+                    </div>
                     <div className="flex flex-col truncate">
                       <span className="text-xs font-bold text-white truncate">{form.filename}</span>
                       <span className="text-[9px] text-white/30 uppercase font-mono">Litematic File</span>
@@ -433,7 +434,9 @@ export default function Page() {
                   className="bg-red-500/5 border border-red-500/20 hover:bg-red-500 hover:text-white text-red-500 p-5 rounded-3xl transition-all flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-red-500/10 group-hover:bg-white/20">🗑️</div>
+                    <div className="p-2.5 rounded-xl bg-red-500/10 group-hover:bg-white/20">
+                      <span className="material-icons">delete</span>
+                    </div>
                     <span className="text-xs font-black uppercase tracking-widest">彻底删除此稿件</span>
                   </div>
                 </button>
